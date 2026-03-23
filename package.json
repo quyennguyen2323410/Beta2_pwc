@@ -1,5 +1,6 @@
 {
   "name": "pwc-ai-beta",
+  "homepage": "https://quyennguyen2323410.github.io/Beta2_pwc/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -7,12 +8,15 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "gh-pages": "^6.3.0",
     "lucide-react": "^0.577.0",
     "mssql": "^12.2.1",
     "react": "^19.2.4",

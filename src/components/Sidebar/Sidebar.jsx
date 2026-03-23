@@ -177,7 +177,7 @@ export default function Sidebar({ onCloseMobile }) {
             }`
           }
         >
-          Đăng tin
+          Đăng bài
         </NavLink>
 
         <NavLink
