@@ -3,84 +3,84 @@ import { Plus, Search, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 
-// const defaultDevices = [
-//   {
-//     id: "1",
-//     group: "Van giảm áp",
-//     brand: "Bernad",
-//     name: "Bermad 720",
-//     description:
-//       "Van giảm áp điều khiển thủy lực dùng để ổn định áp lực đầu ra trong mạng lưới DMA, phù hợp cho khu vực có biến động tải lớn.",
-//     normalErrors: 2,
-//     advancedErrors: 1,
-//     sections: {
-//       introduction:
-//         "Bermad 720 là dòng van giảm áp được sử dụng phổ biến trong mạng lưới cấp nước để kiểm soát áp lực đầu ra ổn định.",
-//       usage:
-//         "Thiết bị dùng để duy trì áp lực đầu ra ở mức cài đặt, bảo vệ mạng lưới khỏi dao động áp suất lớn.",
-//       installation:
-//         "Lắp đúng chiều dòng chảy, kiểm tra áp suất đầu vào, đầu ra và đảm bảo không rò rỉ tại các vị trí kết nối.",
-//       commonErrors:
-//         "Áp đầu ra không ổn định, kẹt màng van, rò nước tại buồng điều khiển.",
-//       advanced:
-//         "Kiểm tra pilot, lọc pilot, đường impulse, độ kín của màng và độ nhạy của cơ cấu phản hồi áp.",
-//       process:
-//         "Cô lập tuyến, xả áp, tháo pilot, vệ sinh màng, kiểm tra thân van, lắp lại và hiệu chỉnh áp đầu ra.",
-//       media:
-//         "Hình ảnh hiện trường, video vệ sinh pilot, video cân chỉnh áp sau sửa chữa.",
-//     },
-//   },
-//   {
-//     id: "2",
-//     group: "Đồng hồ đo nước",
-//     brand: "Sensus",
-//     name: "Sensus iPERL",
-//     description:
-//       "Đồng hồ đo nước điện tử có khả năng ghi nhận lưu lượng ổn định, hỗ trợ đọc số chính xác và phù hợp cho tích hợp số hóa.",
-//     normalErrors: 2,
-//     advancedErrors: 1,
-//     sections: {
-//       introduction:
-//         "Sensus iPERL là đồng hồ điện tử chuyên dùng cho đo đếm chính xác và tích hợp hệ thống đọc số từ xa.",
-//       usage:
-//         "Dùng để đo lưu lượng nước tiêu thụ và tích hợp với hệ thống thu thập dữ liệu.",
-//       installation:
-//         "Lắp đúng hướng mũi tên, tránh rung, đảm bảo đủ chiều dài ống và không có cặn bẩn lớn.",
-//       commonErrors:
-//         "Mất tín hiệu đọc, sai lệch chỉ số, pin cảnh báo, lỗi truyền dữ liệu.",
-//       advanced:
-//         "Kiểm tra module truyền thông, nguồn, nhiễu đường truyền, cấu hình logger và mapping dữ liệu.",
-//       process:
-//         "Kiểm tra ngoại quan, xác nhận chỉ số, test tín hiệu, thay module hoặc hiệu chuẩn lại nếu cần.",
-//       media: "Hình ảnh kết nối thực tế, video kiểm tra tín hiệu đọc số từ xa.",
-//     },
-//   },
-//   {
-//     id: "3",
-//     group: "Data logger",
-//     brand: "HWM",
-//     name: "HWM Permalog+",
-//     description:
-//       "Thiết bị data logger thu thập áp lực và lưu lượng phục vụ theo dõi thất thoát, dao động áp và hành vi mạng lưới theo thời gian.",
-//     normalErrors: 2,
-//     advancedErrors: 1,
-//     sections: {
-//       introduction:
-//         "HWM Permalog+ là data logger phục vụ thu thập dữ liệu áp lực/lưu lượng và hỗ trợ phát hiện bất thường.",
-//       usage:
-//         "Dùng để ghi dữ liệu hiện trường, phát hiện biến động áp lực và hỗ trợ phân tích rò rỉ.",
-//       installation:
-//         "Gắn chắc thiết bị, xác nhận pin, đồng bộ thời gian, cấu hình chu kỳ ghi nhận.",
-//       commonErrors:
-//         "Mất kết nối, không đồng bộ dữ liệu, pin yếu, dữ liệu thu thiếu.",
-//       advanced:
-//         "Kiểm tra firmware, cấu hình truyền dữ liệu, vùng phủ sóng và mapping kênh đo.",
-//       process:
-//         "Kiểm tra nguồn, kiểm tra cổng kết nối, cấu hình lại thiết bị và đồng bộ với hệ thống.",
-//       media: "Ảnh cấu hình logger, video kiểm tra đồng bộ dữ liệu thực tế.",
-//     },
-//   },
-// ];
+const defaultDevices = [
+  {
+    id: "1",
+    group: "Van giảm áp",
+    brand: "Bernad",
+    name: "Bermad 720",
+    description:
+      "Van giảm áp điều khiển thủy lực dùng để ổn định áp lực đầu ra trong mạng lưới DMA, phù hợp cho khu vực có biến động tải lớn.",
+    normalErrors: 2,
+    advancedErrors: 1,
+    sections: {
+      introduction:
+        "Bermad 720 là dòng van giảm áp được sử dụng phổ biến trong mạng lưới cấp nước để kiểm soát áp lực đầu ra ổn định.",
+      usage:
+        "Thiết bị dùng để duy trì áp lực đầu ra ở mức cài đặt, bảo vệ mạng lưới khỏi dao động áp suất lớn.",
+      installation:
+        "Lắp đúng chiều dòng chảy, kiểm tra áp suất đầu vào, đầu ra và đảm bảo không rò rỉ tại các vị trí kết nối.",
+      commonErrors:
+        "Áp đầu ra không ổn định, kẹt màng van, rò nước tại buồng điều khiển.",
+      advanced:
+        "Kiểm tra pilot, lọc pilot, đường impulse, độ kín của màng và độ nhạy của cơ cấu phản hồi áp.",
+      process:
+        "Cô lập tuyến, xả áp, tháo pilot, vệ sinh màng, kiểm tra thân van, lắp lại và hiệu chỉnh áp đầu ra.",
+      media:
+        "Hình ảnh hiện trường, video vệ sinh pilot, video cân chỉnh áp sau sửa chữa.",
+    },
+  },
+  {
+    id: "2",
+    group: "Đồng hồ đo nước",
+    brand: "Sensus",
+    name: "Sensus iPERL",
+    description:
+      "Đồng hồ đo nước điện tử có khả năng ghi nhận lưu lượng ổn định, hỗ trợ đọc số chính xác và phù hợp cho tích hợp số hóa.",
+    normalErrors: 2,
+    advancedErrors: 1,
+    sections: {
+      introduction:
+        "Sensus iPERL là đồng hồ điện tử chuyên dùng cho đo đếm chính xác và tích hợp hệ thống đọc số từ xa.",
+      usage:
+        "Dùng để đo lưu lượng nước tiêu thụ và tích hợp với hệ thống thu thập dữ liệu.",
+      installation:
+        "Lắp đúng hướng mũi tên, tránh rung, đảm bảo đủ chiều dài ống và không có cặn bẩn lớn.",
+      commonErrors:
+        "Mất tín hiệu đọc, sai lệch chỉ số, pin cảnh báo, lỗi truyền dữ liệu.",
+      advanced:
+        "Kiểm tra module truyền thông, nguồn, nhiễu đường truyền, cấu hình logger và mapping dữ liệu.",
+      process:
+        "Kiểm tra ngoại quan, xác nhận chỉ số, test tín hiệu, thay module hoặc hiệu chuẩn lại nếu cần.",
+      media: "Hình ảnh kết nối thực tế, video kiểm tra tín hiệu đọc số từ xa.",
+    },
+  },
+  {
+    id: "3",
+    group: "Data logger",
+    brand: "HWM",
+    name: "HWM Permalog+",
+    description:
+      "Thiết bị data logger thu thập áp lực và lưu lượng phục vụ theo dõi thất thoát, dao động áp và hành vi mạng lưới theo thời gian.",
+    normalErrors: 2,
+    advancedErrors: 1,
+    sections: {
+      introduction:
+        "HWM Permalog+ là data logger phục vụ thu thập dữ liệu áp lực/lưu lượng và hỗ trợ phát hiện bất thường.",
+      usage:
+        "Dùng để ghi dữ liệu hiện trường, phát hiện biến động áp lực và hỗ trợ phân tích rò rỉ.",
+      installation:
+        "Gắn chắc thiết bị, xác nhận pin, đồng bộ thời gian, cấu hình chu kỳ ghi nhận.",
+      commonErrors:
+        "Mất kết nối, không đồng bộ dữ liệu, pin yếu, dữ liệu thu thiếu.",
+      advanced:
+        "Kiểm tra firmware, cấu hình truyền dữ liệu, vùng phủ sóng và mapping kênh đo.",
+      process:
+        "Kiểm tra nguồn, kiểm tra cổng kết nối, cấu hình lại thiết bị và đồng bộ với hệ thống.",
+      media: "Ảnh cấu hình logger, video kiểm tra đồng bộ dữ liệu thực tế.",
+    },
+  },
+];
 
 export default function Library() {
   const navigate = useNavigate();
