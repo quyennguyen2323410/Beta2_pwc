@@ -158,9 +158,9 @@ export default function Login() {
                   Ghi nhớ đăng nhập
                 </label>
 
-                <span className="text-sm text-slate-400">
+                {/* <span className="text-sm text-slate-400">
                   Demo: admin / 123456
-                </span>
+                </span> */}
               </div>
 
               {error ? (

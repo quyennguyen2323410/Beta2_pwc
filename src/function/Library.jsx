@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Plus, Search, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
+import { Search } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const defaultDevices = [
   {
@@ -10,119 +9,88 @@ const defaultDevices = [
     brand: "Bernad",
     name: "Bermad 720",
     description:
-      "Van giảm áp điều khiển thủy lực dùng để ổn định áp lực đầu ra trong mạng lưới DMA, phù hợp cho khu vực có biến động tải lớn.",
+      "Van giảm áp điều khiển thủy lực dùng để ổn định áp lực đầu ra.",
     normalErrors: 2,
     advancedErrors: 1,
     sections: {
       introduction:
-        "Bermad 720 là dòng van giảm áp được sử dụng phổ biến trong mạng lưới cấp nước để kiểm soát áp lực đầu ra ổn định.",
-      usage:
-        "Thiết bị dùng để duy trì áp lực đầu ra ở mức cài đặt, bảo vệ mạng lưới khỏi dao động áp suất lớn.",
+        "Bermad 720 là dòng van giảm áp phổ biến trong mạng lưới cấp nước.",
+      usage: "Dùng để duy trì áp lực đầu ra ở mức cài đặt.",
       installation:
-        "Lắp đúng chiều dòng chảy, kiểm tra áp suất đầu vào, đầu ra và đảm bảo không rò rỉ tại các vị trí kết nối.",
+        "Lắp đúng chiều dòng chảy, kiểm tra rò rỉ tại các vị trí kết nối.",
       commonErrors:
         "Áp đầu ra không ổn định, kẹt màng van, rò nước tại buồng điều khiển.",
-      advanced:
-        "Kiểm tra pilot, lọc pilot, đường impulse, độ kín của màng và độ nhạy của cơ cấu phản hồi áp.",
+      advanced: "Kiểm tra pilot, lọc pilot, đường impulse, độ kín của màng.",
       process:
-        "Cô lập tuyến, xả áp, tháo pilot, vệ sinh màng, kiểm tra thân van, lắp lại và hiệu chỉnh áp đầu ra.",
-      media:
-        "Hình ảnh hiện trường, video vệ sinh pilot, video cân chỉnh áp sau sửa chữa.",
+        "Cô lập tuyến, xả áp, tháo pilot, vệ sinh màng, kiểm tra thân van.",
+      media: "Ảnh hiện trường, video vệ sinh pilot, video cân chỉnh áp.",
     },
   },
   {
     id: "2",
-    group: "Đồng hồ đo nước",
-    brand: "Sensus",
-    name: "Sensus iPERL",
+    group: "Logger",
+    brand: "HWM",
+    name: "HWM Permalog+",
     description:
-      "Đồng hồ đo nước điện tử có khả năng ghi nhận lưu lượng ổn định, hỗ trợ đọc số chính xác và phù hợp cho tích hợp số hóa.",
+      "Thiết bị logger thu thập dữ liệu áp lực và lưu lượng hiện trường.",
     normalErrors: 2,
     advancedErrors: 1,
     sections: {
       introduction:
-        "Sensus iPERL là đồng hồ điện tử chuyên dùng cho đo đếm chính xác và tích hợp hệ thống đọc số từ xa.",
-      usage:
-        "Dùng để đo lưu lượng nước tiêu thụ và tích hợp với hệ thống thu thập dữ liệu.",
-      installation:
-        "Lắp đúng hướng mũi tên, tránh rung, đảm bảo đủ chiều dài ống và không có cặn bẩn lớn.",
-      commonErrors:
-        "Mất tín hiệu đọc, sai lệch chỉ số, pin cảnh báo, lỗi truyền dữ liệu.",
-      advanced:
-        "Kiểm tra module truyền thông, nguồn, nhiễu đường truyền, cấu hình logger và mapping dữ liệu.",
-      process:
-        "Kiểm tra ngoại quan, xác nhận chỉ số, test tín hiệu, thay module hoặc hiệu chuẩn lại nếu cần.",
-      media: "Hình ảnh kết nối thực tế, video kiểm tra tín hiệu đọc số từ xa.",
+        "Logger dùng để theo dõi dữ liệu hiện trường và phát hiện bất thường.",
+      usage: "Ghi dữ liệu áp lực/lưu lượng và hỗ trợ phân tích rò rỉ.",
+      installation: "Gắn chắc thiết bị, xác nhận pin, đồng bộ thời gian.",
+      commonErrors: "Mất kết nối, pin yếu, không đồng bộ dữ liệu.",
+      advanced: "Kiểm tra firmware, sóng truyền, mapping kênh đo.",
+      process: "Kiểm tra nguồn, cấu hình lại thiết bị và đồng bộ với hệ thống.",
+      media: "Ảnh cấu hình logger, video kiểm tra đồng bộ dữ liệu.",
     },
   },
   {
     id: "3",
-    group: "Data logger",
-    brand: "HWM",
-    name: "HWM Permalog+",
-    description:
-      "Thiết bị data logger thu thập áp lực và lưu lượng phục vụ theo dõi thất thoát, dao động áp và hành vi mạng lưới theo thời gian.",
-    normalErrors: 2,
+    group: "Khác",
+    brand: "Generic",
+    name: "Van xả khí",
+    description: "Thiết bị phụ trợ dùng trong vận hành mạng lưới.",
+    normalErrors: 1,
     advancedErrors: 1,
     sections: {
-      introduction:
-        "HWM Permalog+ là data logger phục vụ thu thập dữ liệu áp lực/lưu lượng và hỗ trợ phát hiện bất thường.",
-      usage:
-        "Dùng để ghi dữ liệu hiện trường, phát hiện biến động áp lực và hỗ trợ phân tích rò rỉ.",
-      installation:
-        "Gắn chắc thiết bị, xác nhận pin, đồng bộ thời gian, cấu hình chu kỳ ghi nhận.",
-      commonErrors:
-        "Mất kết nối, không đồng bộ dữ liệu, pin yếu, dữ liệu thu thiếu.",
-      advanced:
-        "Kiểm tra firmware, cấu hình truyền dữ liệu, vùng phủ sóng và mapping kênh đo.",
-      process:
-        "Kiểm tra nguồn, kiểm tra cổng kết nối, cấu hình lại thiết bị và đồng bộ với hệ thống.",
-      media: "Ảnh cấu hình logger, video kiểm tra đồng bộ dữ liệu thực tế.",
+      introduction: "Van xả khí hỗ trợ loại bỏ khí tồn đọng trong ống.",
+      usage: "Dùng tại các vị trí cao điểm trên tuyến ống.",
+      installation: "Bố trí đúng vị trí, đảm bảo kín khít và dễ bảo trì.",
+      commonErrors: "Rò rỉ, kẹt cơ cấu, xả khí kém.",
+      advanced: "Kiểm tra phao, buồng khí và lỗ thoát.",
+      process: "Cô lập, tháo kiểm tra, vệ sinh và lắp lại.",
+      media: "Hình ảnh kết cấu và quy trình kiểm tra.",
     },
   },
 ];
 
+const tabs = ["Cách xử lý", "Nguyên nhân", "Tài liệu"];
+
 export default function Library() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [devices, setDevices] = useState([]);
   const [search, setSearch] = useState("");
-  // const [groupFilter, setGroupFilter] = useState("Tất cả");
-  const [searchParams] = useSearchParams();
-  const groupFromUrl = searchParams.get("group");
+  const [activeTab, setActiveTab] = useState("Cách xử lý");
+  const [selectedDeviceId, setSelectedDeviceId] = useState("");
 
-  const [groupFilter, setGroupFilter] = useState(groupFromUrl || "Tất cả");
-  useEffect(() => {
-    if (groupFromUrl) {
-      setGroupFilter(groupFromUrl);
-    } else {
-      setGroupFilter("Tất cả");
-    }
-  }, [groupFromUrl]);
-
-  const [brandFilter, setBrandFilter] = useState("Tất cả");
-  const [openAddModal, setOpenAddModal] = useState(false);
-
-  const [newDevice, setNewDevice] = useState({
-    group: "",
-    brand: "",
-    name: "",
-    description: "",
-    normalErrors: "",
-    advancedErrors: "",
-    introduction: "",
-    usage: "",
-    installation: "",
-    commonErrors: "",
-    advanced: "",
-    process: "",
-    media: "",
-  });
+  const groupFromUrl = searchParams.get("group") || "";
+  const keywordFromUrl = searchParams.get("q") || "";
 
   useEffect(() => {
     const saved = localStorage.getItem("pwc_library_devices");
     if (saved) {
-      setDevices(JSON.parse(saved));
+      try {
+        const parsed = JSON.parse(saved);
+        setDevices(
+          Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultDevices,
+        );
+      } catch {
+        setDevices(defaultDevices);
+      }
     } else {
       localStorage.setItem(
         "pwc_library_devices",
@@ -132,25 +100,20 @@ export default function Library() {
     }
   }, []);
 
-  const saveDevices = (updated) => {
-    setDevices(updated);
-    localStorage.setItem("pwc_library_devices", JSON.stringify(updated));
-  };
+  useEffect(() => {
+    if (keywordFromUrl) setSearch(keywordFromUrl);
+  }, [keywordFromUrl]);
 
   const groups = useMemo(() => {
-    const unique = [...new Set(devices.map((item) => item.group))];
-    return ["Tất cả", ...unique];
-  }, [devices]);
-
-  const brands = useMemo(() => {
-    const unique = [...new Set(devices.map((item) => item.brand))];
-    return ["Tất cả", ...unique];
+    const unique = [
+      ...new Set(devices.map((item) => item.group).filter(Boolean)),
+    ];
+    return unique;
   }, [devices]);
 
   const filteredDevices = useMemo(() => {
     return devices.filter((item) => {
       const keyword = search.trim().toLowerCase();
-
       const matchSearch =
         keyword === "" ||
         item.name.toLowerCase().includes(keyword) ||
@@ -158,405 +121,333 @@ export default function Library() {
         item.brand.toLowerCase().includes(keyword) ||
         item.description.toLowerCase().includes(keyword) ||
         item.sections?.commonErrors?.toLowerCase().includes(keyword);
-      const matchGroup =
-        groupFilter === "Tất cả" ? true : item.group === groupFilter;
 
-      const matchBrand =
-        brandFilter === "Tất cả" ? true : item.brand === brandFilter;
-
-      return matchSearch && matchGroup && matchBrand;
+      const matchGroup = groupFromUrl ? item.group === groupFromUrl : true;
+      return matchSearch && matchGroup;
     });
-  }, [devices, search, groupFilter, brandFilter]);
+  }, [devices, search, groupFromUrl]);
 
-  const handleNewDeviceChange = (e) => {
-    const { name, value } = e.target;
-    setNewDevice((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleAddDevice = (e) => {
-    e.preventDefault();
-
-    if (!newDevice.group || !newDevice.brand || !newDevice.name) {
-      alert("Vui lòng nhập tối thiểu: nhóm thiết bị, hãng và tên thiết bị.");
+  useEffect(() => {
+    if (!filteredDevices.length) {
+      setSelectedDeviceId("");
       return;
     }
 
-    const createdDevice = {
-      id: String(Date.now()),
-      group: newDevice.group,
-      brand: newDevice.brand,
-      name: newDevice.name,
-      description: newDevice.description || "Chưa có mô tả.",
-      normalErrors: Number(newDevice.normalErrors || 0),
-      advancedErrors: Number(newDevice.advancedErrors || 0),
-      sections: {
-        introduction: newDevice.introduction || "Chưa có nội dung giới thiệu.",
-        usage: newDevice.usage || "Chưa có hướng dẫn sử dụng.",
-        installation: newDevice.installation || "Chưa có nội dung cài đặt.",
-        commonErrors: newDevice.commonErrors || "Chưa có lỗi thường gặp.",
-        advanced: newDevice.advanced || "Chưa có nội dung nâng cao.",
-        process: newDevice.process || "Chưa có quy trình sửa chữa.",
-        media: newDevice.media || "Chưa có media.",
-      },
-    };
-
-    const updated = [createdDevice, ...devices];
-    saveDevices(updated);
-    setOpenAddModal(false);
-
-    setNewDevice({
-      group: "",
-      brand: "",
-      name: "",
-      description: "",
-      normalErrors: "",
-      advancedErrors: "",
-      introduction: "",
-      usage: "",
-      installation: "",
-      commonErrors: "",
-      advanced: "",
-      process: "",
-      media: "",
-    });
-  };
-
-  const handleDeleteDevice = (deviceId, deviceName) => {
-    const confirmed = window.confirm(
-      `Bạn có chắc chắn muốn xóa mục "${deviceName}" không?`,
+    const stillExists = filteredDevices.some(
+      (item) => item.id === selectedDeviceId,
     );
-    if (!confirmed) return;
+    if (!stillExists) setSelectedDeviceId(filteredDevices[0].id);
+  }, [filteredDevices, selectedDeviceId]);
 
-    const updated = devices.filter((item) => item.id !== deviceId);
-    saveDevices(updated);
-    window.dispatchEvent(new Event("pwc-library-updated"));
+  const selectedDevice =
+    filteredDevices.find((item) => item.id === selectedDeviceId) ||
+    filteredDevices[0] ||
+    null;
+
+  const relatedDocs = useMemo(() => {
+    if (!selectedDevice) return [];
+
+    if (selectedDevice.group === "Van giảm áp") {
+      return [
+        { title: "TL hướng dẫn bảo trì van giảm áp", tag: "PDF" },
+        { title: "Tra cứu dữ liệu logger", tag: "PDF" },
+        { title: "Cách kiểm tra màng van", tag: "PDF" },
+      ];
+    }
+
+    if (selectedDevice.group === "Logger") {
+      return [
+        { title: "TL hướng dẫn bảo trì logger", tag: "PDF" },
+        { title: "Cấu hình logger", tag: "PDF" },
+        { title: "Đọc dữ liệu logger", tag: "PDF" },
+      ];
+    }
+
+    return [
+      { title: "Tài liệu kỹ thuật hiện trường", tag: "PDF" },
+      { title: "Checklist kiểm tra thiết bị", tag: "PDF" },
+    ];
+  }, [selectedDevice]);
+
+  const handleChangeGroup = (value) => {
+    const next = new URLSearchParams(searchParams);
+    if (value) next.set("group", value);
+    else next.delete("group");
+    setSearchParams(next);
   };
 
-  const handleViewDetail = (deviceId) => {
-    navigate(`/Library/${deviceId}`);
+  const handleChangeKeyword = (value) => {
+    setSearch(value);
+    const next = new URLSearchParams(searchParams);
+    if (value.trim()) next.set("q", value);
+    else next.delete("q");
+    setSearchParams(next);
   };
+
+  const issueTitle =
+    selectedDevice?.group === "Van giảm áp"
+      ? "Sự cố: Áp đầu ra cao"
+      : selectedDevice?.group === "Logger"
+        ? "Sự cố: Mất tín hiệu logger"
+        : "Sự cố: Thiết bị bất thường";
+
+  const steps =
+    selectedDevice?.group === "Van giảm áp"
+      ? [
+          "Đóng van đầu vào, tạm ngắt nước qua van giảm áp.",
+          "Kiểm tra màng van, vệ sinh hoặc thay thế nếu hư.",
+        ]
+      : selectedDevice?.group === "Logger"
+        ? [
+            "Kiểm tra nguồn cấp và trạng thái pin logger.",
+            "Đồng bộ lại thiết bị và xác nhận tín hiệu truyền dữ liệu.",
+          ]
+        : [
+            "Cô lập thiết bị để kiểm tra an toàn.",
+            "Đối chiếu tình trạng thực tế với tài liệu kỹ thuật.",
+          ];
+
+  const causes =
+    selectedDevice?.group === "Van giảm áp"
+      ? [
+          "Mở van bi hư hoặc hạt đo cảm biến bám lâu ngày.",
+          "Thông pilot không điều khiển được van.",
+        ]
+      : selectedDevice?.group === "Logger"
+        ? [
+            "Pin yếu hoặc hết pin.",
+            "Mất sóng, lỗi đồng bộ hoặc lỗi cấu hình logger.",
+          ]
+        : ["Thiết bị lắp sai vị trí hoặc bám cặn.", "Thiếu bảo trì định kỳ."];
+
+  const reenact =
+    selectedDevice?.group === "Van giảm áp"
+      ? [
+          "Đóng van hạ lưu để đo cảm biến lỗi ngay.",
+          "Thử lại pilot để xác định điểm nghẽn dòng.",
+        ]
+      : selectedDevice?.group === "Logger"
+        ? [
+            "Reset logger và đọc lại chu kỳ ghi dữ liệu.",
+            "So sánh dữ liệu hiện trường với dữ liệu gửi về hệ thống.",
+          ]
+        : [
+            "Quan sát tình trạng thiết bị dưới tải thực tế.",
+            "Đối chiếu với mẫu lỗi gần nhất.",
+          ];
+
+  const detailLines =
+    activeTab === "Cách xử lý"
+      ? steps
+      : activeTab === "Nguyên nhân"
+        ? causes
+        : reenact;
 
   return (
-    <div className="space-y-6">
-      <section className="flex flex-col gap-3 xl:flex-row xl:items-start xl:justify-between">
-        <div>
-          <h1 className="mt-2 text-2xl font-bold text-slate-800 xl:text-[34px]">
-            Thư viện kỹ thuật theo phân loại thiết bị
-          </h1>
-        </div>
-      </section>
-
-      <section className="rounded-[32px] border border-slate-200 bg-white p-5 shadow-sm xl:p-6">
-        <div className="grid gap-4 xl:grid-cols-[1.4fr_0.7fr_0.7fr]">
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Tìm kiếm
-            </label>
-            <div className="relative">
-              <Search
-                size={18}
-                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-              />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Nhập thiết bị, hãng, lỗi hoặc quy trình..."
-                className="w-full rounded-2xl border border-slate-300 bg-white py-3 pl-11 pr-4 outline-none transition focus:border-[#0b8ea0] focus:ring-2 focus:ring-[#0b8ea0]/20"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Nhóm thiết bị
-            </label>
+    <div className="min-h-screen bg-[#f6f1e7] text-slate-800">
+      <div className="mx-auto max-w-[1280px] px-4 py-5 lg:px-6">
+        <div className="space-y-4 rounded-[26px] border-2 border-[#214e95] bg-[#fbf8ef] p-4 shadow-sm">
+          <section className="grid gap-3 lg:grid-cols-[220px_220px_1fr]">
             <select
-              value={groupFilter}
-              onChange={(e) => setGroupFilter(e.target.value)}
-              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-[#0b8ea0] focus:ring-2 focus:ring-[#0b8ea0]/20"
+              value={groupFromUrl}
+              onChange={(e) => handleChangeGroup(e.target.value)}
+              className="h-11 rounded-[8px] border-2 border-[#214e95] bg-white px-3 text-[15px] text-[#17396b] outline-none"
             >
+              <option value="">Chọn nhóm TB</option>
               {groups.map((group) => (
                 <option key={group} value={group}>
                   {group}
                 </option>
               ))}
             </select>
-          </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Hãng
-            </label>
             <select
-              value={brandFilter}
-              onChange={(e) => setBrandFilter(e.target.value)}
-              className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-[#0b8ea0] focus:ring-2 focus:ring-[#0b8ea0]/20"
+              value={selectedDevice?.name || ""}
+              onChange={(e) => {
+                const nextDevice = filteredDevices.find(
+                  (item) => item.name === e.target.value,
+                );
+                if (nextDevice) setSelectedDeviceId(nextDevice.id);
+              }}
+              className="h-11 rounded-[8px] border-2 border-[#214e95] bg-white px-3 text-[15px] text-[#17396b] outline-none"
             >
-              {brands.map((brand) => (
-                <option key={brand} value={brand}>
-                  {brand}
+              <option value="">Chọn lưu lượng</option>
+              {filteredDevices.map((item) => (
+                <option key={item.id} value={item.name}>
+                  {item.name}
                 </option>
               ))}
             </select>
-          </div>
-        </div>
 
-        <div className="mt-5 grid gap-4 md:grid-cols-2 2xl:grid-cols-3">
-          {/* Add card đưa lên đầu */}
-          <button
-            type="button"
-            onClick={() => setOpenAddModal(true)}
-            className="flex min-h-[360px] flex-col items-center justify-center rounded-[28px] border border-dashed border-[#0b8ea0]/40 bg-[#f7fcfd] p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-          >
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#0b8ea0]/10 text-[#0b8ea0]">
-              <Plus size={28} />
+            <div className="relative">
+              <Search
+                size={18}
+                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#214e95]"
+              />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => handleChangeKeyword(e.target.value)}
+                placeholder=""
+                className="h-11 w-full rounded-[8px] border-2 border-[#214e95] bg-white px-3 pr-10 text-[15px] text-[#17396b] outline-none"
+              />
             </div>
-            <h3 className="mt-5 text-2xl font-bold text-slate-800">
-              Thêm thiết bị mới
-            </h3>
-            <p className="mt-3 max-w-sm text-sm leading-7 text-slate-500">
-              Thêm nhóm thiết bị, hãng, tên thiết bị và các mục nội dung kỹ
-              thuật để mở rộng thư viện nội bộ.
-            </p>
-          </button>
+          </section>
 
-          {filteredDevices.map((device) => (
-            <div
-              key={device.id}
-              className="flex h-full flex-col rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-[#134e8c]">
-                    {device.group}
-                  </span>
-                  <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600">
-                    {device.brand}
-                  </span>
-                </div>
-
+          <section className="flex flex-wrap gap-2 border-b-2 border-[#214e95] pb-3">
+            {[
+              { label: "Van giảm áp", value: "Van giảm áp" },
+              { label: "Logger", value: "Logger" },
+              { label: "ĐH cỡ lớn", value: "Khác" },
+            ].map((tab) => {
+              const active = (groupFromUrl || "") === tab.value;
+              return (
                 <button
+                  key={tab.label}
                   type="button"
-                  onClick={() => handleDeleteDevice(device.id, device.name)}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-red-50 text-red-500 transition hover:bg-red-100"
-                  title="Xóa mục"
+                  onClick={() => handleChangeGroup(tab.value)}
+                  className={`rounded-t-[12px] border-2 border-[#214e95] px-4 py-2 text-[15px] font-semibold ${
+                    active
+                      ? "bg-[#eaf1ff] text-[#143765]"
+                      : "bg-white text-[#355588]"
+                  }`}
                 >
-                  <Trash2 size={18} />
+                  {tab.label}
                 </button>
+              );
+            })}
+          </section>
+
+          <section className="space-y-4">
+            <div className="flex items-start gap-3 text-[#17396b]">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#214e95] bg-white font-bold">
+                !
               </div>
-
-              <h3 className="mt-5 text-2xl font-bold text-slate-900">
-                {device.name}
-              </h3>
-
-              <div className="mt-4 flex-1">
-                <p className="mt-4 text-base leading-8 text-slate-600">
-                  {device.description}
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <span className="rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700">
-                    {device.normalErrors} lỗi thường gặp
-                  </span>
-                  <span className="rounded-full bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700">
-                    {device.advancedErrors} lỗi nâng cao
-                  </span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => handleViewDetail(device.id)}
-                className="mt-6 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-base font-semibold text-[#134e8c] transition hover:bg-slate-100"
-              >
-                Xem chi tiết
-              </button>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {openAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4">
-          <div className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-[30px] bg-white p-6 shadow-2xl">
-            <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0b8ea0]">
-                  Thêm thiết bị mới
+                <h1 className="text-[24px] font-bold">{issueTitle}</h1>
+                <p className="mt-1 text-[15px] text-[#355588]">
+                  {selectedDevice?.brand || "Thiết bị"} •{" "}
+                  {selectedDevice?.name || "Chưa chọn thiết bị"}
                 </p>
-                <h2 className="mt-2 text-2xl font-bold text-slate-900">
-                  Mở rộng thư viện kỹ thuật
-                </h2>
               </div>
-
-              <button
-                type="button"
-                onClick={() => setOpenAddModal(false)}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-600 transition hover:bg-slate-200"
-              >
-                ×
-              </button>
             </div>
 
-            <form onSubmit={handleAddDevice} className="mt-6 space-y-6">
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                <InputField
-                  label="Nhóm thiết bị"
-                  name="group"
-                  value={newDevice.group}
-                  onChange={handleNewDeviceChange}
-                  placeholder="Ví dụ: Van giảm áp"
-                />
-                <InputField
-                  label="Hãng"
-                  name="brand"
-                  value={newDevice.brand}
-                  onChange={handleNewDeviceChange}
-                  placeholder="Ví dụ: Bermad"
-                />
-                <InputField
-                  label="Tên thiết bị"
-                  name="name"
-                  value={newDevice.name}
-                  onChange={handleNewDeviceChange}
-                  placeholder="Ví dụ: Bermad 720"
-                />
-              </div>
-
-              <TextareaField
-                label="Mô tả ngắn"
-                name="description"
-                value={newDevice.description}
-                onChange={handleNewDeviceChange}
-                rows={3}
-              />
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <InputField
-                  label="Số lỗi thường gặp"
-                  name="normalErrors"
-                  value={newDevice.normalErrors}
-                  onChange={handleNewDeviceChange}
-                  type="number"
-                />
-                <InputField
-                  label="Số lỗi nâng cao"
-                  name="advancedErrors"
-                  value={newDevice.advancedErrors}
-                  onChange={handleNewDeviceChange}
-                  type="number"
-                />
-              </div>
-
-              <TextareaField
-                label="Giới thiệu"
-                name="introduction"
-                value={newDevice.introduction}
-                onChange={handleNewDeviceChange}
-              />
-              <TextareaField
-                label="Hướng dẫn sử dụng"
-                name="usage"
-                value={newDevice.usage}
-                onChange={handleNewDeviceChange}
-              />
-              <TextareaField
-                label="Cài đặt"
-                name="installation"
-                value={newDevice.installation}
-                onChange={handleNewDeviceChange}
-              />
-              <TextareaField
-                label="Lỗi thường gặp"
-                name="commonErrors"
-                value={newDevice.commonErrors}
-                onChange={handleNewDeviceChange}
-              />
-              <TextareaField
-                label="Advanced"
-                name="advanced"
-                value={newDevice.advanced}
-                onChange={handleNewDeviceChange}
-              />
-              <TextareaField
-                label="Quy trình sửa chữa"
-                name="process"
-                value={newDevice.process}
-                onChange={handleNewDeviceChange}
-              />
-              <TextareaField
-                label="Media"
-                name="media"
-                value={newDevice.media}
-                onChange={handleNewDeviceChange}
-              />
-
-              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <div className="flex flex-wrap gap-2">
+              {tabs.map((tab) => (
                 <button
+                  key={tab}
                   type="button"
-                  onClick={() => setOpenAddModal(false)}
-                  className="rounded-2xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:bg-slate-50"
+                  onClick={() => setActiveTab(tab)}
+                  className={`rounded-[12px] border-2 border-[#214e95] px-4 py-2 text-sm font-semibold ${
+                    activeTab === tab
+                      ? "bg-[#eaf1ff] text-[#143765]"
+                      : "bg-white text-[#355588]"
+                  }`}
                 >
-                  Hủy
+                  {tab}
                 </button>
+              ))}
+            </div>
 
-                <button
-                  type="submit"
-                  className="rounded-2xl bg-[#0f8fad] px-5 py-3 font-semibold text-white shadow-md transition hover:bg-[#0d7d97]"
-                >
-                  Lưu thiết bị
-                </button>
+            <div className="grid gap-4 xl:grid-cols-[1.2fr_0.95fr]">
+              <div className="rounded-[18px] border-2 border-[#214e95] bg-white p-4">
+                <div className="space-y-3 text-[16px] leading-7 text-[#27416f]">
+                  {detailLines.map((line, index) => (
+                    <div key={line} className="flex gap-3">
+                      <span className="font-bold text-[#17396b]">
+                        {index + 1}.
+                      </span>
+                      <span>{line}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </form>
-          </div>
+
+              <div className="rounded-[18px] border-2 border-[#214e95] bg-white p-4 text-[16px] leading-7 text-[#27416f]">
+                <ul className="list-disc space-y-2 pl-5">
+                  {selectedDevice?.group === "Van giảm áp" ? (
+                    <>
+                      <li>Đóng van hạ lưu hết do cảm biến lỗi ngay.</li>
+                      <li>Thử lên pilot để đo lưu lượng đột ngột qua van.</li>
+                    </>
+                  ) : selectedDevice?.group === "Logger" ? (
+                    <>
+                      <li>Đồng bộ lại hệ đo cảm biến lỗi ngay.</li>
+                      <li>Thử lại kênh truyền để loại trừ lỗi mạng.</li>
+                    </>
+                  ) : (
+                    <>
+                      <li>
+                        Đối chiếu thiết bị với tình trạng vận hành hiện tại.
+                      </li>
+                      <li>Ghi nhận hiện tượng để bổ sung tri thức nội bộ.</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            </div>
+
+            <div>
+              <button
+                type="button"
+                className="rounded-[10px] border-2 border-[#214e95] bg-white px-4 py-2 text-sm font-semibold text-[#17396b]"
+              >
+                Đã xử lý sự cố ☑
+              </button>
+            </div>
+          </section>
+
+          <section className="grid gap-4 xl:grid-cols-[1.2fr_0.95fr]">
+            <div className="rounded-[18px] border-2 border-[#214e95] bg-white p-4">
+              <h2 className="mb-3 text-[20px] font-bold text-[#17396b]">
+                Nguyên nhân thường gặp
+              </h2>
+              <div className="space-y-3 text-[16px] text-[#27416f]">
+                {causes.map((cause) => (
+                  <label key={cause} className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      className="mt-1 h-5 w-5 accent-[#214e95]"
+                    />
+                    <span>{cause}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[18px] border-2 border-[#214e95] bg-white p-4">
+              <h2 className="mb-3 text-[20px] font-bold text-[#17396b]">
+                Tham khảo thêm tài liệu
+              </h2>
+              <div className="space-y-3">
+                {relatedDocs.map((doc) => (
+                  <button
+                    key={doc.title}
+                    type="button"
+                    onClick={() => navigate("/QA")}
+                    className="flex w-full items-center justify-between rounded-[10px] border-2 border-[#214e95] bg-[#fbf8ef] px-3 py-3 text-left text-[#27416f] hover:bg-[#f4f8ff]"
+                  >
+                    <span>{doc.title}</span>
+                    <span className="rounded-[6px] border-2 border-[#214e95] px-2 py-1 text-xs font-bold text-[#214e95]">
+                      {doc.tag}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="pt-1 text-[#27416f]">
+            <button
+              type="button"
+              onClick={() => navigate("/QA")}
+              className="text-[18px] font-medium hover:text-[#214e95]"
+            >
+              ! Tham khảo thêm tri thức liên.
+            </button>
+          </section>
         </div>
-      )}
-    </div>
-  );
-}
-
-function InputField({
-  label,
-  name,
-  value,
-  onChange,
-  placeholder = "",
-  type = "text",
-}) {
-  return (
-    <div>
-      <label className="mb-2 block text-sm font-semibold text-slate-700">
-        {label}
-      </label>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#0b8ea0] focus:ring-2 focus:ring-[#0b8ea0]/20"
-      />
-    </div>
-  );
-}
-
-function TextareaField({ label, name, value, onChange, rows = 4 }) {
-  return (
-    <div>
-      <label className="mb-2 block text-sm font-semibold text-slate-700">
-        {label}
-      </label>
-      <textarea
-        name={name}
-        value={value}
-        onChange={onChange}
-        rows={rows}
-        placeholder={`Nhập nội dung cho mục ${label}...`}
-        className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-[#0b8ea0] focus:ring-2 focus:ring-[#0b8ea0]/20"
-      />
+      </div>
     </div>
   );
 }

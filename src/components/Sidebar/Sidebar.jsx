@@ -83,19 +83,17 @@ export default function Sidebar({ onCloseMobile }) {
       </div>
 
       {/* Brand */}
-      <div className="mb-8 flex items-start gap-4">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-400 text-[#06384b] text-2xl font-extrabold shadow-md">
+
+      <div className="mb-4 flex items-center gap-3">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 bg-cyan-400 text-lg font-bold text-[#214e95] text-2xl">
           PW
         </div>
-
         <div>
-          <h1 className="text-2xl font-bold leading-tight">PWC WaterCare AI</h1>
-          <p className="mt-2 text-lg leading-snug text-cyan-50/90">
-            Nền tảng vận hành kỹ thuật ngành nước
-          </p>
+          <div className="text-2xl font-bold text-cyan-50/90">
+            PWC Watercare
+          </div>
         </div>
       </div>
-
       {/* Menu */}
       <div className="space-y-3">
         <NavLink
@@ -177,7 +175,7 @@ export default function Sidebar({ onCloseMobile }) {
             }`
           }
         >
-          Đăng bài
+          Thư viện kiến thức
         </NavLink>
 
         <NavLink
