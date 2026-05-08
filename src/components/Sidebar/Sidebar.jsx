@@ -140,7 +140,7 @@ export default function Sidebar({ onCloseMobile }) {
             </button>
           </div>
 
-          {openLibraryMenu && (
+          {/* {openLibraryMenu && (
             <div className="border-t border-white/10 px-3 pb-3">
               <div className="mt-2 space-y-2">
                 {libraryGroups.length > 0 ? (
@@ -161,7 +161,7 @@ export default function Sidebar({ onCloseMobile }) {
                 )}
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         <NavLink

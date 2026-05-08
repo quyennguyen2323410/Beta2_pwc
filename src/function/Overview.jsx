@@ -1,4 +1,5 @@
 import React from "react";
+import { Search, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function Overview() {
@@ -67,32 +68,45 @@ export default function Overview() {
     { icon: "T", text: "8:55 Mất dữ liệu", time: "13:53" },
   ];
 
+  const cardClass =
+    "rounded-[18px] border border-[#7ba2e6]/70 bg-gradient-to-br from-white via-[#f7faff] to-[#eef4ff] p-3 shadow-[0_8px_24px_rgba(32,76,152,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(32,76,152,0.14)] sm:rounded-[22px] sm:p-4";
+
+  const innerCardClass =
+    "rounded-[14px] border border-[#8db0ee] bg-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]";
+
   return (
-    <div className="min-h-screen bg-[#f6f1e7] text-slate-800">
-      <div className="mx-auto max-w-[1280px] px-4 py-5 lg:px-6">
-        <main className="space-y-4">
-          <section className="rounded-[26px] border-2 border-[#214e95] bg-[#fbf8ef] p-4 shadow-sm">
-            <div className="border-b-2 border-[#214e95] pb-3">
-              <h1 className="text-[24px] font-bold uppercase tracking-wide text-[#16396f]">
-                CÔNG TY CỔ PHẦN CẤP NƯỚC PHÚ HÒA TÂN
-              </h1>
-              <p className="mt-2 max-w-5xl text-[16px] leading-7 text-[#27416f]">
-                Tổng hợp tình trạng van giảm áp, logger và thiết bị trên mạng
-                lưới – hỗ trợ phát hiện lỗi, tra cứu nguyên nhân và hướng xử lý
-                nhanh.
-              </p>
+    <div className="min-h-screen  text-slate-800">
+      <div className="w-full max-w-none px-3 py-3 sm:px-4 sm:py-5 lg:px-6 xl:px-8">
+        <main className="space-y-3 sm:space-y-4">
+          <section className="rounded-[20px] border border-[#7ba2e6]/80 bg-gradient-to-br from-white via-[#f7faff] to-[#eef4ff] p-3 shadow-[0_10px_32px_rgba(35,72,138,0.10)] sm:rounded-[28px] sm:p-4">
+            <div className="border-b border-[#8db0ee] pb-3">
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2f69d9] to-[#4e8df5] text-white shadow-md">
+                  <Sparkles size={16} />
+                </div>
+                <div>
+                  <h1 className="text-[18px] font-bold uppercase leading-tight tracking-wide text-[#183f82] sm:text-[24px]">
+                    CÔNG TY CỔ PHẦN CẤP NƯỚC PHÚ HÒA TÂN
+                  </h1>
+                  <p className="mt-2 text-[14px] leading-6 text-[#48679d] sm:max-w-5xl sm:text-[16px] sm:leading-7">
+                    Tổng hợp tình trạng van giảm áp, logger và thiết bị trên
+                    mạng lưới – hỗ trợ phát hiện lỗi, tra cứu nguyên nhân và
+                    hướng xử lý nhanh.
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="mt-4 grid gap-3 md:grid-cols-3 xl:grid-cols-5">
+            <div className="mt-4 grid gap-2 sm:gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
               {topStats.map((item) => (
                 <div
                   key={item.label}
-                  className="min-h-[86px] rounded-[10px] border-2 border-[#214e95] bg-white px-4 py-3"
+                  className="rounded-[14px] border border-[#8db0ee] bg-white/90 px-3 py-3 shadow-[0_6px_18px_rgba(45,87,165,0.08)] transition-all duration-200 hover:border-[#5f8ee6] hover:shadow-[0_10px_22px_rgba(45,87,165,0.14)] sm:min-h-[86px] sm:px-4"
                 >
-                  <div className="text-sm font-semibold text-[#2b4a7f]">
+                  <div className="text-[13px] font-semibold text-[#5672a7] sm:text-sm">
                     {item.label}
                   </div>
-                  <div className="mt-2 text-[20px] font-bold text-[#143765]">
+                  <div className="mt-2 text-[18px] font-bold text-[#173f82] sm:text-[20px]">
                     {item.value}
                   </div>
                 </div>
@@ -100,194 +114,194 @@ export default function Overview() {
             </div>
           </section>
 
-          <section className="grid gap-4 xl:grid-cols-[1.7fr_0.95fr]">
-            <div className="space-y-4">
-              <div className="rounded-[22px] border-2 border-[#214e95] bg-[#fbf8ef] p-4 shadow-sm">
-                <div className="mb-3 flex items-center justify-between">
-                  <h2 className="text-[22px] font-bold text-[#16396f]">
-                    Lỗi phổ biến
-                  </h2>
-                  <button className="rounded-md border-2 border-[#214e95] px-2 py-1 text-xs font-bold text-[#214e95]">
-                    9
-                  </button>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse text-left text-sm">
-                    <thead>
-                      <tr className="text-[#17396b]">
-                        {["Thiết bị", "Lỗi", "Nguyên nhân", "Cách xử lý"].map(
-                          (head) => (
-                            <th
-                              key={head}
-                              className="border-2 border-[#214e95] px-3 py-2 font-bold"
-                            >
-                              {head}
-                            </th>
-                          ),
-                        )}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {commonIssues.map((row) => (
-                        <tr
-                          key={row.device + row.issue}
-                          className="text-[#2a446d]"
-                        >
-                          <td className="border-2 border-[#214e95] px-3 py-2 font-semibold">
-                            {row.device}
-                          </td>
-                          <td className="border-2 border-[#214e95] px-3 py-2">
-                            {row.issue}
-                          </td>
-                          <td className="border-2 border-[#214e95] px-3 py-2">
-                            {row.cause}
-                          </td>
-                          <td className="border-2 border-[#214e95] px-3 py-2">
-                            {row.action}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+          <section className="grid gap-3 sm:gap-4 2xl:grid-cols-[1.9fr_1fr] xl:grid-cols-[1.75fr_0.98fr]">
+            <div className={cardClass}>
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <h2 className="text-[18px] font-bold text-[#183f82] sm:text-[22px]">
+                  Lỗi phổ biến
+                </h2>
+                <button className="shrink-0 rounded-lg border border-[#7ca1e8] bg-white px-2.5 py-1 text-xs font-bold text-[#2d5ab2] shadow-sm transition hover:bg-[#f3f7ff]">
+                  9
+                </button>
               </div>
 
-              <div className="grid gap-4 lg:grid-cols-[1.2fr_0.9fr]">
-                <div className="rounded-[22px] border-2 border-[#214e95] bg-[#fbf8ef] p-4 shadow-sm">
-                  <h2 className="mb-3 text-[22px] font-bold text-[#16396f]">
-                    Phân loại theo thiết bị (2 ngày)
-                  </h2>
-
-                  <div className="space-y-4">
-                    {deviceGroups.map((group) => (
-                      <div
-                        key={group.title}
-                        className="border-2 border-[#214e95]"
+              <div className="overflow-x-auto rounded-[14px] border border-[#8db0ee] bg-white/85">
+                <table className="min-w-[640px] w-full border-collapse text-left text-[13px] sm:text-sm">
+                  <thead>
+                    <tr className="bg-[#f4f8ff] text-[#224989]">
+                      {["Thiết bị", "Lỗi", "Nguyên nhân", "Cách xử lý"].map(
+                        (head) => (
+                          <th
+                            key={head}
+                            className="border-b border-r border-[#8db0ee] px-2 py-3 font-bold last:border-r-0 sm:px-3"
+                          >
+                            {head}
+                          </th>
+                        ),
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {commonIssues.map((row, index) => (
+                      <tr
+                        key={row.device + row.issue}
+                        className={`text-[#4b6698] transition hover:bg-[#f8fbff] ${index !== commonIssues.length - 1 ? "border-b border-[#d7e3fb]" : ""}`}
                       >
-                        <div className="flex items-center justify-between border-b-2 border-[#214e95] bg-white px-3 py-2">
-                          <div className="font-bold text-[#17396b]">
-                            {group.title}
-                          </div>
-                          <div className="text-sm font-semibold text-[#355588]">
-                            {group.total}
-                          </div>
-                        </div>
-                        <div className="space-y-2 px-3 py-3 text-[#27416f]">
-                          {group.items.map(([label, count]) => (
-                            <div
-                              key={label}
-                              className="flex items-center justify-between"
-                            >
-                              <div>• {label}</div>
-                              <div className="font-bold">{count} ✓</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                        <td className="border-r border-[#d7e3fb] px-2 py-3 font-semibold text-[#284d8b] sm:px-3">
+                          {row.device}
+                        </td>
+                        <td className="border-r border-[#d7e3fb] px-2 py-3 sm:px-3">
+                          {row.issue}
+                        </td>
+                        <td className="border-r border-[#d7e3fb] px-2 py-3 sm:px-3">
+                          {row.cause}
+                        </td>
+                        <td className="px-2 py-3 sm:px-3">{row.action}</td>
+                      </tr>
                     ))}
-                  </div>
-                </div>
-
-                <div className="rounded-[22px] border-2 border-[#214e95] bg-[#fbf8ef] p-4 shadow-sm">
-                  <h2 className="mb-3 text-[22px] font-bold text-[#16396f]">
-                    Thư viện tài liệu
-                  </h2>
-                  <div className="space-y-3">
-                    {docs.map(([label, page]) => (
-                      <button
-                        key={label}
-                        type="button"
-                        onClick={() => navigate("/Library")}
-                        className="flex w-full items-center justify-between rounded-[10px] border-2 border-[#214e95] bg-white px-3 py-3 text-left text-[#27416f] hover:bg-[#f4f8ff]"
-                      >
-                        <span>{label}</span>
-                        <span className="rounded-md border border-[#214e95] px-2 py-1 text-xs font-bold text-[#214e95]">
-                          {page}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                  </tbody>
+                </table>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="rounded-[22px] border-2 border-[#214e95] bg-[#fbf8ef] p-4 shadow-sm">
-                <div className="rounded-[14px] border-2 border-[#214e95] bg-white px-4 py-3 text-[#17396b]">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="font-bold">Q nhập - áp cao</div>
-                    <div className="flex h-7 w-7 items-center justify-center rounded-full border-2 border-[#214e95] text-sm">
-                      ?
-                    </div>
+            <div className={cardClass}>
+              <div className="rounded-[14px] border border-[#8db0ee] bg-white/90 px-3 py-3 text-[#17396b] shadow-[0_6px_18px_rgba(45,87,165,0.06)] sm:px-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-sm font-bold sm:text-base">
+                    Q nhập - áp cao
                   </div>
-                </div>
-
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-[12px] border-2 border-[#214e95] bg-white p-3">
-                    <div className="font-bold text-[#17396b]">Nguyên nhân</div>
-                    <ul className="mt-2 list-disc space-y-1 pl-5 text-[#27416f]">
-                      <li>Cặn cát</li>
-                      <li>Pin yếu</li>
-                    </ul>
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#8db0ee] bg-[#f4f8ff] text-sm text-[#2d5ab2] shadow-sm">
+                    ?
                   </div>
-
-                  <div className="rounded-[12px] border-2 border-[#214e95] bg-white p-3">
-                    <div className="font-bold text-[#17396b]">
-                      Sức ép / khuyến nghị
-                    </div>
-                    <div className="mt-2 text-[#27416f]">Thay pin</div>
-                  </div>
-                </div>
-
-                <div className="mt-4 space-y-2 text-[#27416f]">
-                  <button
-                    type="button"
-                    onClick={() => navigate("/Library")}
-                    className="block w-full rounded-[10px] border-2 border-[#214e95] bg-white px-3 py-3 text-left hover:bg-[#f4f8ff]"
-                  >
-                    A. HDSD van giảm áp .pdf
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => navigate("/Library")}
-                    className="block w-full rounded-[10px] border-2 border-[#214e95] bg-white px-3 py-3 text-left hover:bg-[#f4f8ff]"
-                  >
-                    B. HDSD logger .pdf
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => navigate("/AI")}
-                    className="block w-full rounded-[10px] border-2 border-[#214e95] bg-white px-3 py-3 text-left hover:bg-[#f4f8ff]"
-                  >
-                    C. Hỏi AI để tra cứu nhanh
-                  </button>
                 </div>
               </div>
 
-              <div className="rounded-[22px] border-2 border-[#214e95] bg-[#fbf8ef] p-4 shadow-sm">
-                <h2 className="mb-4 text-[22px] font-bold text-[#16396f]">
-                  Cảnh báo từ logger real time
-                </h2>
+              <div className="mt-3 grid gap-3 sm:mt-4 sm:grid-cols-2">
+                <div className={`${innerCardClass} p-3`}>
+                  <div className="font-bold text-[#224989]">Nguyên nhân</div>
+                  <ul className="mt-2 list-disc space-y-1 pl-5 text-[14px] text-[#4b6698] sm:text-base">
+                    <li>Cặn cát</li>
+                    <li>Pin yếu</li>
+                  </ul>
+                </div>
 
-                <div className="space-y-3">
-                  {alerts.map((alert) => (
-                    <div
-                      key={alert.text}
-                      className="grid grid-cols-[34px_1fr_74px] items-center gap-3"
-                    >
-                      <div className="flex h-8 w-8 items-center justify-center border-2 border-[#214e95] bg-white text-sm font-bold text-[#214e95]">
-                        {alert.icon}
+                <div className={`${innerCardClass} p-3`}>
+                  <div className="font-bold text-[#224989]">
+                    Sức ép / khuyến nghị
+                  </div>
+                  <div className="mt-2 text-[14px] text-[#4b6698] sm:text-base">
+                    Thay pin
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-3 space-y-2 text-[#27416f] sm:mt-4">
+                <button
+                  type="button"
+                  onClick={() => navigate("/Library")}
+                  className="block w-full rounded-[12px] border border-[#8db0ee] bg-white/90 px-3 py-3 text-left text-[14px] shadow-[0_6px_18px_rgba(45,87,165,0.06)] transition hover:-translate-y-0.5 hover:bg-[#f4f8ff] hover:shadow-[0_10px_22px_rgba(45,87,165,0.12)] sm:text-base"
+                >
+                  A. HDSD van giảm áp .pdf
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/Library")}
+                  className="block w-full rounded-[12px] border border-[#8db0ee] bg-white/90 px-3 py-3 text-left text-[14px] shadow-[0_6px_18px_rgba(45,87,165,0.06)] transition hover:-translate-y-0.5 hover:bg-[#f4f8ff] hover:shadow-[0_10px_22px_rgba(45,87,165,0.12)] sm:text-base"
+                >
+                  B. HDSD logger .pdf
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/AI")}
+                  className="block w-full rounded-[12px] border border-[#8db0ee] bg-gradient-to-r from-[#edf4ff] to-[#f8fbff] px-3 py-3 text-left text-[14px] font-medium text-[#224989] shadow-[0_6px_18px_rgba(45,87,165,0.08)] transition hover:-translate-y-0.5 hover:from-[#e2eeff] hover:to-[#f3f8ff] hover:shadow-[0_10px_22px_rgba(45,87,165,0.14)] sm:text-base"
+                >
+                  C. Hỏi AI để tra cứu nhanh
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section className="grid items-stretch gap-3 sm:gap-4 xl:grid-cols-[1.15fr_0.9fr_1fr]">
+            <div className={cardClass}>
+              <h2 className="mb-3 text-[18px] font-bold text-[#183f82] sm:text-[22px]">
+                Phân loại theo thiết bị (2 ngày)
+              </h2>
+
+              <div className="space-y-3 sm:space-y-4">
+                {deviceGroups.map((group) => (
+                  <div
+                    key={group.title}
+                    className="rounded-[14px] border border-[#8db0ee] bg-white/88 shadow-[0_4px_14px_rgba(45,87,165,0.05)]"
+                  >
+                    <div className="flex items-center justify-between gap-3 border-b border-[#d7e3fb] bg-[#f4f8ff] px-3 py-2.5">
+                      <div className="text-sm font-bold text-[#224989] sm:text-base">
+                        {group.title}
                       </div>
-                      <div className="rounded-[10px] border-2 border-[#214e95] bg-white px-3 py-3 text-[#27416f]">
-                        {alert.text}
-                      </div>
-                      <div className="rounded-[8px] border-2 border-[#214e95] bg-white px-2 py-2 text-center text-sm font-bold text-[#214e95]">
-                        {alert.time}
+                      <div className="text-xs font-semibold text-[#5a78ad] sm:text-sm">
+                        {group.total}
                       </div>
                     </div>
-                  ))}
-                </div>
+                    <div className="space-y-2 px-3 py-3 text-[14px] text-[#4b6698] sm:text-base">
+                      {group.items.map(([label, count]) => (
+                        <div
+                          key={label}
+                          className="flex items-center justify-between gap-3 rounded-lg px-1 py-0.5 transition hover:bg-[#f7faff]"
+                        >
+                          <div>{label}</div>
+                          <div className="shrink-0 font-bold text-[#224989]">
+                            {count} ✓
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className={cardClass}>
+              <h2 className="mb-3 text-[18px] font-bold text-[#183f82] sm:text-[22px]">
+                Thư viện tài liệu
+              </h2>
+              <div className="space-y-2 sm:space-y-3">
+                {docs.map(([label, page]) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => navigate("/Library")}
+                    className="flex w-full items-start justify-between gap-3 rounded-[12px] border border-[#8db0ee] bg-white/90 px-3 py-3 text-left text-[14px] text-[#4b6698] shadow-[0_6px_18px_rgba(45,87,165,0.06)] transition hover:-translate-y-0.5 hover:bg-[#f4f8ff] hover:shadow-[0_10px_22px_rgba(45,87,165,0.12)] sm:items-center sm:text-base"
+                  >
+                    <span className="min-w-0 flex-1 leading-6">{label}</span>
+                    <span className="shrink-0 rounded-lg border border-[#7ca1e8] bg-[#f6f9ff] px-2 py-1 text-[11px] font-bold text-[#2d5ab2] sm:text-xs">
+                      {page}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className={cardClass}>
+              <h2 className="mb-3 text-[18px] font-bold text-[#183f82] sm:mb-4 sm:text-[22px]">
+                Cảnh báo từ logger real time
+              </h2>
+
+              <div className="space-y-2 sm:space-y-3">
+                {alerts.map((alert) => (
+                  <div
+                    key={alert.text}
+                    className="grid grid-cols-[30px_1fr_58px] items-center gap-2 sm:grid-cols-[34px_1fr_74px] sm:gap-3"
+                  >
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#8db0ee] bg-[#f4f8ff] text-xs font-bold text-[#2d5ab2] shadow-sm sm:h-8 sm:w-8 sm:text-sm">
+                      {alert.icon}
+                    </div>
+                    <div className="rounded-[12px] border border-[#8db0ee] bg-white/92 px-2 py-2 text-[13px] text-[#4b6698] shadow-[0_6px_18px_rgba(45,87,165,0.06)] transition hover:bg-[#f7faff] sm:px-3 sm:py-3 sm:text-base">
+                      {alert.text}
+                    </div>
+                    <div className="rounded-[10px] border border-[#8db0ee] bg-[#f6f9ff] px-1.5 py-2 text-center text-[11px] font-bold text-[#2d5ab2] shadow-sm sm:px-2 sm:text-sm">
+                      {alert.time}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </section>

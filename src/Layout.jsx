@@ -10,7 +10,7 @@ export default function Layout() {
     <div className="h-screen overflow-hidden bg-slate-100">
       <div className="flex min-h-screen">
         {/* Sidebar desktop */}
-        <aside className="hidden md:block w-[340px] flex-shrink-0 bg-gradient-to-b from-[#062f43] via-[#06384b] to-[#052c3f] text-white border-r border-white/10 shadow-xl">
+        <aside className="hidden md:block w-[340px] flex-shrink-0 bg-gradient-to-b from-[#238cc1] via-[#06384b] to-[#052c3f] text-white border-r border-white/10 shadow-xl">
           <div className=" h-full p-5 md:p-7">
             <Sidebar />
           </div>
@@ -43,20 +43,8 @@ export default function Layout() {
           </button>
 
           <div className="p-4 pt-24 md:p-6 md:pt-6 lg:p-8">
-            {/* Banner */}
-            {/* <div className="mb-6 rounded-[28px] bg-white/70 border border-slate-200 shadow-sm backdrop-blur-sm">
-              <div className="px-5 py-5 md:px-7 md:py-6">
-                <p className="text-xs md:text-sm font-bold uppercase tracking-[0.22em] text-[#0b8ea0]">
-                  CÔNG TY CỔ PHẦN CẤP NƯỚC PHÙ HÒA TÂN
-                </p>
-                <h1 className="mt-3 text-[28px] leading-tight font-bold text-slate-800 md:text-3xl">
-                  Quản lý tri thức – Vận hành – AI
-                </h1>
-              </div>
-            </div> */}
-
             {/* Content */}
-            <div className="min-h-[calc(100vh-180px)] rounded-[28px] border border-slate-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm md:p-6">
+            <div>
               <Outlet />
             </div>
           </div>
