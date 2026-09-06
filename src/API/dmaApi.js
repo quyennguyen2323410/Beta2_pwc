@@ -59,7 +59,7 @@ export const fetchAllDmaData = async () => {
 };
 
 /**
- * Thêm lỗi / sự cố mới
+ * Thêm lỗi / sự cố mới cho thiết bị
  */
 export const createDmaError = async (errorData) => {
   try {
