@@ -139,44 +139,7 @@ export default function Sidebar({ onCloseMobile }) {
               )}
             </button>
           </div>
-
-          {/* {openLibraryMenu && (
-            <div className="border-t border-white/10 px-3 pb-3">
-              <div className="mt-2 space-y-2">
-                {libraryGroups.length > 0 ? (
-                  libraryGroups.map((group) => (
-                    <button
-                      key={group}
-                      type="button"
-                      onClick={() => handleGoLibraryGroup(group)}
-                      className="block w-full rounded-xl bg-white/5 px-3 py-3 text-left text-sm text-cyan-50 transition hover:bg-white/10"
-                    >
-                      {group}
-                    </button>
-                  ))
-                ) : (
-                  <div className="rounded-xl bg-white/5 px-3 py-3 text-sm text-white/60">
-                    Chưa có nhóm thiết bị
-                  </div>
-                )}
-              </div>
-            </div>
-          )} */}
         </div>
-
-        <NavLink
-          to="/QA"
-          onClick={() => onCloseMobile?.()}
-          className={({ isActive }) =>
-            `block rounded-2xl px-4 py-4 text-lg transition-all duration-200 border ${
-              isActive
-                ? "bg-cyan-500/20 border-cyan-300/40 text-white shadow-md"
-                : "bg-[#0b3b52]/80 border-white/5 text-white/95 hover:bg-[#104961]"
-            }`
-          }
-        >
-          Thư viện kiến thức
-        </NavLink>
 
         <NavLink
           to="/AI"

@@ -5,17 +5,9 @@ import Overview from "./function/Overview";
 import InternalQA from "./function/InternalQA";
 import AI from "./function/AI";
 
-import KpiDevices from "./Kpi/KpiDevices";
-import KpiQuestions from "./Kpi/KpiQuestions";
-import KpiReports from "./Kpi/KpiReports";
-import KpiRating from "./Kpi/KpiRating";
-import KpiTasks from "./Kpi/KpiTasks";
-import KpiIdeas from "./Kpi/KpiIdeas";
-import KpiProcesses from "./Kpi/KpiProcesses";
-import KpiRole from "./Kpi/KpiRole";
 import Login from "./Login/Login";
 
-import LibraryDetail from "./function/Library/LabraryDetail";
+import LibraryDetail from "./function/Library/LibraryDetail";
 
 export default function CellLink() {
   const getAuth = () => {
@@ -50,15 +42,6 @@ export default function CellLink() {
             { path: "Library/:deviceId", element: <LibraryDetail /> },
             { path: "QA", element: <InternalQA /> },
             { path: "AI", element: <AI /> },
-
-            { path: "KpiDevices", element: <KpiDevices /> },
-            { path: "KpiQuestions", element: <KpiQuestions /> },
-            { path: "KpiReports", element: <KpiReports /> },
-            { path: "KpiRating", element: <KpiRating /> },
-            { path: "KpiTasks", element: <KpiTasks /> },
-            { path: "KpiIdeas", element: <KpiIdeas /> },
-            { path: "KpiProcesses", element: <KpiProcesses /> },
-            { path: "KpiRole", element: <KpiRole /> },
           ],
         },
       ],

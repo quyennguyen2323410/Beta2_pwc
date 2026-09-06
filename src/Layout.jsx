@@ -42,7 +42,7 @@ export default function Layout() {
             <Menu size={24} strokeWidth={2.2} />
           </button>
 
-          <div className="p-4 pt-24 md:p-6 md:pt-6 lg:p-8">
+          <div>
             {/* Content */}
             <div>
               <Outlet />

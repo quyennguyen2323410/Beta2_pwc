@@ -1,306 +1,285 @@
 import React from "react";
-import { Search, Sparkles } from "lucide-react";
+import {
+  Activity,
+  AlertTriangle,
+  Bot,
+  BookOpen,
+  ChevronRight,
+  Droplets,
+  Gauge,
+  MapPinned,
+  Plus,
+  Search,
+  Server,
+  ShieldCheck,
+  Sparkles,
+  Wrench,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function Overview() {
   const navigate = useNavigate();
 
-  const topStats = [
-    { label: "Trạm nước", value: "7 khu vực" },
-    { label: "Mực nước hiện tại", value: "Ổn định" },
-    { label: "Lỗi hôm nay", value: "12 lỗi" },
-    { label: "Cảnh báo áp lực", value: "35 cảnh báo" },
-    { label: "Thiết bị bình thường", value: "420 / 480" },
-  ];
-
-  const commonIssues = [
+  const urgentAlerts = [
     {
-      device: "PRV",
-      issue: "Áp đầu ra cao",
-      cause: "Kẹt màng van",
-      action: "Vệ sinh / thay màng",
+      level: "Nghiêm trọng",
+      title: "Áp lực đầu ra PRV tăng bất thường",
+      device: "PRV-DMA-02",
+      area: "DMA Phú Hòa",
+      time: "13:53",
+      status: "Chưa xử lý",
     },
     {
-      device: "Logger",
-      issue: "Mất kết nối",
-      cause: "Tín yếu / sóng kém",
-      action: "Thực hiện / thay SIM",
+      level: "Cao",
+      title: "Logger mất tín hiệu dữ liệu",
+      device: "LOG-084",
+      area: "DMA Tân Phú",
+      time: "12:33",
+      status: "Đang kiểm tra",
     },
     {
-      device: "Van/VAF",
-      issue: "Không giữ áp",
-      cause: "Bể đài / đầu nguồn",
-      action: "Kiểm tra đầu ống / bơm / van",
+      level: "Trung bình",
+      title: "Lưu lượng đột biến ngoài ngưỡng",
+      device: "FM-112",
+      area: "DMA Khu A",
+      time: "11:20",
+      status: "Theo dõi",
     },
   ];
 
-  const deviceGroups = [
+  const deviceHealth = [
+    ["Van giảm áp PRV", 7, 5, "71%"],
+    ["Logger", 180, 27, "85%"],
+    ["Đồng hồ lưu lượng", 96, 8, "92%"],
+    ["Cảm biến áp lực", 205, 26, "87%"],
+  ];
+
+  const knowledgeItems = [
     {
-      title: "Van giảm áp",
-      total: "7 hôm nay",
-      items: [
-        ["Không giữ áp", 1],
-        ["Áp dao động", 4],
-        ["Rò rỉ", 5],
-      ],
+      title: "Quy trình xử lý lỗi PRV",
+      desc: "Áp cao, không giữ áp, rò rỉ, kẹt màng van",
+      count: "13 lỗi",
     },
     {
-      title: "Logger",
-      total: "7 hôm nay",
-      items: [
-        ["Mất tín hiệu / kết nối", 12],
-        ["Pin yếu", 15],
-      ],
+      title: "Hướng dẫn kiểm tra Logger",
+      desc: "Mất kết nối, pin yếu, SIM lỗi, mất dữ liệu",
+      count: "14 lỗi",
+    },
+    {
+      title: "Datasheet thiết bị",
+      desc: "Thông số kỹ thuật, catalogue, manual PDF",
+      count: "28 tài liệu",
     },
   ];
 
-  const docs = [
-    ["Quy trình xử lý lỗi", 13],
-    ["Hướng dẫn sử dụng", 14],
-    ["Catalogue thiết bị", 13],
-    ["Sơ đồ mạng lưới", 23],
-    ["PDF HDSD Logger", 12],
-  ];
+  const pageBg =
+    "min-h-screen bg-[radial-gradient(circle_at_top_left,#dbeafe_0,#f8fbff_32%,#eef4ff_58%,#f9fbff_100%)] text-slate-800";
 
-  const alerts = [
-    { icon: "T", text: "8:29 Áp lực bất thường", time: "13:53" },
-    { icon: "L", text: "8:45 Lưu lượng đột biến", time: "12:33" },
-    { icon: "T", text: "8:55 Mất dữ liệu", time: "13:53" },
-  ];
+  const glassCard =
+    "rounded-[28px] border border-white/70 bg-white/70 shadow-[0_24px_70px_rgba(30,64,175,0.13)] backdrop-blur-2xl";
 
-  const cardClass =
-    "rounded-[18px] border border-[#7ba2e6]/70 bg-gradient-to-br from-white via-[#f7faff] to-[#eef4ff] p-3 shadow-[0_8px_24px_rgba(32,76,152,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_32px_rgba(32,76,152,0.14)] sm:rounded-[22px] sm:p-4";
-
-  const innerCardClass =
-    "rounded-[14px] border border-[#8db0ee] bg-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]";
+  const softCard =
+    "rounded-[24px] border border-white/75 bg-white/75 shadow-[0_18px_45px_rgba(30,64,175,0.11)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(30,64,175,0.18)]";
 
   return (
-    <div className="min-h-screen  text-slate-800">
-      <div className="w-full max-w-none px-3 py-3 sm:px-4 sm:py-5 lg:px-6 xl:px-8">
-        <main className="space-y-3 sm:space-y-4">
-          <section className="rounded-[20px] border border-[#7ba2e6]/80 bg-gradient-to-br from-white via-[#f7faff] to-[#eef4ff] p-3 shadow-[0_10px_32px_rgba(35,72,138,0.10)] sm:rounded-[28px] sm:p-4">
-            <div className="border-b border-[#8db0ee] pb-3">
-              <div className="flex items-start gap-3">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2f69d9] to-[#4e8df5] text-white shadow-md">
+    <div className={pageBg}>
+      <div className="mx-auto w-full max-w-[1600px] px-4 py-5 sm:px-6 lg:px-8">
+        <main className="space-y-5">
+          {/* HERO */}
+          <section
+            className={`${glassCard} relative overflow-hidden p-5 sm:p-7`}
+          >
+            {/* <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-blue-400/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-28 left-1/3 h-72 w-72 rounded-full bg-cyan-300/20 blur-3xl" /> */}
+
+            <div className="relative grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+              <div>
+                {/* <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/70 px-3 py-1.5 text-sm font-semibold text-blue-700 shadow-sm">
                   <Sparkles size={16} />
+                  PWC AI Monitoring System
+                </div> */}
+
+                <h1 className="text-[26px] font-black uppercase leading-tight tracking-tight text-[#123a77] sm:text-[34px] lg:text-[40px]">
+                  Tổng quan giám sát thiết bị, cảnh báo lỗi và tài liệu xử lý
+                </h1>
+
+                <p className="mt-4 max-w-5xl text-[15px] leading-7 text-[#4d6798] sm:text-[17px]">
+                  Hệ thống hỗ trợ kỹ sư vận hành theo dõi tình trạng thiết bị,
+                  xem cảnh báo bất thường, tra cứu datasheet và phương án xử lý
+                  lỗi nhanh chóng. Trong thời gian chờ API Intelli, giao diện sử
+                  dụng dữ liệu mẫu để hoàn thiện trải nghiệm trước.
+                </p>
+
+                <div className="mt-5 flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => navigate("/Library")}
+                    className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-500 px-4 py-3 text-sm font-bold text-white shadow-[0_12px_30px_rgba(37,99,235,0.32)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_38px_rgba(37,99,235,0.42)]"
+                  >
+                    <BookOpen size={18} />
+                    Mở kho tài liệu
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => navigate("/AI")}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-white/80 px-4 py-3 text-sm font-bold text-blue-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-white"
+                  >
+                    <Bot size={18} />
+                    Hỏi AI xử lý lỗi
+                  </button>
+
+                  {/* <button
+                    type="button"
+                    onClick={() => navigate("/Library")}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-rose-200 bg-rose-50/80 px-4 py-3 text-sm font-bold text-rose-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-white"
+                  >
+                    <Plus size={18} />
+                    Cập nhật lỗi mới
+                  </button> */}
                 </div>
+              </div>
+
+              <div className="rounded-[28px] border border-white/80 bg-gradient-to-br from-[#0f3b7c] via-[#1454a7] to-[#14b8c8] p-5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_24px_60px_rgba(14,88,170,0.28)]">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-blue-100">
+                      Tình trạng mạng lưới
+                    </p>
+                    <h2 className="mt-1 text-3xl font-black">Ổn định</h2>
+                  </div>
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/18 shadow-inner backdrop-blur">
+                    <Droplets size={28} />
+                  </div>
+                </div>
+
+                <div className="mt-6 space-y-4">
+                  <div>
+                    <div className="mb-2 flex justify-between text-sm text-blue-100">
+                      <span>Thiết bị hoạt động tốt</span>
+                      <span>86.4%</span>
+                    </div>
+                    <div className="h-3 overflow-hidden rounded-full bg-white/20">
+                      <div className="h-full w-[86%] rounded-full bg-white shadow-[0_0_24px_rgba(255,255,255,0.75)]" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl bg-white/14 p-3 backdrop-blur">
+                      <p className="text-xs text-blue-100">Cập nhật gần nhất</p>
+                      <p className="mt-1 text-lg font-black">13:53</p>
+                    </div>
+                    <div className="rounded-2xl bg-white/14 p-3 backdrop-blur">
+                      <p className="text-xs text-blue-100">Nguồn dữ liệu</p>
+                      <p className="mt-1 text-lg font-black">Mock Data</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* MAIN CONTENT */}
+          <section className="grid gap-5 xl:grid-cols-[1.25fr_0.75fr]">
+            {/* PRIORITY ALERTS */}
+            <div className={`${softCard} p-5`}>
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h1 className="text-[18px] font-bold uppercase leading-tight tracking-wide text-[#183f82] sm:text-[24px]">
-                    CÔNG TY CỔ PHẦN CẤP NƯỚC PHÚ HÒA TÂN
-                  </h1>
-                  <p className="mt-2 text-[14px] leading-6 text-[#48679d] sm:max-w-5xl sm:text-[16px] sm:leading-7">
-                    Tổng hợp tình trạng van giảm áp, logger và thiết bị trên
-                    mạng lưới – hỗ trợ phát hiện lỗi, tra cứu nguyên nhân và
-                    hướng xử lý nhanh.
+                  <h2 className="text-2xl font-black text-[#163f7e]">
+                    Cảnh báo ưu tiên
+                  </h2>
+                  <p className="mt-1 text-sm text-[#6c7fa4]">
+                    Các lỗi cần kỹ sư kiểm tra trước trong ngày
                   </p>
                 </div>
               </div>
-            </div>
 
-            <div className="mt-4 grid gap-2 sm:gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
-              {topStats.map((item) => (
-                <div
-                  key={item.label}
-                  className="rounded-[14px] border border-[#8db0ee] bg-white/90 px-3 py-3 shadow-[0_6px_18px_rgba(45,87,165,0.08)] transition-all duration-200 hover:border-[#5f8ee6] hover:shadow-[0_10px_22px_rgba(45,87,165,0.14)] sm:min-h-[86px] sm:px-4"
-                >
-                  <div className="text-[13px] font-semibold text-[#5672a7] sm:text-sm">
-                    {item.label}
-                  </div>
-                  <div className="mt-2 text-[18px] font-bold text-[#173f82] sm:text-[20px]">
-                    {item.value}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="grid gap-3 sm:gap-4 2xl:grid-cols-[1.9fr_1fr] xl:grid-cols-[1.75fr_0.98fr]">
-            <div className={cardClass}>
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <h2 className="text-[18px] font-bold text-[#183f82] sm:text-[22px]">
-                  Lỗi phổ biến
-                </h2>
-                <button className="shrink-0 rounded-lg border border-[#7ca1e8] bg-white px-2.5 py-1 text-xs font-bold text-[#2d5ab2] shadow-sm transition hover:bg-[#f3f7ff]">
-                  9
-                </button>
-              </div>
-
-              <div className="overflow-x-auto rounded-[14px] border border-[#8db0ee] bg-white/85">
-                <table className="min-w-[640px] w-full border-collapse text-left text-[13px] sm:text-sm">
-                  <thead>
-                    <tr className="bg-[#f4f8ff] text-[#224989]">
-                      {["Thiết bị", "Lỗi", "Nguyên nhân", "Cách xử lý"].map(
-                        (head) => (
-                          <th
-                            key={head}
-                            className="border-b border-r border-[#8db0ee] px-2 py-3 font-bold last:border-r-0 sm:px-3"
-                          >
-                            {head}
-                          </th>
-                        ),
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {commonIssues.map((row, index) => (
-                      <tr
-                        key={row.device + row.issue}
-                        className={`text-[#4b6698] transition hover:bg-[#f8fbff] ${index !== commonIssues.length - 1 ? "border-b border-[#d7e3fb]" : ""}`}
-                      >
-                        <td className="border-r border-[#d7e3fb] px-2 py-3 font-semibold text-[#284d8b] sm:px-3">
-                          {row.device}
-                        </td>
-                        <td className="border-r border-[#d7e3fb] px-2 py-3 sm:px-3">
-                          {row.issue}
-                        </td>
-                        <td className="border-r border-[#d7e3fb] px-2 py-3 sm:px-3">
-                          {row.cause}
-                        </td>
-                        <td className="px-2 py-3 sm:px-3">{row.action}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className={cardClass}>
-              <div className="rounded-[14px] border border-[#8db0ee] bg-white/90 px-3 py-3 text-[#17396b] shadow-[0_6px_18px_rgba(45,87,165,0.06)] sm:px-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-sm font-bold sm:text-base">
-                    Q nhập - áp cao
-                  </div>
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#8db0ee] bg-[#f4f8ff] text-sm text-[#2d5ab2] shadow-sm">
-                    ?
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-3 grid gap-3 sm:mt-4 sm:grid-cols-2">
-                <div className={`${innerCardClass} p-3`}>
-                  <div className="font-bold text-[#224989]">Nguyên nhân</div>
-                  <ul className="mt-2 list-disc space-y-1 pl-5 text-[14px] text-[#4b6698] sm:text-base">
-                    <li>Cặn cát</li>
-                    <li>Pin yếu</li>
-                  </ul>
-                </div>
-
-                <div className={`${innerCardClass} p-3`}>
-                  <div className="font-bold text-[#224989]">
-                    Sức ép / khuyến nghị
-                  </div>
-                  <div className="mt-2 text-[14px] text-[#4b6698] sm:text-base">
-                    Thay pin
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-3 space-y-2 text-[#27416f] sm:mt-4">
-                <button
-                  type="button"
-                  onClick={() => navigate("/Library")}
-                  className="block w-full rounded-[12px] border border-[#8db0ee] bg-white/90 px-3 py-3 text-left text-[14px] shadow-[0_6px_18px_rgba(45,87,165,0.06)] transition hover:-translate-y-0.5 hover:bg-[#f4f8ff] hover:shadow-[0_10px_22px_rgba(45,87,165,0.12)] sm:text-base"
-                >
-                  A. HDSD van giảm áp .pdf
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("/Library")}
-                  className="block w-full rounded-[12px] border border-[#8db0ee] bg-white/90 px-3 py-3 text-left text-[14px] shadow-[0_6px_18px_rgba(45,87,165,0.06)] transition hover:-translate-y-0.5 hover:bg-[#f4f8ff] hover:shadow-[0_10px_22px_rgba(45,87,165,0.12)] sm:text-base"
-                >
-                  B. HDSD logger .pdf
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("/AI")}
-                  className="block w-full rounded-[12px] border border-[#8db0ee] bg-gradient-to-r from-[#edf4ff] to-[#f8fbff] px-3 py-3 text-left text-[14px] font-medium text-[#224989] shadow-[0_6px_18px_rgba(45,87,165,0.08)] transition hover:-translate-y-0.5 hover:from-[#e2eeff] hover:to-[#f3f8ff] hover:shadow-[0_10px_22px_rgba(45,87,165,0.14)] sm:text-base"
-                >
-                  C. Hỏi AI để tra cứu nhanh
-                </button>
-              </div>
-            </div>
-          </section>
-
-          <section className="grid items-stretch gap-3 sm:gap-4 xl:grid-cols-[1.15fr_0.9fr_1fr]">
-            <div className={cardClass}>
-              <h2 className="mb-3 text-[18px] font-bold text-[#183f82] sm:text-[22px]">
-                Phân loại theo thiết bị (2 ngày)
-              </h2>
-
-              <div className="space-y-3 sm:space-y-4">
-                {deviceGroups.map((group) => (
+              <div className="space-y-3">
+                {urgentAlerts.map((alert) => (
                   <div
-                    key={group.title}
-                    className="rounded-[14px] border border-[#8db0ee] bg-white/88 shadow-[0_4px_14px_rgba(45,87,165,0.05)]"
+                    key={alert.title}
+                    className="rounded-2xl border border-white/75 bg-white/80 p-4 shadow-[0_10px_25px_rgba(30,64,175,0.08)] transition hover:-translate-y-0.5 hover:bg-white"
                   >
-                    <div className="flex items-center justify-between gap-3 border-b border-[#d7e3fb] bg-[#f4f8ff] px-3 py-2.5">
-                      <div className="text-sm font-bold text-[#224989] sm:text-base">
-                        {group.title}
-                      </div>
-                      <div className="text-xs font-semibold text-[#5a78ad] sm:text-sm">
-                        {group.total}
-                      </div>
-                    </div>
-                    <div className="space-y-2 px-3 py-3 text-[14px] text-[#4b6698] sm:text-base">
-                      {group.items.map(([label, count]) => (
-                        <div
-                          key={label}
-                          className="flex items-center justify-between gap-3 rounded-lg px-1 py-0.5 transition hover:bg-[#f7faff]"
-                        >
-                          <div>{label}</div>
-                          <div className="shrink-0 font-bold text-[#224989]">
-                            {count} ✓
-                          </div>
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex gap-3">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 shadow-inner">
+                          <AlertTriangle size={22} />
                         </div>
-                      ))}
+
+                        <div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="rounded-full bg-rose-100 px-2.5 py-1 text-xs font-black text-rose-700">
+                              {alert.level}
+                            </span>
+                            <span className="text-xs font-semibold text-[#7890b4]">
+                              {alert.time}
+                            </span>
+                          </div>
+                          <h3 className="mt-2 text-base font-black text-[#183f82]">
+                            {alert.title}
+                          </h3>
+                          <p className="mt-1 text-sm text-[#657da8]">
+                            {alert.device} · {alert.area}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 sm:justify-end">
+                        <span className="rounded-xl border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700">
+                          {alert.status}
+                        </span>
+                        <button
+                          onClick={() => navigate("/Library")}
+                          className="rounded-xl bg-[#163f7e] px-3 py-2 text-xs font-bold text-white transition hover:bg-blue-700"
+                        >
+                          Xử lý
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className={cardClass}>
-              <h2 className="mb-3 text-[18px] font-bold text-[#183f82] sm:text-[22px]">
-                Thư viện tài liệu
+            {/* QUICK SEARCH */}
+            <div className={`${softCard} p-5`}>
+              <h2 className="text-2xl font-black text-[#163f7e]">
+                Tra cứu nhanh
               </h2>
-              <div className="space-y-2 sm:space-y-3">
-                {docs.map(([label, page]) => (
+              <p className="mt-1 text-sm text-[#6c7fa4]">
+                Tìm lỗi, thiết bị, mã DMA hoặc tài liệu hướng dẫn
+              </p>
+
+              <div className="mt-4 flex items-center gap-3 rounded-2xl border border-blue-100 bg-white/85 px-4 py-3 shadow-inner">
+                <Search size={20} className="text-blue-500" />
+                <input
+                  type="text"
+                  placeholder="Nhập mã thiết bị, tên lỗi, mã DMA..."
+                  className="w-full bg-transparent text-sm font-medium text-[#163f7e] outline-none placeholder:text-[#8fa2c2]"
+                />
+              </div>
+
+              <div className="mt-4 grid gap-3">
+                {knowledgeItems.map((item) => (
                   <button
-                    key={label}
-                    type="button"
+                    key={item.title}
                     onClick={() => navigate("/Library")}
-                    className="flex w-full items-start justify-between gap-3 rounded-[12px] border border-[#8db0ee] bg-white/90 px-3 py-3 text-left text-[14px] text-[#4b6698] shadow-[0_6px_18px_rgba(45,87,165,0.06)] transition hover:-translate-y-0.5 hover:bg-[#f4f8ff] hover:shadow-[0_10px_22px_rgba(45,87,165,0.12)] sm:items-center sm:text-base"
+                    className="rounded-2xl border border-white/80 bg-white/80 p-4 text-left shadow-[0_10px_25px_rgba(30,64,175,0.08)] transition hover:-translate-y-0.5 hover:bg-white"
                   >
-                    <span className="min-w-0 flex-1 leading-6">{label}</span>
-                    <span className="shrink-0 rounded-lg border border-[#7ca1e8] bg-[#f6f9ff] px-2 py-1 text-[11px] font-bold text-[#2d5ab2] sm:text-xs">
-                      {page}
-                    </span>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-black text-[#183f82]">
+                          {item.title}
+                        </h3>
+                        <p className="mt-1 text-sm leading-5 text-[#6c7fa4]">
+                          {item.desc}
+                        </p>
+                      </div>
+                      <span className="shrink-0 rounded-xl bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-700">
+                        {item.count}
+                      </span>
+                    </div>
                   </button>
-                ))}
-              </div>
-            </div>
-
-            <div className={cardClass}>
-              <h2 className="mb-3 text-[18px] font-bold text-[#183f82] sm:mb-4 sm:text-[22px]">
-                Cảnh báo từ logger real time
-              </h2>
-
-              <div className="space-y-2 sm:space-y-3">
-                {alerts.map((alert) => (
-                  <div
-                    key={alert.text}
-                    className="grid grid-cols-[30px_1fr_58px] items-center gap-2 sm:grid-cols-[34px_1fr_74px] sm:gap-3"
-                  >
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-[#8db0ee] bg-[#f4f8ff] text-xs font-bold text-[#2d5ab2] shadow-sm sm:h-8 sm:w-8 sm:text-sm">
-                      {alert.icon}
-                    </div>
-                    <div className="rounded-[12px] border border-[#8db0ee] bg-white/92 px-2 py-2 text-[13px] text-[#4b6698] shadow-[0_6px_18px_rgba(45,87,165,0.06)] transition hover:bg-[#f7faff] sm:px-3 sm:py-3 sm:text-base">
-                      {alert.text}
-                    </div>
-                    <div className="rounded-[10px] border border-[#8db0ee] bg-[#f6f9ff] px-1.5 py-2 text-center text-[11px] font-bold text-[#2d5ab2] shadow-sm sm:px-2 sm:text-sm">
-                      {alert.time}
-                    </div>
-                  </div>
                 ))}
               </div>
             </div>

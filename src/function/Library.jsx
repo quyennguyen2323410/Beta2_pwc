@@ -1,236 +1,234 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Plus, Search, Sparkles } from "lucide-react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Plus,
+  Search,
+  Sparkles,
+  Loader2,
+  AlertCircle,
+  MapPin,
+  ArrowLeft,
+  X,
+} from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 
-const defaultDevices = [
-  {
-    id: "1",
-    group: "Van giảm áp",
-    brand: "Bernad",
-    name: "Bermad 720",
-    description:
-      "Van giảm áp điều khiển thủy lực dùng để ổn định áp lực đầu ra.",
-    errors: [
-      {
-        id: "prv-1",
-        title: "Áp đầu ra cao",
-        left: [
-          "Đóng van đầu vào, tạm ngắt nước qua van giảm áp.",
-          "Kiểm tra màng van, vệ sinh hoặc thay thế nếu hư.",
-        ],
-        right: [
-          "Đóng van hạ lưu để kiểm tra cảm biến lỗi ngay.",
-          "Thử lên pilot để đo lưu lượng đột ngột qua van.",
-        ],
-        causes: [
-          "Mở van bi hư hoặc hạt đo cảm biến bám lâu ngày.",
-          "Thông pilot không điều khiển được van.",
-        ],
-        docs: [
-          "TL hướng dẫn bảo trì van giảm áp",
-          "Tra cứu dữ liệu logger",
-          "Cách kiểm tra màng van",
-        ],
-      },
-      {
-        id: "prv-2",
-        title: "Không giữ áp",
-        left: [
-          "Kiểm tra đầu vào và đầu ra để xác định độ tụt áp.",
-          "Rà soát pilot, van kim và màng điều khiển.",
-        ],
-        right: [
-          "Đo áp tại 2 đầu van để so sánh với cài đặt.",
-          "Xác nhận có rò rỉ hoặc nghẽn trên tuyến bypass hay không.",
-        ],
-        causes: [
-          "Pilot chỉnh sai hoặc tắc nghẽn đường impulse.",
-          "Màng van mòn hoặc buồng điều khiển rò nước.",
-        ],
-        docs: [
-          "Quy trình chỉnh pilot",
-          "Checklist kiểm tra áp",
-          "Sơ đồ cấu tạo PRV",
-        ],
-      },
-    ],
-  },
-  {
-    id: "2",
-    group: "Logger",
-    brand: "HWM",
-    name: "HWM Permalog+",
-    description:
-      "Thiết bị logger thu thập dữ liệu áp lực và lưu lượng hiện trường.",
-    errors: [
-      {
-        id: "log-1",
-        title: "Mất tín hiệu logger",
-        left: [
-          "Kiểm tra trạng thái pin và nguồn cấp của logger.",
-          "Đồng bộ lại thiết bị và kiểm tra chu kỳ gửi dữ liệu.",
-        ],
-        right: [
-          "Thử lại kênh truyền để loại trừ lỗi mạng di động.",
-          "Đối chiếu dữ liệu hiện trường với dữ liệu nhận trên hệ thống.",
-        ],
-        causes: [
-          "Pin yếu hoặc hết pin.",
-          "Mất sóng, lỗi đồng bộ hoặc sai cấu hình logger.",
-        ],
-        docs: [
-          "TL hướng dẫn bảo trì logger",
-          "Cấu hình logger",
-          "Đọc dữ liệu logger",
-        ],
-      },
-      {
-        id: "log-2",
-        title: "Mất dữ liệu",
-        left: [
-          "Kiểm tra bộ nhớ logger và chu kỳ ghi nhận.",
-          "Xác nhận thiết bị còn đồng bộ thời gian với hệ thống.",
-        ],
-        right: [
-          "Đối chiếu dữ liệu cuối cùng nhận được với hiện trường.",
-          "Kiểm tra firmware và cấu hình gửi gói tin.",
-        ],
-        causes: [
-          "Lỗi bộ nhớ hoặc mất đồng bộ thời gian.",
-          "Firmware cũ hoặc chu kỳ gửi dữ liệu thiết lập sai.",
-        ],
-        docs: [
-          "Checklist kiểm tra dữ liệu",
-          "HDSD bộ nhớ logger",
-          "Quy trình reset logger",
-        ],
-      },
-    ],
-  },
-  {
-    id: "3",
-    group: "ĐH cỡ lớn",
-    brand: "Sensus",
-    name: "Sensus iPERL",
-    description: "Thiết bị đo nước cỡ lớn dùng trong mạng lưới chính.",
-    errors: [
-      {
-        id: "meter-1",
-        title: "Đồng hồ đo bất thường",
-        left: [
-          "Khóa tuyến và kiểm tra tình trạng đo thực tế tại hiện trường.",
-          "Đối chiếu số liệu đo với lưu lượng tham chiếu để xác định sai lệch.",
-        ],
-        right: [
-          "Kiểm tra cánh đo, cảm biến và cụm truyền tín hiệu.",
-          "Xác nhận có nghẹt cặn hoặc ảnh hưởng rung động trên tuyến hay không.",
-        ],
-        causes: [
-          "Sai số đo do cặn bẩn hoặc mài mòn cơ cấu đo.",
-          "Tín hiệu truyền không ổn định hoặc lắp đặt sai hướng dòng.",
-        ],
-        docs: [
-          "Hướng dẫn kiểm tra đồng hồ cỡ lớn",
-          "Quy trình tháo lắp và hiệu chuẩn",
-          "Checklist kiểm tra hiện trường",
-        ],
-      },
-    ],
-  },
-];
+// Import hàm gọi API từ file quản lý API riêng
+import { fetchDmaLocations } from "../API/dmaApi";
 
-const topTabs = [
-  { label: "Van giảm áp", value: "Van giảm áp" },
-  { label: "Logger", value: "Logger" },
-  { label: "ĐH cỡ lớn", value: "ĐH cỡ lớn" },
+// Danh sách lỗi mẫu gán theo từng loại Thiết bị
+const defaultErrorTemplates = {
+  "Bộ mạch PHT": [
+    {
+      id: "pht-1",
+      title: "Mất tín hiệu truyền dữ liệu PHT",
+      left: [
+        "Kiểm tra nguồn cấp cho bộ mạch PHT.",
+        "Khởi động lại mô-đun truyền thông.",
+      ],
+      right: [
+        "Kiểm tra SIM và ăng-ten kết nối mạng.",
+        "Đối chiếu dữ liệu truyền về server.",
+      ],
+      causes: [
+        "Nguồn điện chập chờn hoặc pin yếu.",
+        "Mất sóng di động tại khu vực lắp đặt.",
+      ],
+      docs: ["HDSD Bộ mạch PHT", "Sơ đồ đấu nối PHT"],
+    },
+    {
+      id: "pht-2",
+      title: "Sai số đo cảm biến PHT",
+      left: ["Vệ sinh đầu đo cảm biến.", "Hiệu chỉnh lại thông số calib."],
+      right: ["Kiểm tra đường ống dẫn áp.", "So sánh với đồng hồ chuẩn."],
+      causes: ["Cặn bẩn bám vào cảm biến.", "Lỗi firmware bộ mạch."],
+      docs: ["Quy trình hiệu chuẩn PHT"],
+    },
+  ],
+  Regulo: [
+    {
+      id: "reg-1",
+      title: "Không điều khiển được van Regulo",
+      left: [
+        "Kiểm tra áp lực đầu vào/đầu ra.",
+        "Rà soát van solenoid điều khiển.",
+      ],
+      right: ["Đo tín hiệu điều khiển từ bộ Regulo.", "Kiểm tra nguồn cấp."],
+      causes: ["Lỗi màng điều khiển Regulo.", "Kẹt van solenoid."],
+      docs: ["Hướng dẫn sửa chữa Regulo", "Checklist kiểm tra áp"],
+    },
+  ],
+  "Cello 4S": [
+    {
+      id: "cel-1",
+      title: "Mất kết nối Logger Cello 4S",
+      left: [
+        "Kiểm tra pin và nguồn nuôi Cello.",
+        "Đồng bộ lại cấu hình gửi tin.",
+      ],
+      right: [
+        "Kiểm tra vị trí đặt Ăng-ten.",
+        "Kiểm tra cổng giao tiếp RS232/RS485.",
+      ],
+      causes: ["Hết pin dự phòng.", "Mất sóng mạng di động."],
+      docs: ["HDSD Logger Cello 4S", "Sơ đồ chân Cello 4S"],
+    },
+  ],
+};
+
+const fallbackErrors = [
+  {
+    id: "gen-1",
+    title: "Mất tín hiệu giám sát",
+    left: [
+      "Kiểm tra nguồn điện cấp cho thiết bị.",
+      "Kiểm tra kết nối mạng/truyền thông.",
+    ],
+    right: [
+      "Kiểm tra đèn trạng thái LED trên thiết bị.",
+      "Đo điện áp đầu vào.",
+    ],
+    causes: ["Nguồn cấp không ổn định.", "Lỗi cáp tín hiệu hoặc mất sóng."],
+    docs: ["Hướng dẫn xử lý sự cố chung", "Checklist kiểm tra hiện trường"],
+  },
 ];
 
 const accentMap = {
-  "Van giảm áp": "from-[#eff6ff] via-white to-[#eef4ff]",
-  Logger: "from-[#eefdf7] via-white to-[#edf8ff]",
-  "ĐH cỡ lớn": "from-[#fff9ee] via-white to-[#f5f7ff]",
+  "Bộ mạch PHT": "from-[#eff6ff] via-white to-[#eef4ff]",
+  Regulo: "from-[#eefdf7] via-white to-[#edf8ff]",
+  "Cello 4S": "from-[#fff9ee] via-white to-[#f5f7ff]",
+  Sofrel: "from-[#fef2f2] via-white to-[#fff5f5]",
+  Pegasus: "from-[#faf5ff] via-white to-[#f3e8ff]",
+};
+
+const initialNewErrorState = {
+  title: "",
+  cause1: "",
+  cause2: "",
+  step1: "",
+  step2: "",
+  doc1: "",
+  doc2: "",
 };
 
 export default function Library() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [devices] = useState(defaultDevices);
+  // State quản lý dữ liệu API
+  const [dmaList, setDmaList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState(null);
+
+  // State lưu danh sách lỗi động (Bao gồm lỗi mặc định + lỗi do người dùng thêm)
+  const [errorTemplates, setErrorTemplates] = useState(defaultErrorTemplates);
+
+  // State bộ lọc và hiển thị
   const [search, setSearch] = useState("");
-  const [selectedGroup, setSelectedGroup] = useState(
-    searchParams.get("group") || "Van giảm áp",
-  );
-  const [selectedDeviceId, setSelectedDeviceId] = useState("");
+  const [selectedDeviceType, setSelectedDeviceType] = useState("");
+  const [selectedDmaId, setSelectedDmaId] = useState("");
   const [selectedErrorId, setSelectedErrorId] = useState("");
   const [activeTab, setActiveTab] = useState("Cách xử lý");
   const [isAnimating, setIsAnimating] = useState(false);
   const [viewMode, setViewMode] = useState("list");
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [newError, setNewError] = useState({
-    title: "",
-    cause1: "",
-    cause2: "",
-    step1: "",
-    step2: "",
-    doc1: "",
-    doc2: "",
-  });
+
+  const [newError, setNewError] = useState(initialNewErrorState);
+
+  // Load danh sách DMA từ API Service
+  const loadDmaData = async () => {
+    try {
+      setLoading(true);
+      setApiError(null);
+
+      const data = await fetchDmaLocations();
+      setDmaList(data || []);
+
+      const types = [
+        ...new Set((data || []).map((item) => item.thiet_bi)),
+      ].filter(Boolean);
+      const urlGroup = searchParams.get("group");
+      const defaultType =
+        urlGroup && types.includes(urlGroup)
+          ? urlGroup
+          : types[0] || "Bộ mạch PHT";
+
+      setSelectedDeviceType(defaultType);
+    } catch (err) {
+      console.error("Lỗi tải dữ liệu DMA:", err);
+      setApiError("Không thể kết nối đến máy chủ API");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const urlGroup = searchParams.get("group");
-    if (urlGroup) setSelectedGroup(urlGroup);
-  }, [searchParams]);
+    loadDmaData();
+  }, []);
 
-  const filteredDevices = useMemo(() => {
-    return devices.filter((item) => {
+  // Danh sách các Loại Thiết bị (Unique list)
+  const deviceTypes = useMemo(() => {
+    return [...new Set(dmaList.map((item) => item.thiet_bi))].filter(Boolean);
+  }, [dmaList]);
+
+  // Danh sách DMA được lọc theo Thiết bị & Keyword
+  const filteredDmaList = useMemo(() => {
+    return dmaList.filter((item) => {
       const keyword = search.trim().toLowerCase();
-      const matchGroup = item.group === selectedGroup;
+      const matchType = item.thiet_bi === selectedDeviceType;
       const matchKeyword =
         !keyword ||
-        item.name.toLowerCase().includes(keyword) ||
-        item.brand.toLowerCase().includes(keyword) ||
-        item.group.toLowerCase().includes(keyword) ||
-        item.errors.some((error) =>
-          error.title.toLowerCase().includes(keyword),
-        );
-      return matchGroup && matchKeyword;
-    });
-  }, [devices, search, selectedGroup]);
+        item.ten_dma?.toString().toLowerCase().includes(keyword) ||
+        item.vi_tri_dma?.toLowerCase().includes(keyword) ||
+        item.thiet_bi?.toLowerCase().includes(keyword);
 
+      return matchType && matchKeyword;
+    });
+  }, [dmaList, search, selectedDeviceType]);
+
+  // Tự động chọn DMA đầu tiên khi danh sách lọc thay đổi
   useEffect(() => {
     if (
-      filteredDevices.length &&
-      !filteredDevices.some((d) => d.id === selectedDeviceId)
+      filteredDmaList.length &&
+      !filteredDmaList.some((d) => d.ten_dma === selectedDmaId)
     ) {
-      setSelectedDeviceId(filteredDevices[0].id);
+      setSelectedDmaId(filteredDmaList[0].ten_dma);
     }
-  }, [filteredDevices, selectedDeviceId]);
+  }, [filteredDmaList, selectedDmaId]);
 
-  const selectedDevice =
-    filteredDevices.find((item) => item.id === selectedDeviceId) ||
-    filteredDevices[0];
+  // DMA hiện tại đang chọn
+  const selectedDma = useMemo(() => {
+    return (
+      filteredDmaList.find((item) => item.ten_dma === selectedDmaId) ||
+      filteredDmaList[0]
+    );
+  }, [filteredDmaList, selectedDmaId]);
 
+  // Danh sách sự cố/lỗi của Thiết bị hiện tại
+  const currentErrors = useMemo(() => {
+    if (!selectedDma?.thiet_bi) return fallbackErrors;
+    return errorTemplates[selectedDma.thiet_bi] || fallbackErrors;
+  }, [selectedDma, errorTemplates]);
+
+  // Tự động chọn lỗi đầu tiên khi DMA hoặc Loại thiết bị thay đổi
   useEffect(() => {
-    if (selectedDevice?.errors?.length) {
-      const exists = selectedDevice.errors.some(
-        (err) => err.id === selectedErrorId,
-      );
-      if (!exists) setSelectedErrorId(selectedDevice.errors[0].id);
+    if (currentErrors.length) {
+      const exists = currentErrors.some((err) => err.id === selectedErrorId);
+      if (!exists) setSelectedErrorId(currentErrors[0].id);
     }
-  }, [selectedDevice, selectedErrorId]);
+  }, [currentErrors, selectedErrorId]);
 
   const selectedError =
-    selectedDevice?.errors?.find((err) => err.id === selectedErrorId) ||
-    selectedDevice?.errors?.[0];
+    currentErrors.find((err) => err.id === selectedErrorId) || currentErrors[0];
 
-  const changeGroup = (group) => {
+  // Đổi Loại Thiết Bị
+  const changeDeviceType = (type) => {
     setIsAnimating(true);
-    setSelectedGroup(group);
+    setSelectedDeviceType(type);
     setViewMode("list");
     setActiveTab("Cách xử lý");
+
     const next = new URLSearchParams(searchParams);
-    next.set("group", group);
+    next.set("group", type);
     setSearchParams(next);
+
     setTimeout(() => setIsAnimating(false), 220);
   };
 
@@ -240,46 +238,116 @@ export default function Library() {
     setActiveTab("Cách xử lý");
   };
 
+  // Mở Google Maps theo tọa độ (Latitude: vi_do, Longitude: kinh_do)
+  const handleOpenMap = (lat, lng) => {
+    if (!lat || !lng) {
+      alert("Chưa có thông tin tọa độ cho thiết bị này!");
+      return;
+    }
+    const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+    window.open(mapUrl, "_blank", "noopener,noreferrer");
+  };
+
+  // Thêm lỗi mới vào State
+  const handleSaveNewError = () => {
+    if (!newError.title.trim()) {
+      alert("Vui lòng nhập tên lỗi!");
+      return;
+    }
+
+    const deviceName = selectedDma?.thiet_bi || selectedDeviceType;
+    const generatedId = `custom-${Date.now()}`;
+
+    const newErrorObj = {
+      id: generatedId,
+      title: newError.title.trim(),
+      left: [newError.step1, newError.step2].filter(Boolean),
+      right: ["Kiểm tra lại hệ thống sau khi thao tác."],
+      causes: [newError.cause1, newError.cause2].filter(Boolean),
+      docs: [newError.doc1, newError.doc2].filter(Boolean),
+    };
+
+    setErrorTemplates((prev) => ({
+      ...prev,
+      [deviceName]: [...(prev[deviceName] || []), newErrorObj],
+    }));
+
+    setNewError(initialNewErrorState);
+    setOpenAddModal(false);
+    setSelectedErrorId(generatedId);
+  };
+
   const cardClass =
     "rounded-[20px] border border-[#8db0ee] bg-white/88 p-4 shadow-[0_10px_30px_rgba(34,73,137,0.08)] backdrop-blur-sm transition-all duration-300";
+
+  if (loading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center gap-3 text-[#2f69d9]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+        <span className="text-lg font-semibold">
+          Đang tải dữ liệu thiết bị...
+        </span>
+      </div>
+    );
+  }
+
+  if (apiError) {
+    return (
+      <div className="flex h-screen w-full flex-col items-center justify-center gap-3 text-red-500">
+        <AlertCircle className="h-10 w-10" />
+        <span className="text-lg font-semibold">{apiError}</span>
+        <button
+          type="button"
+          onClick={loadDmaData}
+          className="mt-2 rounded-lg bg-[#2f69d9] px-4 py-2 text-white shadow transition hover:bg-[#1d478d]"
+        >
+          Thử lại
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen text-slate-800">
       <div className="w-full px-3 py-3 sm:px-4 sm:py-5 lg:px-6 xl:px-8">
         <main className="rounded-[22px] border border-[#7ba2e6]/80 bg-gradient-to-br from-white via-[#f8fbff] to-[#eef5ff] p-3 shadow-[0_18px_40px_rgba(35,72,138,0.10)] sm:rounded-[28px] sm:p-4 lg:p-5">
-          <section className="grid gap-3 lg:grid-cols-[196px_196px_1fr]">
+          {/* Header Controls */}
+          <section className="grid gap-3 lg:grid-cols-[220px_220px_1fr]">
+            {/* Dropdown loại Thiết bị */}
             <select
-              value={selectedGroup}
-              onChange={(e) => changeGroup(e.target.value)}
+              value={selectedDeviceType}
+              onChange={(e) => changeDeviceType(e.target.value)}
               className="h-11 rounded-[12px] border border-[#8db0ee] bg-white px-3 text-[15px] text-[#244a8a] shadow-sm outline-none transition focus:border-[#4f80de] focus:ring-4 focus:ring-[#4f80de]/10"
             >
-              {topTabs.map((tab) => (
-                <option key={tab.value} value={tab.value}>
-                  {tab.label}
+              {deviceTypes.map((type) => (
+                <option key={type} value={type}>
+                  Thiết bị: {type}
                 </option>
               ))}
             </select>
 
+            {/* Dropdown Mã DMA */}
             <select
-              value={selectedDevice?.name || ""}
+              value={selectedDma?.ten_dma || ""}
               onChange={(e) => {
-                const nextDevice = filteredDevices.find(
-                  (item) => item.name === e.target.value,
+                const nextDma = filteredDmaList.find(
+                  (item) => item.ten_dma === e.target.value,
                 );
-                if (nextDevice) {
-                  setSelectedDeviceId(nextDevice.id);
+                if (nextDma) {
+                  setSelectedDmaId(nextDma.ten_dma);
                   setViewMode("list");
                 }
               }}
               className="h-11 rounded-[12px] border border-[#8db0ee] bg-white px-3 text-[15px] text-[#244a8a] shadow-sm outline-none transition focus:border-[#4f80de] focus:ring-4 focus:ring-[#4f80de]/10"
             >
-              {filteredDevices.map((item) => (
-                <option key={item.id} value={item.name}>
-                  {item.name}
+              {filteredDmaList.map((item) => (
+                <option key={item.stt || item.ten_dma} value={item.ten_dma}>
+                  DMA: {item.ten_dma}
                 </option>
               ))}
             </select>
 
+            {/* Ô tìm kiếm */}
             <div className="relative">
               <Search
                 size={18}
@@ -288,37 +356,13 @@ export default function Library() {
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Tìm nhanh thiết bị / lỗi"
+                placeholder="Tìm DMA, vị trí, loại thiết bị..."
                 className="h-11 w-full rounded-[12px] border border-[#8db0ee] bg-white px-3 pr-11 text-[15px] text-[#244a8a] shadow-sm outline-none transition focus:border-[#4f80de] focus:ring-4 focus:ring-[#4f80de]/10"
               />
             </div>
           </section>
 
-          <section className="mt-4 border-b border-[#a7c0ef] pb-3">
-            <div className="flex flex-wrap gap-2">
-              {topTabs.map((tab) => {
-                const active = selectedGroup === tab.value;
-                return (
-                  <button
-                    key={tab.value}
-                    type="button"
-                    onClick={() => changeGroup(tab.value)}
-                    className={`group relative overflow-hidden rounded-[12px] border px-4 py-2.5 text-sm font-semibold transition-all duration-300 ${
-                      active
-                        ? "border-[#4f80de] bg-gradient-to-r from-[#eaf2ff] to-white text-[#1d478d] shadow-[0_8px_20px_rgba(54,102,190,0.16)]"
-                        : "border-[#9bb8ee] bg-white/80 text-[#5572a8] hover:-translate-y-0.5 hover:border-[#6f99e6] hover:bg-[#f7faff] hover:text-[#244a8a]"
-                    }`}
-                  >
-                    <span className="relative z-10">{tab.label}</span>
-                    {active ? (
-                      <span className="absolute inset-x-3 bottom-0 h-[2px] rounded-full bg-gradient-to-r from-[#4f80de] to-[#7babff]" />
-                    ) : null}
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-
+          {/* Main Content Area */}
           <section
             className={`mt-4 transition-all duration-300 ${
               isAnimating
@@ -328,29 +372,54 @@ export default function Library() {
           >
             {viewMode === "list" ? (
               <div className="space-y-4">
+                {/* Banner Thông tin DMA đang chọn */}
                 <div
-                  className={`rounded-[22px] border border-[#8db0ee] bg-gradient-to-br ${accentMap[selectedGroup]} p-4 shadow-[0_14px_34px_rgba(34,73,137,0.10)]`}
+                  className={`rounded-[22px] border border-[#8db0ee] bg-gradient-to-br ${
+                    accentMap[selectedDeviceType] ||
+                    "from-[#eff6ff] via-white to-[#eef4ff]"
+                  } p-4 shadow-[0_14px_34px_rgba(34,73,137,0.10)]`}
                 >
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex items-start gap-3">
                       <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2f69d9] to-[#5f93f0] text-white shadow-md">
                         <Sparkles size={17} />
                       </div>
                       <div>
                         <h1 className="text-[22px] font-bold text-[#183f82] sm:text-[26px]">
-                          Danh sách lỗi {selectedGroup.toLowerCase()}
+                          DMA {selectedDma?.ten_dma || "---"} (
+                          {selectedDma?.thiet_bi})
                         </h1>
-                        <p className="mt-1 text-sm text-[#4f72ad] sm:text-base">
-                          {selectedDevice?.brand || "Thiết bị"} •{" "}
-                          {selectedDevice?.name || "Chưa chọn thiết bị"}
-                        </p>
+                        <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-[#4f72ad] sm:text-base">
+                          <span>
+                            Vị trí: {selectedDma?.vi_tri_dma || "Chưa xác định"}
+                          </span>
+                          <span>•</span>
+                          <span>
+                            Tọa độ: {selectedDma?.kinh_do || "---"},{" "}
+                            {selectedDma?.vi_do || "---"}
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleOpenMap(
+                                selectedDma?.vi_do,
+                                selectedDma?.kinh_do,
+                              )
+                            }
+                            className="inline-flex items-center gap-1 rounded-md border border-[#8db0ee] bg-white px-2 py-0.5 text-xs font-semibold text-[#2f69d9] shadow-sm transition hover:bg-[#2f69d9] hover:text-white"
+                          >
+                            <MapPin size={12} />
+                            Xem tọa độ
+                          </button>
+                        </div>
                       </div>
                     </div>
 
                     <button
                       type="button"
                       onClick={() => setOpenAddModal(true)}
-                      className="inline-flex items-center gap-2 rounded-[12px] border border-[#4f80de] bg-white px-4 py-2.5 text-sm font-semibold text-[#1d478d] shadow-[0_8px_18px_rgba(54,102,190,0.12)] transition hover:-translate-y-0.5 hover:bg-[#f7fbff]"
+                      className="inline-flex items-center justify-center gap-2 rounded-[12px] border border-[#4f80de] bg-white px-4 py-2.5 text-sm font-semibold text-[#1d478d] shadow-[0_8px_18px_rgba(54,102,190,0.12)] transition hover:-translate-y-0.5 hover:bg-[#f7fbff]"
                     >
                       <Plus size={16} />
                       Thêm lỗi
@@ -358,19 +427,20 @@ export default function Library() {
                   </div>
                 </div>
 
+                {/* Danh sách lỗi & Sidebar thông tin */}
                 <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
                   <div className={cardClass}>
                     <div className="mb-3 flex items-center justify-between">
                       <h2 className="text-[19px] font-bold text-[#183f82] sm:text-[22px]">
-                        Các lỗi thường gặp
+                        Các sự cố / lỗi ghi nhận
                       </h2>
                       <span className="rounded-full bg-[#eef4ff] px-3 py-1 text-xs font-bold text-[#2d5ab2]">
-                        {selectedDevice?.errors?.length || 0} lỗi
+                        {currentErrors.length} lỗi
                       </span>
                     </div>
 
                     <div className="space-y-3">
-                      {selectedDevice?.errors?.map((error, index) => (
+                      {currentErrors.map((error, index) => (
                         <button
                           key={error.id}
                           type="button"
@@ -385,7 +455,7 @@ export default function Library() {
                               {error.title}
                             </div>
                             <div className="mt-2 text-sm leading-6 text-[#5977a9]">
-                              {error.causes?.[0]}
+                              {error.causes?.[0] || "Chưa cập nhật nguyên nhân"}
                             </div>
                           </div>
                           <div className="shrink-0 rounded-[10px] border border-[#8db0ee] bg-[#f4f8ff] px-3 py-2 text-sm font-semibold text-[#2d5ab2] transition group-hover:bg-[#ebf2ff]">
@@ -396,33 +466,54 @@ export default function Library() {
                     </div>
                   </div>
 
+                  {/* Sidebar Thông tin DMA */}
                   <div className={cardClass}>
                     <h2 className="mb-3 text-[19px] font-bold text-[#183f82] sm:text-[22px]">
-                      Gợi ý nội dung khi thêm lỗi
+                      Thông tin kỹ thuật DMA
                     </h2>
                     <div className="space-y-3 text-[#4c6898]">
-                      {[
-                        "Tên lỗi / hiện tượng",
-                        "Nguyên nhân 1, nguyên nhân 2",
-                        "Cách xử lý từng bước",
-                        "Các ghi chú kiểm tra hiện trường",
-                        "Tài liệu PDF / SOP liên quan",
-                      ].map((item) => (
-                        <div
-                          key={item}
-                          className="rounded-[12px] bg-white/82 px-3 py-3 shadow-[0_4px_12px_rgba(34,73,137,0.05)]"
-                        >
-                          • {item}
+                      <div className="rounded-[12px] bg-white/82 px-3 py-3 shadow-[0_4px_12px_rgba(34,73,137,0.05)]">
+                        • <b>Mã DMA:</b> {selectedDma?.ten_dma || "N/A"}
+                      </div>
+                      <div className="rounded-[12px] bg-white/82 px-3 py-3 shadow-[0_4px_12px_rgba(34,73,137,0.05)]">
+                        • <b>Loại thiết bị:</b> {selectedDma?.thiet_bi || "N/A"}
+                      </div>
+                      <div className="rounded-[12px] bg-white/82 px-3 py-3 shadow-[0_4px_12px_rgba(34,73,137,0.05)]">
+                        • <b>Địa điểm:</b> {selectedDma?.vi_tri_dma || "N/A"}
+                      </div>
+
+                      {/* Thẻ hiển thị GPS + Nút Xem Tọa Độ */}
+                      <div className="flex items-center justify-between rounded-[12px] bg-white/82 px-3 py-3 shadow-[0_4px_12px_rgba(34,73,137,0.05)]">
+                        <div>
+                          • <b>Tọa độ GPS:</b> {selectedDma?.kinh_do || "---"},{" "}
+                          {selectedDma?.vi_do || "---"}
                         </div>
-                      ))}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleOpenMap(
+                              selectedDma?.vi_do,
+                              selectedDma?.kinh_do,
+                            )
+                          }
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-[#8db0ee] bg-[#f4f8ff] px-3 py-1.5 text-xs font-semibold text-[#2f69d9] shadow-sm transition hover:bg-[#2f69d9] hover:text-white"
+                        >
+                          <MapPin size={14} />
+                          Xem bản đồ
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             ) : (
+              /* Chi tiết Lỗi / Sự cố */
               <div className="space-y-4">
                 <div
-                  className={`rounded-[22px] border border-[#8db0ee] bg-gradient-to-br ${accentMap[selectedGroup]} p-4 shadow-[0_14px_34px_rgba(34,73,137,0.10)]`}
+                  className={`rounded-[22px] border border-[#8db0ee] bg-gradient-to-br ${
+                    accentMap[selectedDeviceType] ||
+                    "from-[#eff6ff] via-white to-[#eef4ff]"
+                  } p-4 shadow-[0_14px_34px_rgba(34,73,137,0.10)]`}
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex items-start gap-3">
@@ -433,16 +524,16 @@ export default function Library() {
                         <button
                           type="button"
                           onClick={() => setViewMode("list")}
-                          className="mb-2 text-sm font-semibold text-[#4f72ad] transition hover:text-[#1d478d]"
+                          className="mb-2 inline-flex items-center gap-1 text-sm font-semibold text-[#4f72ad] transition hover:text-[#1d478d]"
                         >
-                          ← Quay lại danh sách lỗi
+                          <ArrowLeft size={16} /> Quay lại danh sách lỗi
                         </button>
                         <h1 className="text-[22px] font-bold text-[#183f82] sm:text-[26px]">
-                          Sự cố: {selectedError?.title}
+                          Sự cố: {selectedError?.title || "Không rõ lỗi"}
                         </h1>
                         <p className="mt-1 text-sm text-[#4f72ad] sm:text-base">
-                          {selectedDevice?.brand || "Thiết bị"} •{" "}
-                          {selectedDevice?.name || "Chưa chọn thiết bị"}
+                          Thiết bị: {selectedDma?.thiet_bi} • Mã DMA:{" "}
+                          {selectedDma?.ten_dma}
                         </p>
                       </div>
                     </div>
@@ -457,6 +548,7 @@ export default function Library() {
                     </button>
                   </div>
 
+                  {/* Tabs switch */}
                   <div className="mt-4 flex flex-wrap gap-2">
                     {["Cách xử lý", "Nguyên nhân", "Tài liệu"].map((tab) => (
                       <button
@@ -475,6 +567,7 @@ export default function Library() {
                   </div>
                 </div>
 
+                {/* Tab content */}
                 <div className="grid gap-4 xl:grid-cols-[1.15fr_0.9fr]">
                   <div className={cardClass}>
                     <div className="space-y-4 text-[15px] leading-7 text-[#4c6898] sm:text-base">
@@ -485,7 +578,7 @@ export default function Library() {
                           : selectedError?.docs || []
                       ).map((line, index) => (
                         <div
-                          key={line}
+                          key={`${line}-${index}`}
                           className="flex gap-3 rounded-[12px] bg-white/80 px-3 py-2 shadow-[0_4px_12px_rgba(34,73,137,0.05)] transition hover:bg-white"
                         >
                           <span className="font-bold text-[#1d478d]">
@@ -499,9 +592,9 @@ export default function Library() {
 
                   <div className={cardClass}>
                     <div className="space-y-3 text-[15px] leading-7 text-[#4c6898] sm:text-base">
-                      {(selectedError?.right || []).map((line) => (
+                      {(selectedError?.right || []).map((line, index) => (
                         <div
-                          key={line}
+                          key={`${line}-${index}`}
                           className="rounded-[12px] bg-white/80 px-3 py-3 shadow-[0_4px_12px_rgba(34,73,137,0.05)] transition hover:bg-white"
                         >
                           • {line}
@@ -510,87 +603,38 @@ export default function Library() {
                     </div>
                   </div>
                 </div>
-
-                <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-                  <div className={cardClass}>
-                    <h2 className="mb-3 text-[19px] font-bold text-[#183f82] sm:text-[22px]">
-                      Nguyên nhân thường gặp
-                    </h2>
-                    <div className="space-y-3">
-                      {(selectedError?.causes || []).map((cause) => (
-                        <label
-                          key={cause}
-                          className="flex items-start gap-3 rounded-[12px] bg-white/82 px-3 py-3 text-[#4c6898] shadow-[0_4px_12px_rgba(34,73,137,0.05)] transition hover:bg-white"
-                        >
-                          <input
-                            type="checkbox"
-                            className="mt-1 h-4 w-4 accent-[#4f80de]"
-                          />
-                          <span>{cause}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className={cardClass}>
-                    <h2 className="mb-3 text-[19px] font-bold text-[#183f82] sm:text-[22px]">
-                      Tham khảo thêm tài liệu
-                    </h2>
-                    <div className="space-y-3">
-                      {(selectedError?.docs || []).map((doc) => (
-                        <button
-                          key={doc}
-                          type="button"
-                          onClick={() => navigate("/QA")}
-                          className="flex w-full items-center justify-between gap-3 rounded-[14px] border border-[#8db0ee] bg-white/88 px-3 py-3 text-left text-[#4c6898] shadow-[0_6px_18px_rgba(34,73,137,0.06)] transition-all duration-200 hover:-translate-y-0.5 hover:border-[#6e98e7] hover:bg-white hover:shadow-[0_12px_24px_rgba(34,73,137,0.12)]"
-                        >
-                          <span className="min-w-0 flex-1">{doc}</span>
-                          <span className="shrink-0 rounded-[10px] border border-[#7ca1e8] bg-[#f5f9ff] px-2 py-1 text-xs font-bold text-[#2d5ab2]">
-                            PDF
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => navigate("/QA")}
-                  className="text-left text-[18px] font-medium text-[#295292] transition hover:text-[#1d478d] hover:underline"
-                >
-                  ! Tham khảo thêm tri thức liên.
-                </button>
               </div>
             )}
           </section>
         </main>
       </div>
 
-      {openAddModal ? (
+      {/* Modal Thêm lỗi mới */}
+      {openAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/35 p-4 backdrop-blur-sm">
           <div className="w-full max-w-2xl rounded-[24px] border border-[#9bb8ee] bg-white p-5 shadow-[0_24px_60px_rgba(20,40,90,0.24)]">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-xs font-bold uppercase tracking-[0.18em] text-[#6d8fc2]">
-                  Thư viện kỹ thuật
+                  Thư viện kỹ thuật DMA
                 </div>
                 <h3 className="mt-1 text-[22px] font-bold text-[#183f82]">
-                  Thêm lỗi mới cho {selectedGroup}
+                  Thêm lỗi mới cho {selectedDma?.thiet_bi} (DMA{" "}
+                  {selectedDma?.ten_dma})
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setOpenAddModal(false)}
-                className="rounded-[12px] border border-[#9bb8ee] px-3 py-2 text-sm font-semibold text-[#244a8a] hover:bg-[#f6f9ff]"
+                className="rounded-[12px] border border-[#9bb8ee] p-2 text-sm font-semibold text-[#244a8a] hover:bg-[#f6f9ff]"
               >
-                Đóng
+                <X size={18} />
               </button>
             </div>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <Input
-                label="Tên lỗi"
+                label="Tên lỗi *"
                 value={newError.title}
                 onChange={(value) =>
                   setNewError((prev) => ({ ...prev, title: value }))
@@ -625,21 +669,12 @@ export default function Library() {
                 }
               />
               <Input
-                label="Tài liệu 1"
+                label="Tài liệu tham khảo 1"
                 value={newError.doc1}
                 onChange={(value) =>
                   setNewError((prev) => ({ ...prev, doc1: value }))
                 }
               />
-              <div className="sm:col-span-2">
-                <Input
-                  label="Tài liệu 2"
-                  value={newError.doc2}
-                  onChange={(value) =>
-                    setNewError((prev) => ({ ...prev, doc2: value }))
-                  }
-                />
-              </div>
             </div>
 
             <div className="mt-5 flex justify-end gap-3">
@@ -652,15 +687,15 @@ export default function Library() {
               </button>
               <button
                 type="button"
-                onClick={() => setOpenAddModal(false)}
-                className="rounded-[12px] bg-gradient-to-r from-[#2f69d9] to-[#5f93f0] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(47,105,217,0.25)]"
+                onClick={handleSaveNewError}
+                className="rounded-[12px] bg-gradient-to-r from-[#2f69d9] to-[#5f93f0] px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(47,105,217,0.25)] hover:opacity-95"
               >
                 Lưu lỗi
               </button>
             </div>
           </div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
