@@ -1,0 +1,804 @@
+{
+  "success": true,
+  "total_categories": 9,
+  "data": [
+    {
+      "id_pq": 3,
+      "loai_thiet_bi": "Van điều áp",
+      "devices": [
+        {
+          "ten_thiet_bi": "Van Dorot",
+          "errors": [
+            {
+              "id": 3,
+              "loi_so": 1,
+              "tinh_trang": "Không hoạt động đúng khi thay Pilot khác",
+              "nguyen_nhan": "Sử dụng Pilot đồng bộ với van; riêng van 1104 (S300) có thể sử dụng Pilot khác tương thích",
+              "huong_khac_phuc": "Van Dorot 1128 (S100) chỉ tương thích với Pilot đồng bộ của hãng"
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Van GF/ NeoFlow",
+          "errors": [
+            {
+              "id": 1,
+              "loi_so": 1,
+              "tinh_trang": "Dao động lớn",
+              "nguyen_nhan": "Tăng van kim lên mức 5",
+              "huong_khac_phuc": "Kiểm tra van kim, đề xuất: Nên test Pilot Cista"
+            },
+            {
+              "id": 2,
+              "loi_so": 2,
+              "tinh_trang": "Không đóng được",
+              "nguyen_nhan": "Tổn thất áp lực lớn (thực tế ~6 m, tài liệu ~2 m)",
+              "huong_khac_phuc": "Kiểm tra điều kiện vận hành hệ thống"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id_pq": 4,
+      "loai_thiet_bi": "DATA LOGGER",
+      "devices": [
+        {
+          "ten_thiet_bi": "Cello 4S - WinGPS",
+          "errors": [
+            {
+              "id": 32,
+              "loi_so": 1,
+              "tinh_trang": "Sản lượng: Thuận, Nghịch",
+              "nguyen_nhan": "API hiện chỉ hỗ trợ lấy sản lượng thuận; dữ liệu sản lượng nghịch chưa được hỗ trợ.",
+              "huong_khac_phuc": "Đã lấy sản lượng thuận"
+            },
+            {
+              "id": 33,
+              "loi_so": 2,
+              "tinh_trang": "Sản lượng hiển thị cao hoặc thấp gấp 10 lần cần kiểm tra lại hệ số quy đổi",
+              "nguyen_nhan": "Giá trị 1 xung tương ứng bao nhiêu lít nước",
+              "huong_khac_phuc": "Sự cố này thường xảy ra đối với hệ thống sử dụng tín hiệu xung giữa đồng hồ và Logger."
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Logger Mini G+ (EMS)",
+          "errors": [
+            {
+              "id": 48,
+              "loi_so": 1,
+              "tinh_trang": "Không sử dụng cho đồng hồ khác được <-> Thiết kế riêng cho đh Imeter",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 49,
+              "loi_so": 2,
+              "tinh_trang": "Sản lượng: Thuận;",
+              "nguyen_nhan": "API chỉ thuận",
+              "huong_khac_phuc": "Lấy sản lượng thuận"
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Logger PHT - Đối ID",
+          "errors": [
+            {
+              "id": 34,
+              "loi_so": 1,
+              "tinh_trang": "Dữ liệu truyền thường xuyên về Zero hoặc nhiều mảnh",
+              "nguyen_nhan": "Chuyển đổi nhà mạng giữa MobiFone và Viettel",
+              "huong_khac_phuc": "Chất lượng sóng di động chập chờn, không ổn định"
+            },
+            {
+              "id": 35,
+              "loi_so": 2,
+              "tinh_trang": "Kết nối đh mã van không có flow (Loại 01 áp lực)",
+              "nguyen_nhan": "Cần đổi Velox -> modbus setting -> 19200Bd 8-bit no parity",
+              "huong_khac_phuc": "Chuyển đh sang Modbus ( nếu cần Reset)"
+            },
+            {
+              "id": 36,
+              "loi_so": 3,
+              "tinh_trang": "Sản lượng: Net, thuận, nghịch",
+              "nguyen_nhan": "API đủ",
+              "huong_khac_phuc": "Lấy sản lượng thuận"
+            },
+            {
+              "id": 37,
+              "loi_so": 4,
+              "tinh_trang": "Logger vận hành chế độ theo áp suất tự động thì dựa vào Inlet # Pegasus",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 38,
+              "loi_so": 5,
+              "tinh_trang": "Giá trị True/ False của đh điện từ đ đ đ + hệ số K ,vận tốc , ....",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 39,
+              "loi_so": 6,
+              "tinh_trang": "Logger PHT Modbus sẽ cài đặt ABB 19200Bd 8-bit no parity",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 40,
+              "loi_so": 7,
+              "tinh_trang": "Bỏ Solenoid thì V1 giữa Pilot I & II, V2 - V4 là On/Off",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 41,
+              "loi_so": 8,
+              "tinh_trang": "Muốn đổi ID phải dùng USB cab ( Khuyết)",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 42,
+              "loi_so": 9,
+              "tinh_trang": "Logger vừa dùng được 4G vừa Nb-IoT",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Multilog - IDT",
+          "errors": [
+            {
+              "id": 46,
+              "loi_so": 1,
+              "tinh_trang": "Logger Xung",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 47,
+              "loi_so": 2,
+              "tinh_trang": "Nếu Logger gần tại điểm thiếu năng, thì OFF nguồn NLMT rồi chuyển sang dùng nguồn pin trong",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Pegasus - IDT",
+          "errors": [
+            {
+              "id": 29,
+              "loi_so": 1,
+              "tinh_trang": "Pegasus trôi áp",
+              "nguyen_nhan": "Thay pin và thực hiện CALL lại để kiểm tra sau khi thay",
+              "huong_khac_phuc": "Pin nguồn ngoài hết dẫn đến hết pin trong (02 pin)"
+            },
+            {
+              "id": 30,
+              "loi_so": 2,
+              "tinh_trang": "Pegasus trôi áp",
+              "nguyen_nhan": "Điều chỉnh lại giá trị cài đặt và thực hiện xúc xả",
+              "huong_khac_phuc": "Van tiết lưu hoặc béc phun bị nghẹt"
+            },
+            {
+              "id": 31,
+              "loi_so": 3,
+              "tinh_trang": "Pegasus trôi áp",
+              "nguyen_nhan": "Kiểm tra nguồn cấp",
+              "huong_khac_phuc": "Điện áp nguồn nhỏ hơn 7,2 V"
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "PWC Log 1 áp lực",
+          "errors": [
+            {
+              "id": 43,
+              "loi_so": 1,
+              "tinh_trang": "Khuyết điểm hiện tại Thời gian ghi và thời gian truyền đang là MỘT",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 44,
+              "loi_so": 2,
+              "tinh_trang": "Muốn đổi thời gian, ID,... phải dùng USB cab ( Khuyết)",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 45,
+              "loi_so": 3,
+              "tinh_trang": "Nguồn cấp Logger là 7.6V",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Sofrel - Sofrel Softools",
+          "errors": [
+            {
+              "id": 4,
+              "loi_so": 1,
+              "tinh_trang": "Lưu lượng và áp lực về zero",
+              "nguyen_nhan": "Pin logger sắp hết làm giá trị lưu lượng đo không ổn định, độ chính xác có xu hướng giảm",
+              "huong_khac_phuc": "Thay pin nguồn"
+            },
+            {
+              "id": 5,
+              "loi_so": 2,
+              "tinh_trang": "Sofrel không truyền dữ liệu",
+              "nguyen_nhan": "Kiểm tra Server mục Sofrel",
+              "huong_khac_phuc": "Lỗi kết nối truyền thông hoặc lỗi Server"
+            },
+            {
+              "id": 6,
+              "loi_so": 3,
+              "tinh_trang": "Sofrel không sử dụng được sóng 4G, chỉ sử dụng NB-IoT",
+              "nguyen_nhan": "Giới hạn do thiết kế phần cứng nhằm giảm tiêu thụ năng lượng",
+              "huong_khac_phuc": "Nhược điểm của thiết bị"
+            },
+            {
+              "id": 7,
+              "loi_so": 4,
+              "tinh_trang": "Sofrel DL4W-LP (1 áp lực) sử dụng Modbus; Sofrel DL4W-S (2 áp lực) sử dụng Modbus",
+              "nguyen_nhan": "Mỗi dòng thiết bị sử dụng giao thức truyền thông khác nhau | Tín hiệu Modbus phải đấu",
+              "huong_khac_phuc": "Riêng biệt"
+            },
+            {
+              "id": 8,
+              "loi_so": 5,
+              "tinh_trang": "Lưu lượng dao động từ 0,0 – 3,6",
+              "nguyen_nhan": "Trùng ID thiết bị",
+              "huong_khac_phuc": "Thay đổi sang ID khác"
+            },
+            {
+              "id": 9,
+              "loi_so": 6,
+              "tinh_trang": "Giá trị lưu lượng thường thấp",
+              "nguyen_nhan": "Độ rộng xung cài đặt chưa phù hợp",
+              "huong_khac_phuc": "Cài đặt độ rộng Pulse trong khoảng 8 – 20 ms"
+            },
+            {
+              "id": 10,
+              "loi_so": 7,
+              "tinh_trang": "Sản lượng Net, thuận, nghịch hiển thị không chính xác",
+              "nguyen_nhan": "Chưa cấu hình đúng vùng dữ liệu/API",
+              "huong_khac_phuc": "Lấy sản lượng thuận (đã chuyển đổi toàn bộ sang 2 vùng dữ liệu)"
+            },
+            {
+              "id": 11,
+              "loi_so": 8,
+              "tinh_trang": "Offset áp lực PMAC Outlet/Inlet",
+              "nguyen_nhan": "Có thể hiệu chỉnh từ xa",
+              "huong_khac_phuc": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id_pq": 5,
+      "loai_thiet_bi": "Đồng hồ điện tử",
+      "devices": [
+        {
+          "ten_thiet_bi": "ABB Aquamaster4 - Velox",
+          "errors": [
+            {
+              "id": 51,
+              "loi_so": 1,
+              "tinh_trang": "Lưu lượng & áp lực đều về zero",
+              "nguyen_nhan": "Hết pin ( mặt hiển thị sẽ cảnh báo pin)",
+              "huong_khac_phuc": "Thay pin"
+            },
+            {
+              "id": 52,
+              "loi_so": 2,
+              "tinh_trang": "Lưu lượng không đúng",
+              "nguyen_nhan": "Xung và độ rộng",
+              "huong_khac_phuc": "Quy đổi lại cho tương thích 8-20"
+            },
+            {
+              "id": 53,
+              "loi_so": 3,
+              "tinh_trang": "Giảm sản lượng",
+              "nguyen_nhan": "Bể trong",
+              "huong_khac_phuc": "Sửa bể"
+            },
+            {
+              "id": 54,
+              "loi_so": 4,
+              "tinh_trang": "Giảm sản lượng",
+              "nguyen_nhan": "Chuột cắn đứt dây",
+              "huong_khac_phuc": "Nối lại dây cáp tín hiệu"
+            },
+            {
+              "id": 55,
+              "loi_so": 5,
+              "tinh_trang": "Số sản lượng mặt hiển thị 6 số",
+              "nguyen_nhan": "Đổi số thập phân 4 <-> 2",
+              "huong_khac_phuc": "Quy định chỉ 02 số thập phân"
+            },
+            {
+              "id": 56,
+              "loi_so": 6,
+              "tinh_trang": "ĐH 30m cài hiển thị...",
+              "nguyen_nhan": "Lấy dữ liệu từ Board mạch lên MHT",
+              "huong_khac_phuc": "Giá trị NET, Thuận, Nghịch sẽ giữ nguyên"
+            },
+            {
+              "id": 57,
+              "loi_so": 7,
+              "tinh_trang": "Đồng nước mà lưu lượng vẫn còn, tiến hành Cut off 6.32, 6.33 mà vẫn ko được thì đh hư hỏng",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 58,
+              "loi_so": 8,
+              "tinh_trang": "Dây tín hiệu đồng hồ dài 20m ( SC4) 30m ( SC6 )",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 59,
+              "loi_so": 9,
+              "tinh_trang": "Lock số 2 là Khoá ( Read Only) , số 01 là ON",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "AichiTokei",
+          "errors": [
+            {
+              "id": 69,
+              "loi_so": 1,
+              "tinh_trang": "Reset chỉ số về Zero thì Bavitech hỗ trợ ( dùng phần mềm riêng)",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Axioma",
+          "errors": [
+            {
+              "id": 66,
+              "loi_so": 1,
+              "tinh_trang": "Esim trong đồng hồ được tính thanh toán trong vòng 3 năm của nhà mạng Viettel",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 67,
+              "loi_so": 2,
+              "tinh_trang": "Để biết được DN thì nhìn vào cỡ ren DN15 là G3/4, DN25 là G1 1/2, ... , hoặc Q3 40m3/h là DN 50",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Krohne",
+          "errors": [
+            {
+              "id": 68,
+              "loi_so": 1,
+              "tinh_trang": "Q3 6.3m3/h là DN 25",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Octave - Smart Merter",
+          "errors": [
+            {
+              "id": 60,
+              "loi_so": 1,
+              "tinh_trang": "Chuyển từ Xung -> Modbus",
+              "nguyen_nhan": "Đổi dây cáp",
+              "huong_khac_phuc": "Loại 2 sợi"
+            },
+            {
+              "id": 61,
+              "loi_so": 2,
+              "tinh_trang": "Cho hiển thị || tắt lưu lượng nghịch",
+              "nguyen_nhan": "Đổi trên phần mềm",
+              "huong_khac_phuc": "Chuyển sang alternating ( FWD/ BCK) Pass: Arad1941"
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Siemens- Flowtool",
+          "errors": [
+            {
+              "id": 62,
+              "loi_so": 1,
+              "tinh_trang": "Reset chỉ số về Zero thì NTP hỗ trợ ( dùng phần mềm riêng)",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 63,
+              "loi_so": 1,
+              "tinh_trang": "Mặt hiển thị báo batt",
+              "nguyen_nhan": "Đồng hồ hết pin",
+              "huong_khac_phuc": "Thay pin"
+            },
+            {
+              "id": 64,
+              "loi_so": 2,
+              "tinh_trang": "Khi thay pin vướng dây chì niêm",
+              "nguyen_nhan": "- Đối với ĐHCL liên hệ đơn vị kiểm định để bấm lại chì niêm phong khi thay đồng thời yêu cầu thay pin ngay khi kiểm định hoặc có thể sử dụng pin ngoài ( vẫn phải tháo chì lần đầu)",
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Slogger S1 WAIN",
+          "errors": [
+            {
+              "id": 50,
+              "loi_so": 1,
+              "tinh_trang": "Logger Xung 2 áp lực đấu song song với Sofrel cho ra kết quả tương đương",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Sonata - Arad",
+          "errors": [
+            {
+              "id": 65,
+              "loi_so": 1,
+              "tinh_trang": "Muốn xem / cài đặt các thông số của ĐH thì dùng phần mềm...",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id_pq": 6,
+      "loai_thiet_bi": "PWNOC",
+      "devices": [
+        {
+          "ten_thiet_bi": "Chung",
+          "errors": [
+            {
+              "id": 70,
+              "loi_so": 1,
+              "tinh_trang": "Khi đồng hồ bị nhiễm từ thì chuyển sang dùng đồng hồ siêu âm như Octave....",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 71,
+              "loi_so": 1,
+              "tinh_trang": null,
+              "nguyen_nhan": "Dữ liệu của Sofrel, Technolog chưa đổ về NOC",
+              "huong_khac_phuc": "Kiểm tra Server và liên hệ Intelli"
+            },
+            {
+              "id": 72,
+              "loi_so": 2,
+              "tinh_trang": null,
+              "nguyen_nhan": "Dữ liệu của Sofrel, Technolog chưa đổ về Watercore",
+              "huong_khac_phuc": "Liên hệ Bavitech kích hoạt lại Watercore"
+            },
+            {
+              "id": 73,
+              "loi_so": 3,
+              "tinh_trang": null,
+              "nguyen_nhan": "Đổi từ Logger khác sang Logger PHT (Datalogger DHCL)",
+              "huong_khac_phuc": "Để ý dùng link : https://gis.phuwaco.com.vn/scada/admin/station"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id_pq": 7,
+      "loai_thiet_bi": "Server",
+      "devices": [
+        {
+          "ten_thiet_bi": "Data",
+          "errors": [
+            {
+              "id": 88,
+              "loi_so": 1,
+              "tinh_trang": "Dữ liệu truyền về zero",
+              "nguyen_nhan": "Không cài phần mềm Bavitech, Sofre, Fdtech,... Trên ổ D mà phải là ổ C do hãng quy định",
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 89,
+              "loi_so": 3,
+              "tinh_trang": "Trường hợp Server lỗi thì Data cũng sẽ tiếp tục giám sát ( ko quan tâm đến Lịch sử)",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Logger PHT",
+          "errors": [
+            {
+              "id": 84,
+              "loi_so": 1,
+              "tinh_trang": "Data không về || về zero",
+              "nguyen_nhan": "Phần mềm bị Docker Desktop stop",
+              "huong_khac_phuc": "Mở lại phần mềm Docker Desktop - Click ( đã bật tự mở khi Restart)"
+            },
+            {
+              "id": 85,
+              "loi_so": 2,
+              "tinh_trang": "Không truy cập được App",
+              "nguyen_nhan": "Do xoá phần mềm SQL 8",
+              "huong_khac_phuc": "Liên hệ FDtech cài lại"
+            },
+            {
+              "id": 86,
+              "loi_so": 3,
+              "tinh_trang": "Web/ App Logger PHT không vào được khi Server bị OFF",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 87,
+              "loi_so": 4,
+              "tinh_trang": "Phần mềm Docker Desktop nên là bộ full (hiện đang cài tương Version) để khi cài mới không còn phải code thủ công - hướng phát triển",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Pegasus",
+          "errors": [
+            {
+              "id": 83,
+              "loi_so": 1,
+              "tinh_trang": "Bị mất điều khiển || Áp lực bị trôi",
+              "nguyen_nhan": "Xem phần cài đặt mở full hoàn toàn",
+              "huong_khac_phuc": "Kiểm tra cấu hình ( sau khi thay pin xem phần đk có bị off ko)"
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "RegulloCello 4S",
+          "errors": [
+            {
+              "id": 77,
+              "loi_so": 1,
+              "tinh_trang": "Phần mềm Pmac ( Không cần mở lại sau khi Server Restart) User: system / Pass: system",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 78,
+              "loi_so": 2,
+              "tinh_trang": "Vào W+R gõ services.msc + TGSN: Stop/ Start",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Sofrel",
+          "errors": [
+            {
+              "id": 80,
+              "loi_so": 1,
+              "tinh_trang": null,
+              "nguyen_nhan": "Data không về",
+              "huong_khac_phuc": "Xem data ở C có bị full | Phần mềm Waternet Be- luôn mở User: aptechs Pass: aptechs.net - Script copy bat luôn chạy"
+            },
+            {
+              "id": 81,
+              "loi_so": 2,
+              "tinh_trang": null,
+              "nguyen_nhan": "Data về zero",
+              "huong_khac_phuc": "Phần mềm bị stop | Phần mềm Waternet Be- luôn mở User: aptechs Pass: aptechs.net - Script copy bat luôn chạy"
+            },
+            {
+              "id": 82,
+              "loi_so": 3,
+              "tinh_trang": "Dữ liệu truyền về bất thường - khả năng trùng ID",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Web Watercore",
+          "errors": [
+            {
+              "id": 79,
+              "loi_so": 3,
+              "tinh_trang": "Web Watercore không truy cập được khi Server bị OFF",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id_pq": 8,
+      "loai_thiet_bi": "Tủ chất lượng nước",
+      "devices": [
+        {
+          "ten_thiet_bi": "EUWater",
+          "errors": [
+            {
+              "id": 90,
+              "loi_so": 1,
+              "tinh_trang": "Dữ liệu không truyền về",
+              "nguyen_nhan": "Pin Lithium không đủ",
+              "huong_khac_phuc": "Đã thêm 1 tấm NLMT"
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Van On/Off",
+          "errors": [
+            {
+              "id": 91,
+              "loi_so": 1,
+              "tinh_trang": "Lượng nước vận động mở DN 150 là 0.9 lít Khi nguồn nghịch mạnh thì van đóng mở vẫn chạy ngược và mở van",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id_pq": 11,
+      "loai_thiet_bi": "Pilot",
+      "devices": [
+        {
+          "ten_thiet_bi": "Bermad",
+          "errors": [
+            {
+              "id": 93,
+              "loi_so": 1,
+              "tinh_trang": "Inlet : 4 Outlet : 2",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Chung",
+          "errors": [
+            {
+              "id": 92,
+              "loi_so": null,
+              "tinh_trang": "Béc + Van kim",
+              "nguyen_nhan": "Béc 1.0 + 1.5 || khép van bi",
+              "huong_khac_phuc": "Dựa trên kinh nghiệm"
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Dorot",
+          "errors": [
+            {
+              "id": 94,
+              "loi_so": 1,
+              "tinh_trang": "Pilot 3 cổng cần thì chỉ chạy 01 ít nước khi Inlet giảm sâu ( Công 2 Inlet, 1 Outlet, 3 Bonet, 4 xả)",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Van 3.6V",
+          "errors": [
+            {
+              "id": 95,
+              "loi_so": 1,
+              "tinh_trang": "Pilot 3 cổng ko cần dùng kèm Béc phù hợp cho van VAG",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "X",
+          "errors": [
+            {
+              "id": 96,
+              "loi_so": 1,
+              "tinh_trang": "( Cổng C là Bonet, O là Inlet, F là Outlet, Z là xả)",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 97,
+              "loi_so": 2,
+              "tinh_trang": "Pilot 3 cổng Model #X không cần dùng kèm Béc, phù hợp cho van Bermad",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id_pq": 12,
+      "loai_thiet_bi": "Pin",
+      "devices": [
+        {
+          "ten_thiet_bi": "Lithium 12V",
+          "errors": [
+            {
+              "id": 98,
+              "loi_so": 1,
+              "tinh_trang": "13.6 là 100% pin, 12V là gần hết pin",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        },
+        {
+          "ten_thiet_bi": "Lithium 3.6V",
+          "errors": [
+            {
+              "id": 99,
+              "loi_so": 1,
+              "tinh_trang": "3.6V là 100% pin",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id_pq": 13,
+      "loai_thiet_bi": "Sim",
+      "devices": [
+        {
+          "ten_thiet_bi": "Gồm Esim",
+          "errors": [
+            {
+              "id": 100,
+              "loi_so": 1,
+              "tinh_trang": "eSIM (embedded SIM) là SIM điện tử gắn sẵn trong thiết bị, không cần tháo lắp như SIM thường.",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 101,
+              "loi_so": 2,
+              "tinh_trang": "Viettel mã ....04/ Mobil mã .....01",
+              "nguyen_nhan": null,
+              "huong_khac_phuc": null
+            },
+            {
+              "id": 102,
+              "loi_so": 3,
+              "tinh_trang": "2G ngưng",
+              "nguyen_nhan": "Ngày 10/9/2025",
+              "huong_khac_phuc": "Phải đổi thiết bị b-IoT/ 4G"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -8,6 +8,7 @@ import AI from "./function/AI";
 import Login from "./Login/Login";
 
 import LibraryDetail from "./function/Library/LibraryDetail";
+import DocumentManager from "./function/Documents/DocumentManager";
 
 export default function CellLink() {
   const getAuth = () => {
@@ -40,6 +41,7 @@ export default function CellLink() {
             { path: "Overview", element: <Overview /> },
             { path: "Library", element: <Library /> },
             { path: "Library/:deviceId", element: <LibraryDetail /> },
+            { path: "Documents", element: <DocumentManager /> },
             { path: "QA", element: <InternalQA /> },
             { path: "AI", element: <AI /> },
           ],

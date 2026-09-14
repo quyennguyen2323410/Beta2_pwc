@@ -1,0 +1,696 @@
+{
+  "success": true,
+  "total": 69,
+  "data": [
+    {
+      "stt": 1,
+      "id_pq": 1,
+      "ten_dma": "1001",
+      "vi_tri_dma": "GL: Lý Thái Tổ- Hồ Thị Kỷ, P. Vườn Lài",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.676346,
+      "vi_do": 10.766989,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 2,
+      "id_pq": 1,
+      "ten_dma": "1005",
+      "vi_tri_dma": "Số 484 Ngô Gia Tự, P. Diên Hồng",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.669165,
+      "vi_do": 10.76033,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 3,
+      "id_pq": 1,
+      "ten_dma": "1007",
+      "vi_tri_dma": "GL: 3T2- Nguyễn Lâm, P. Diên Hồng",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.66307,
+      "vi_do": 10.765335,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 4,
+      "id_pq": 1,
+      "ten_dma": "1014",
+      "vi_tri_dma": "Số 4 Ngô Gia Tự, P. Vườn Lài",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.674211,
+      "vi_do": 10.767425,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 5,
+      "id_pq": 1,
+      "ten_dma": "1015",
+      "vi_tri_dma": "GL: 3T2- Lê Hồng Phong, P. Vườn Lài (Số Lẻ)",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.673089,
+      "vi_do": 10.770771,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 6,
+      "id_pq": 1,
+      "ten_dma": "1016",
+      "vi_tri_dma": "GL: 3T2- Lê Hồng Phong, P. Vườn Lài (Số Chẵn)",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.673276,
+      "vi_do": 10.770843,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 7,
+      "id_pq": 1,
+      "ten_dma": "1019",
+      "vi_tri_dma": "GL: Cao Thắng ND- 3T2, P. Hoà Hưng",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.67754,
+      "vi_do": 10.773921,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 8,
+      "id_pq": 1,
+      "ten_dma": "1022",
+      "vi_tri_dma": "Số 15 Tô Hiến Thành, P. Hoà Hưng",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.671804,
+      "vi_do": 10.78258167,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 9,
+      "id_pq": 1,
+      "ten_dma": "1002",
+      "vi_tri_dma": "Lý Thái Tổ- Lê Hồng Phong, P. Vườn Lài (Trạm xăng dầu)",
+      "thiet_bi": "Cello 4S",
+      "kinh_do": 106.674519,
+      "vi_do": 10.767404,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 10,
+      "id_pq": 1,
+      "ten_dma": "1017",
+      "vi_tri_dma": "GL: Điện Biên Phủ-Trần Minh Quyền, P. Vườn Lài",
+      "thiet_bi": "Cello 4S",
+      "kinh_do": 106.675865,
+      "vi_do": 10.769753,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 11,
+      "id_pq": 1,
+      "ten_dma": "1021",
+      "vi_tri_dma": "Số 781 Lê Hồng Phong, P. Hoà Hưng",
+      "thiet_bi": "Cello 4S",
+      "kinh_do": 106.672074,
+      "vi_do": 10.772575,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 12,
+      "id_pq": 1,
+      "ten_dma": "1024",
+      "vi_tri_dma": "GL: Sư Vạn Hạnh- 3T2, P. Hoà Hưng",
+      "thiet_bi": "Cello 4S",
+      "kinh_do": 106.670714,
+      "vi_do": 10.769889,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 13,
+      "id_pq": 1,
+      "ten_dma": "1032",
+      "vi_tri_dma": "GL: Tô Hiến Thành-Nguyễn Giản Thanh, P. Hoà Hưng",
+      "thiet_bi": "Cello 4S",
+      "kinh_do": 106.667725,
+      "vi_do": 10.779954,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 14,
+      "id_pq": 1,
+      "ten_dma": "1034",
+      "vi_tri_dma": "GL: Trường Sơn – CMT8, P. Hoà Hưng",
+      "thiet_bi": "Cello 4S",
+      "kinh_do": 106.666512,
+      "vi_do": 10.78579,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 15,
+      "id_pq": 1,
+      "ten_dma": "1003",
+      "vi_tri_dma": "Số 1 Ngô Gia Tự, P. Vườn Lài",
+      "thiet_bi": "Multilog",
+      "kinh_do": 106.674442,
+      "vi_do": 10.767337,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 16,
+      "id_pq": 1,
+      "ten_dma": "1006",
+      "vi_tri_dma": "GL: Đào Duy Từ - Nguyễn Tri Phương, P. Diên Hồng",
+      "thiet_bi": "Multilog",
+      "kinh_do": 106.668605,
+      "vi_do": 10.76076,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 17,
+      "id_pq": 1,
+      "ten_dma": "1023",
+      "vi_tri_dma": "Số 830 Sư Vạn Hạn, P. Hoà Hưng",
+      "thiet_bi": "Multilog",
+      "kinh_do": 106.664485,
+      "vi_do": 10.777245,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 18,
+      "id_pq": 1,
+      "ten_dma": "1018",
+      "vi_tri_dma": "GL: Điện Biên Phủ-Cao Thắng, P. Vườn Lài",
+      "thiet_bi": "Pegasus",
+      "kinh_do": 106.678947,
+      "vi_do": 10.772862,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 19,
+      "id_pq": 1,
+      "ten_dma": "1025",
+      "vi_tri_dma": "GL Tô Hiến Thành- Thành Thái, P. Hoà Hưng",
+      "thiet_bi": "Pegasus",
+      "kinh_do": 106.663671,
+      "vi_do": 10.776431,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 20,
+      "id_pq": 1,
+      "ten_dma": "1028",
+      "vi_tri_dma": "Số 252 Lý Thường Kiệt, P. Diên Hồng",
+      "thiet_bi": "Pegasus",
+      "kinh_do": 106.659273,
+      "vi_do": 10.766889,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 21,
+      "id_pq": 1,
+      "ten_dma": "1031",
+      "vi_tri_dma": "GL: Tô Hiến Thành- Đồng Nai, P. Hoà Hưng",
+      "thiet_bi": "Pegasus",
+      "kinh_do": 106.664485,
+      "vi_do": 10.777245,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 22,
+      "id_pq": 1,
+      "ten_dma": "1033",
+      "vi_tri_dma": "Số 10 Hồ Bá Kiện, P. Hoà Hưng",
+      "thiet_bi": "Pegasus",
+      "kinh_do": 106.669327,
+      "vi_do": 10.78099,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 23,
+      "id_pq": 1,
+      "ten_dma": "1004",
+      "vi_tri_dma": "177 Ngô Gia Tự, P. Vườn Lài",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.672058,
+      "vi_do": 10.764262,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 24,
+      "id_pq": 1,
+      "ten_dma": "1008",
+      "vi_tri_dma": "Số 779 Ba Tháng Hai, P. Diên Hồng",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.660867,
+      "vi_do": 10.764251,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 25,
+      "id_pq": 1,
+      "ten_dma": "1009",
+      "vi_tri_dma": "Số 725 Đường 3T2, P. Diên Hồng",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.662147,
+      "vi_do": 10.764816,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 26,
+      "id_pq": 1,
+      "ten_dma": "1010",
+      "vi_tri_dma": "GL: 3T2- Nguyễn Tri Phương, P. Diên Hồng",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.66706,
+      "vi_do": 10.767405,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 27,
+      "id_pq": 1,
+      "ten_dma": "1011",
+      "vi_tri_dma": "GL: 3T2- Nguyễn Tri Phương, P. Vườn Lài",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.667255,
+      "vi_do": 10.767551,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 28,
+      "id_pq": 1,
+      "ten_dma": "1012",
+      "vi_tri_dma": "GL- Nguyễn Tri Phương- Bà Hạt, P. Vườn Lài",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.66773,
+      "vi_do": 10.765632,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 29,
+      "id_pq": 1,
+      "ten_dma": "1013",
+      "vi_tri_dma": "GL: Sư Vạn Hạnh- Ngô Gia Tự, P. Vườn Lài",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.672303,
+      "vi_do": 10.765008,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 30,
+      "id_pq": 1,
+      "ten_dma": "1020",
+      "vi_tri_dma": "GL: CMT8- 3T2, P. Hoà Hưng",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.681105,
+      "vi_do": 10.777981,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 31,
+      "id_pq": 1,
+      "ten_dma": "1026",
+      "vi_tri_dma": "GL: Thành Thái - 3T2, P. Hoà Hưng",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.667507,
+      "vi_do": 10.768054,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 32,
+      "id_pq": 1,
+      "ten_dma": "1027",
+      "vi_tri_dma": "GL: 3T2- Nguyễn Ngọc Lộc, P. Diên Hồng",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.663895,
+      "vi_do": 10.766246,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 33,
+      "id_pq": 1,
+      "ten_dma": "1029",
+      "vi_tri_dma": "GL: Tô Hiến Thành- Lý Thường Kiệt, P. Diên Hồng",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.658266,
+      "vi_do": 10.770477,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 34,
+      "id_pq": 1,
+      "ten_dma": "1030",
+      "vi_tri_dma": "Số 270 Lý Thường Kiệt, P. Diên Hồng",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.65722,
+      "vi_do": 10.773961,
+      "loai_thiet_bi": "DMA VÙNG I"
+    },
+    {
+      "stt": 35,
+      "id_pq": 2,
+      "ten_dma": "1121",
+      "vi_tri_dma": "GL Nguyễn Thị Nhỏ – Lữ Gia, P. Phú Thọ",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.652887,
+      "vi_do": 10.772109,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 36,
+      "id_pq": 2,
+      "ten_dma": "1122",
+      "vi_tri_dma": "GL đường số 2 – Lý Thường Kiệt, P. Phú Thọ",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.657412,
+      "vi_do": 10.772385,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 37,
+      "id_pq": 2,
+      "ten_dma": "1102",
+      "vi_tri_dma": "GL Hồng Bàng – Phú Thọ, P. Minh Phụng",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.641958,
+      "vi_do": 10.754493,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 38,
+      "id_pq": 2,
+      "ten_dma": "1104",
+      "vi_tri_dma": "GL Thái Phiên – Ba Tháng Hai, P. Minh Phụng",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.645027,
+      "vi_do": 10.755619,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 39,
+      "id_pq": 2,
+      "ten_dma": "1105",
+      "vi_tri_dma": "GL Trần Quý – Tạ Uyên, P. Minh Phụng",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.653272,
+      "vi_do": 10.758457,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 40,
+      "id_pq": 2,
+      "ten_dma": "1106",
+      "vi_tri_dma": "GL Tạ Uyên – Trần Quý, P. Minh Phụng",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.653568,
+      "vi_do": 10.758712,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 41,
+      "id_pq": 2,
+      "ten_dma": "1107",
+      "vi_tri_dma": "GL Hòa Hảo – Lý Thường Kiệt, P. Minh Phụng",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.660911,
+      "vi_do": 10.760284,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 42,
+      "id_pq": 2,
+      "ten_dma": "1109",
+      "vi_tri_dma": "GL Hàn Hải Nguyên – Minh Phụng, P. Bình Thới",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.644139,
+      "vi_do": 10.758463,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 43,
+      "id_pq": 2,
+      "ten_dma": "1115",
+      "vi_tri_dma": "GL 173 Bình Thới – Lãnh Binh Thăng, P. Phú Thọ",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.646717,
+      "vi_do": 10.765458,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 44,
+      "id_pq": 2,
+      "ten_dma": "1116",
+      "vi_tri_dma": "Đường 100 Bình Thới, P. Hoà Bình",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.649733,
+      "vi_do": 10.76756,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 45,
+      "id_pq": 2,
+      "ten_dma": "1119",
+      "vi_tri_dma": "GL Âu Cơ – Lạc Long Quân, P. Hoà Bình",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.651752,
+      "vi_do": 10.769172,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 46,
+      "id_pq": 2,
+      "ten_dma": "1120",
+      "vi_tri_dma": "GL Lê Đại Hành – Nguyễn Thị Nhỏ, P. Phú Thọ",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.652789,
+      "vi_do": 10.768633,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 47,
+      "id_pq": 2,
+      "ten_dma": "1204",
+      "vi_tri_dma": "GL Âu Cơ – Trịnh Đình Trọng, P. Tân Phú",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.647553,
+      "vi_do": 10.775265,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 48,
+      "id_pq": 2,
+      "ten_dma": "1205",
+      "vi_tri_dma": "173 Khuông Việt, P. Tân Phú",
+      "thiet_bi": "Bộ mạch PHT",
+      "kinh_do": 106.638706,
+      "vi_do": 10.774743,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 49,
+      "id_pq": 2,
+      "ten_dma": "1118",
+      "vi_tri_dma": "GL Âu Cơ – Bình Thới, P. Hoà Bình",
+      "thiet_bi": "Bộ mạch PHT + Cello 4S",
+      "kinh_do": 106.647868,
+      "vi_do": 10.774447,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 50,
+      "id_pq": 2,
+      "ten_dma": "1114",
+      "vi_tri_dma": "GL Tôn Thất Hiệp – Lê Đại Hành, P. Phú Thọ",
+      "thiet_bi": "Cello 4S",
+      "kinh_do": 106.654312,
+      "vi_do": 10.765703,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 51,
+      "id_pq": 2,
+      "ten_dma": "1201",
+      "vi_tri_dma": "GL Khuông Việt – Huỳnh Văn Chính, P. Tân Phú",
+      "thiet_bi": "Cello 4S",
+      "kinh_do": 106.642299,
+      "vi_do": 10.780404,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 52,
+      "id_pq": 2,
+      "ten_dma": "1203",
+      "vi_tri_dma": "GL Khuông Việt – Tân Hòa, P. Tân Phú",
+      "thiet_bi": "Cello 4S",
+      "kinh_do": 106.639856,
+      "vi_do": 10.776926,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 53,
+      "id_pq": 2,
+      "ten_dma": "1128",
+      "vi_tri_dma": "GL Lò Siêu – Ba Tháng Hai, P. Minh Phụng",
+      "thiet_bi": "Multilog",
+      "kinh_do": 106.648981,
+      "vi_do": 10.757736,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 54,
+      "id_pq": 2,
+      "ten_dma": "1202",
+      "vi_tri_dma": "GL Khuông Việt – Âu Cơ, P. Tân Phú",
+      "thiet_bi": "Pegasus",
+      "kinh_do": 106.643232,
+      "vi_do": 10.781235,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 55,
+      "id_pq": 2,
+      "ten_dma": "1127",
+      "vi_tri_dma": "Số 94/12 Hoà Bình, P. Hoà Bình",
+      "thiet_bi": "Pegasus",
+      "kinh_do": 106.637863,
+      "vi_do": 10.769453,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 56,
+      "id_pq": 2,
+      "ten_dma": "1206",
+      "vi_tri_dma": "GL Hòa Bình – Khuông Việt, P. Tân Phú",
+      "thiet_bi": "Pegasus",
+      "kinh_do": 106.637349,
+      "vi_do": 10.769153,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 57,
+      "id_pq": 2,
+      "ten_dma": "1101",
+      "vi_tri_dma": "GL Tân Hòa – Lạc Long Quân, P. Minh Phụng",
+      "thiet_bi": "Regulo",
+      "kinh_do": 106.635462,
+      "vi_do": 10.757842,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 58,
+      "id_pq": 2,
+      "ten_dma": "1103",
+      "vi_tri_dma": "GL Hàn Hải Nguyên – Ba Tháng Hai, P. Minh Phụng",
+      "thiet_bi": "Regulo",
+      "kinh_do": 106.648704,
+      "vi_do": 10.757999,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 59,
+      "id_pq": 2,
+      "ten_dma": "1108",
+      "vi_tri_dma": "GL Lạc Long Quân – Bình Thới, P. Bình Thới",
+      "thiet_bi": "Regulo",
+      "kinh_do": 106.642224,
+      "vi_do": 10.762721,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 60,
+      "id_pq": 2,
+      "ten_dma": "1110",
+      "vi_tri_dma": "GL Xóm Đất – Ba Tháng Hai, P. Bình Thới",
+      "thiet_bi": "Regulo",
+      "kinh_do": 106.649818,
+      "vi_do": 10.758439,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 61,
+      "id_pq": 2,
+      "ten_dma": "1111",
+      "vi_tri_dma": "GL Lãnh Binh Thăng – Dương Đình Nghệ, P. Bình Thới",
+      "thiet_bi": "Regulo",
+      "kinh_do": 106.65024,
+      "vi_do": 10.763065,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 62,
+      "id_pq": 2,
+      "ten_dma": "1113",
+      "vi_tri_dma": "GL Lãnh Binh Thăng – Lê Đại Hành, P. Phú Thọ",
+      "thiet_bi": "Regulo",
+      "kinh_do": 106.656791,
+      "vi_do": 10.762336,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 63,
+      "id_pq": 2,
+      "ten_dma": "1124",
+      "vi_tri_dma": "Hẻm 152 Lạc Long Quân, P. Bình Thới",
+      "thiet_bi": "Regulo",
+      "kinh_do": 106.638495,
+      "vi_do": 10.758851,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 64,
+      "id_pq": 2,
+      "ten_dma": "1112",
+      "vi_tri_dma": "GL Lãnh Binh Thăng – Ba Tháng Hai, P. Phú Thọ",
+      "thiet_bi": "Regulo + Sofrel",
+      "kinh_do": 106.656328,
+      "vi_do": 10.762136,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 65,
+      "id_pq": 2,
+      "ten_dma": "1129",
+      "vi_tri_dma": "GL Vĩnh Viễn – Lý Thường Kiệt, P. Minh Phụng",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.660388,
+      "vi_do": 10.762052,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 66,
+      "id_pq": 2,
+      "ten_dma": "1117",
+      "vi_tri_dma": "GL Ông Ích Khiêm – Lạc Long Quân, P. Hoà Bình",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.642618,
+      "vi_do": 10.766867,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 67,
+      "id_pq": 2,
+      "ten_dma": "1123",
+      "vi_tri_dma": "GL Hòa Bình – Kênh Tân Hóa, P. Bình Thới",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.635875,
+      "vi_do": 10.769471,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 68,
+      "id_pq": 2,
+      "ten_dma": "1125",
+      "vi_tri_dma": "Hẻm 247 Lạc Long Quân, P. Bình Thới",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.642187,
+      "vi_do": 10.764492,
+      "loai_thiet_bi": "DMA VÙNG II"
+    },
+    {
+      "stt": 69,
+      "id_pq": 2,
+      "ten_dma": "1126",
+      "vi_tri_dma": "Số 387 Lạc Long Quân, P. Hoà Bình",
+      "thiet_bi": "Sofrel",
+      "kinh_do": 106.645542,
+      "vi_do": 10.771471,
+      "loai_thiet_bi": "DMA VÙNG II"
+    }
+  ]
+}

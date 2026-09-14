@@ -142,6 +142,20 @@ export default function Sidebar({ onCloseMobile }) {
         </div>
 
         <NavLink
+          to="/Documents"
+          onClick={() => onCloseMobile?.()}
+          className={({ isActive }) =>
+            `block rounded-2xl px-4 py-4 text-lg transition-all duration-200 border ${
+              isActive
+                ? "bg-cyan-500/20 border-cyan-300/40 text-white shadow-md"
+                : "bg-[#0b3b52]/80 border-white/5 text-white/95 hover:bg-[#104961]"
+            }`
+          }
+        >
+          Quản lý tài liệu & Word
+        </NavLink>
+
+        <NavLink
           to="/AI"
           onClick={() => onCloseMobile?.()}
           className={({ isActive }) =>

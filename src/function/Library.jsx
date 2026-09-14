@@ -434,9 +434,8 @@ export default function Library() {
                         <b>Vĩ độ (Latitude):</b> {selectedDma?.vi_do || "---"}
                       </div>
                       <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-xs text-blue-700">
-                        * Tọa độ GPS đồng bộ từ API
-                        `http://fdtech.coder96.com:7843/api/dma`. Nhấn "Mở
-                        Google Maps GPS" để xem bản đồ thực địa.
+                        * Tọa độ GPS đồng bộ trực tiếp từ Supabase Database.
+                        Nhấn "Mở Google Maps GPS" để xem bản đồ thực địa.
                       </div>
                     </div>
                   </div>

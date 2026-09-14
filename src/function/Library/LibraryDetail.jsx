@@ -7,6 +7,7 @@ import {
   Search,
   Loader2,
 } from "lucide-react";
+import { fetchDmaLocations, fetchSuCoThietBiList } from "../../API/dmaApi";
 
 export default function DMASearchPage() {
   // States chứa dữ liệu từ API
@@ -20,26 +21,23 @@ export default function DMASearchPage() {
   const [selectedSubId, setSelectedSubId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // 1. Fetch dữ liệu từ Backend đồng thời
+  // 1. Fetch dữ liệu từ Supabase đồng thời
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        const [dmaRes, troubleRes] = await Promise.all([
-          fetch("http://fdtech.coder96.com:7843/api/dma"),
-          fetch("http://fdtech.coder96.com:7843/api/su-co-thiet-bi"),
+        const [locations, troubleData] = await Promise.all([
+          fetchDmaLocations(),
+          fetchSuCoThietBiList(),
         ]);
 
-        const dmaData = await dmaRes.json();
-        const troubleData = await troubleRes.json();
-
-        if (dmaData.success) setDmaList(dmaData.data || []);
-        if (troubleData.success) setCategories(troubleData.data || []);
+        setDmaList(locations || []);
+        setCategories(troubleData || []);
       } catch (err) {
         console.error("Lỗi khi tải dữ liệu:", err);
-        setError("Không thể tải dữ liệu từ máy chủ. Vui lòng thử lại sau.");
+        setError("Không thể tải dữ liệu từ Supabase. Vui lòng kiểm tra lại cấu hình.");
       } finally {
         setLoading(false);
       }
