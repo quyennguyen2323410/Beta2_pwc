@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabase";
+import { uploadFileToDocSpace, PWC_PUBLIC_SHARE_URL } from "./docspaceService";
 
 /**
  * Lấy thông tin tài khoản đang đăng nhập hiện tại
@@ -75,7 +76,17 @@ export const uploadDocument = async (file, changeSummary = "Khởi tạo tài li
 
   const fileUrl = urlData?.publicUrl || "";
 
-  // 3. Tạo record metadata trong bảng documents
+  // 3. Đồng bộ sang phòng PWC DocSpace nếu là file Word
+  let docSpaceInfo = null;
+  if (fileType === "docx" || fileType === "doc") {
+    try {
+      docSpaceInfo = await uploadFileToDocSpace(file);
+    } catch (dsErr) {
+      console.warn("Chưa đồng bộ sang DocSpace:", dsErr);
+    }
+  }
+
+  // 4. Tạo record metadata trong bảng documents
   const { data: docData, error: dbError } = await supabase
     .from("documents")
     .insert([
@@ -97,6 +108,11 @@ export const uploadDocument = async (file, changeSummary = "Khởi tạo tài li
   if (dbError) {
     console.error("Lỗi lưu metadata vào Database:", dbError);
     throw new Error(`Lưu thông tin thất bại: ${dbError.message}`);
+  }
+
+  if (docSpaceInfo) {
+    docData.docspace_file_id = docSpaceInfo.id;
+    docData.docspace_web_url = docSpaceInfo.webUrl;
   }
 
   // 4. Tự động ghi lại lịch sử Phiên bản 1 vào bảng document_versions
@@ -122,9 +138,15 @@ export const uploadDocument = async (file, changeSummary = "Khởi tạo tài li
 /**
  * Lưu phiên bản mới (Version History) khi chỉnh sửa DOCX hoặc thay thế file
  */
-export const createNewVersion = async (documentId, currentDoc, file, changeSummary = "Cập nhật nội dung") => {
+export const createNewVersion = async (
+  documentId,
+  currentDoc,
+  file,
+  changeSummary = "Cập nhật nội dung",
+  customVersion = null
+) => {
   const user = getCurrentUser();
-  const nextVersion = (currentDoc.current_version || 1) + 1;
+  const nextVersion = customVersion ? Number(customVersion) || customVersion : (currentDoc.current_version || 1) + 1;
   const cleanFileName = (file.name || currentDoc.name).replace(/[^a-zA-Z0-9._-]/g, "_");
   const newStoragePath = `files/${Date.now()}_v${nextVersion}_${cleanFileName}`;
 
@@ -293,16 +315,47 @@ export const checkUserPermission = async (document, currentUser) => {
 };
 
 /**
- * Xóa tài liệu khỏi Storage và Database
+ * Xóa tài liệu khỏi ONLYOFFICE DocSpace, Supabase Storage (mọi phiên bản) và Database
  */
-export const deleteDocument = async (id, storagePath) => {
-  if (storagePath) {
-    await supabase.storage.from("documents").remove([storagePath]);
+export const deleteDocument = async (id, storagePath, fileName = null) => {
+  // 1. Xóa file trên ONLYOFFICE DocSpace
+  if (fileName) {
+    try {
+      const { deleteFileFromDocSpace } = await import("./docspaceService");
+      await deleteFileFromDocSpace(fileName);
+    } catch (dsErr) {
+      console.warn("Lỗi khi xóa trên DocSpace:", dsErr);
+    }
   }
+
+  // 2. Thu thập toàn bộ file của các phiên bản trong Storage để xóa sạch
+  try {
+    const { data: versions } = await supabase
+      .from("document_versions")
+      .select("storage_path")
+      .eq("document_id", id);
+
+    const pathsToDelete = new Set();
+    if (storagePath) pathsToDelete.add(storagePath);
+    if (versions && versions.length > 0) {
+      versions.forEach((v) => {
+        if (v.storage_path) pathsToDelete.add(v.storage_path);
+      });
+    }
+
+    if (pathsToDelete.size > 0) {
+      await supabase.storage.from("documents").remove(Array.from(pathsToDelete));
+    }
+  } catch (stErr) {
+    console.warn("Lỗi dọn dẹp Supabase Storage:", stErr);
+  }
+
+  // 3. Xóa bản ghi trong database (bảng documents và cascade sang document_versions)
   const { error } = await supabase.from("documents").delete().eq("id", id);
   if (error) {
-    console.error("Lỗi xóa document:", error);
+    console.error("Lỗi xóa document trong DB:", error);
     throw error;
   }
   return true;
 };
+

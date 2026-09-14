@@ -21,6 +21,7 @@ import {
   Lock,
   User,
   Clock,
+  GitCommit,
 } from "lucide-react";
 import {
   fetchDocuments,
@@ -30,9 +31,14 @@ import {
   getCurrentUser,
   checkUserPermission,
 } from "../../services/documentService";
-import OnlyOfficeEditor from "../../components/Editor/OnlyOfficeEditor";
+import {
+  getDirectDocEditorUrl,
+  syncDocSpaceFileToSupabase,
+  overwriteCurrentDocSpaceFile,
+} from "../../services/docspaceService";
 import FilePreviewModal from "../../components/Preview/FilePreviewModal";
 import VersionHistoryModal from "../../components/Versions/VersionHistoryModal";
+import CommitVersionModal from "../../components/Versions/CommitVersionModal";
 import PermissionModal from "../../components/Permissions/PermissionModal";
 
 export default function DocumentManager() {
@@ -43,11 +49,14 @@ export default function DocumentManager() {
   const [error, setError] = useState(null);
   const [filterType, setFilterType] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [openingDocId, setOpeningDocId] = useState(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncingDocId, setSyncingDocId] = useState(null);
 
   // Modal states
-  const [editingDoc, setEditingDoc] = useState(null);
   const [previewDoc, setPreviewDoc] = useState(null);
   const [historyDoc, setHistoryDoc] = useState(null);
+  const [commitDoc, setCommitDoc] = useState(null);
   const [permissionDoc, setPermissionDoc] = useState(null);
 
   // Lưu quyền truy cập của từng tài liệu đối với user hiện tại: { [docId]: 'edit' | 'view' }
@@ -87,6 +96,87 @@ export default function DocumentManager() {
     loadDocuments();
   }, []);
 
+  // Mở tệp để xem/chỉnh sửa (tự động chọn đúng trình xem theo loại tệp)
+  const handleOpenFile = (doc) => {
+    if (doc.file_type === "docx") {
+      handleOpenWordEditor(doc);
+    } else {
+      setPreviewDoc(doc);
+    }
+  };
+
+  // Mở hộp thoại tạo phiên bản mới (Commit version)
+  const handleSyncSingle = (doc) => {
+    setCommitDoc(doc);
+  };
+
+  // Kéo nội dung mới nhất từ ONLYOFFICE về ghi đè file hiện tại (không tăng version)
+  const handleSyncFromOnlyOffice = async () => {
+    try {
+      setSyncing(true);
+      let updatedCount = 0;
+      for (const d of documents) {
+        if (d.file_type === "docx") {
+          const res = await overwriteCurrentDocSpaceFile(d);
+          if (res.success) {
+            updatedCount++;
+          }
+        }
+      }
+      await loadDocuments();
+      if (updatedCount > 0) {
+        alert(`Đã cập nhật nội dung mới nhất cho ${updatedCount} tài liệu từ ONLYOFFICE!`);
+      } else {
+        alert("Tất cả tài liệu đã ở trạng thái mới nhất!");
+      }
+    } catch (e) {
+      console.error("Lỗi đồng bộ:", e);
+      alert("Đồng bộ thất bại: " + e.message);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Mở thẳng trình soạn thảo Word trên tab mới (không qua modal)
+  const handleOpenWordEditor = async (doc) => {
+    try {
+      setOpeningDocId(doc.id);
+      const newTab = window.open("about:blank", "_blank");
+      if (newTab) {
+        newTab.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>Đang mở Word - ${doc.name}</title>
+              <meta charset="utf-8" />
+            </head>
+            <body style="background:#0f172a;color:#f8fafc;font-family:system-ui,-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+              <div style="text-align:center;padding:28px 36px;border-radius:20px;background:#1e293b;border:1px solid #334155;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+                <div style="margin-bottom:12px;display:inline-block;width:24px;height:24px;border:3px solid #38bdf8;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;"></div>
+                <h3 style="margin:0 0 8px 0;font-size:17px;font-weight:700;">Đang kết nối ONLYOFFICE Word Editor...</h3>
+                <p style="margin:0 0 12px 0;color:#94a3b8;font-size:13px;">${doc.name}</p>
+                <p style="margin:0;color:#38bdf8;font-size:12px;font-weight:500;">Tự động nạp tài liệu không cần đăng nhập...</p>
+                <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+              </div>
+            </body>
+          </html>
+        `);
+      }
+
+      const editorUrl = await getDirectDocEditorUrl(doc);
+      if (newTab) {
+        newTab.location.href = editorUrl;
+      } else {
+        window.open(editorUrl, "_blank");
+      }
+    } catch (err) {
+      console.error("Lỗi mở editor:", err);
+      alert("Không thể mở trình soạn thảo: " + err.message);
+    } finally {
+      setOpeningDocId(null);
+    }
+  };
+
   // Xử lý upload file
   const handleFileUpload = async (files) => {
     if (!files || files.length === 0) return;
@@ -115,14 +205,14 @@ export default function DocumentManager() {
   const handleDelete = async (doc) => {
     if (
       !window.confirm(
-        `Bạn có chắc chắn muốn xóa tệp "${doc.name}" cùng toàn bộ lịch sử phiên bản khỏi Supabase không?`
+        `Bạn có chắc chắn muốn xóa tệp "${doc.name}" cùng toàn bộ lịch sử phiên bản và bản lưu trên ONLYOFFICE không?`
       )
     ) {
       return;
     }
 
     try {
-      await deleteDocument(doc.id, doc.storage_path);
+      await deleteDocument(doc.id, doc.storage_path, doc.name);
       setDocuments((prev) => prev.filter((d) => d.id !== doc.id));
     } catch (err) {
       alert(`Xóa thất bại: ${err.message}`);
@@ -216,6 +306,16 @@ export default function DocumentManager() {
           </div>
 
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleSyncFromOnlyOffice}
+              disabled={syncing || loading}
+              title="Kéo phiên bản mới nhất vừa sửa từ ONLYOFFICE về lưu vào Supabase"
+              className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50/80 px-4 py-2.5 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-100 disabled:opacity-50"
+            >
+              <RefreshCw size={15} className={syncing ? "animate-spin" : ""} />
+              {syncing ? "Đang đồng bộ..." : "Đồng bộ từ ONLYOFFICE"}
+            </button>
             <button
               type="button"
               onClick={loadDocuments}
@@ -367,14 +467,18 @@ export default function DocumentManager() {
                       key={doc.id}
                       className="group transition hover:bg-cyan-50/30"
                     >
-                      {/* Name */}
+                      {/* Name (Clickable để mở xem file) */}
                       <td className="py-4 pl-6 pr-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100">
+                        <div
+                          onClick={() => handleOpenFile(doc)}
+                          className="flex items-center gap-3 cursor-pointer group/name select-none"
+                          title="Bấm để mở xem hoặc chỉnh sửa tệp này"
+                        >
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 transition group-hover/name:bg-cyan-100 group-hover/name:scale-105">
                             {badge.icon}
                           </div>
                           <div>
-                            <div className="font-semibold text-slate-800 line-clamp-1">
+                            <div className="font-semibold text-slate-800 line-clamp-1 transition group-hover/name:text-cyan-600">
                               {doc.name}
                             </div>
                             <div className="text-[11px] text-slate-400">
@@ -442,19 +546,30 @@ export default function DocumentManager() {
                       {/* Actions */}
                       <td className="py-4 pl-4 pr-6 text-right">
                         <div className="flex items-center justify-end gap-1.5">
-                          {/* Nút thao tác chính: Mở ONLYOFFICE hoặc Xem */}
+                          {/* Nút thao tác chính: Mở Word trên tab mới */}
                           {doc.file_type === "docx" ? (
                             <button
                               type="button"
-                              onClick={() => setEditingDoc(doc)}
-                              className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold text-white shadow-sm transition ${
+                              onClick={() => handleOpenWordEditor(doc)}
+                              disabled={openingDocId === doc.id}
+                              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-bold text-white shadow-sm transition hover:brightness-110 active:scale-95 ${
                                 canEdit
                                   ? "bg-blue-600 hover:bg-blue-700"
                                   : "bg-slate-700 hover:bg-slate-800"
                               }`}
                             >
-                              {canEdit ? <Edit3 size={13} /> : <Eye size={13} />}
-                              {canEdit ? "Sửa Word" : "Xem Word"}
+                              {openingDocId === doc.id ? (
+                                <>
+                                  <RefreshCw size={13} className="animate-spin" />
+                                  Đang nạp...
+                                </>
+                              ) : (
+                                <>
+                                  {canEdit ? <Edit3 size={13} /> : <Eye size={13} />}
+                                  {canEdit ? "Sửa Word" : "Xem Word"}
+                                  <ExternalLink size={12} className="opacity-80" />
+                                </>
+                              )}
                             </button>
                           ) : (
                             <button
@@ -464,6 +579,18 @@ export default function DocumentManager() {
                             >
                               <Eye size={13} />
                               Xem
+                            </button>
+                          )}
+
+                          {/* Nút Commit / Tạo phiên bản mới kiểu Git */}
+                          {doc.file_type === "docx" && canEdit && (
+                            <button
+                              type="button"
+                              onClick={() => handleSyncSingle(doc)}
+                              title="Tạo phiên bản mới (Commit version) từ ONLYOFFICE"
+                              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-cyan-50 hover:text-cyan-600"
+                            >
+                              <GitCommit size={16} />
                             </button>
                           )}
 
@@ -517,20 +644,6 @@ export default function DocumentManager() {
         )}
       </div>
 
-      {/* Modal chỉnh sửa ONLYOFFICE */}
-      {editingDoc && (
-        <OnlyOfficeEditor
-          document={editingDoc}
-          canEdit={userPermissions[editingDoc.id] === "edit"}
-          currentUser={currentUser}
-          onClose={() => {
-            setEditingDoc(null);
-            loadDocuments();
-          }}
-          onOpenVersions={(doc) => setHistoryDoc(doc)}
-        />
-      )}
-
       {/* Modal Lịch sử phiên bản */}
       {historyDoc && (
         <VersionHistoryModal
@@ -542,6 +655,20 @@ export default function DocumentManager() {
               prev.map((d) => (d.id === updatedDoc.id ? updatedDoc : d))
             );
             setHistoryDoc(updatedDoc);
+          }}
+        />
+      )}
+
+      {/* Modal Đồng bộ & Commit phiên bản mới (Git-style) */}
+      {commitDoc && (
+        <CommitVersionModal
+          document={commitDoc}
+          onClose={() => setCommitDoc(null)}
+          onSuccess={(updatedDoc) => {
+            setDocuments((prev) =>
+              prev.map((d) => (d.id === updatedDoc.id ? updatedDoc : d))
+            );
+            loadDocuments();
           }}
         />
       )}
