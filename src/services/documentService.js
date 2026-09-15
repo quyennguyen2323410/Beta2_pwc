@@ -154,7 +154,7 @@ export const createNewVersion = async (
   const { error: uploadError } = await supabase.storage
     .from("documents")
     .upload(newStoragePath, file, {
-      cacheControl: "3600",
+      cacheControl: "0",
       upsert: true,
     });
 

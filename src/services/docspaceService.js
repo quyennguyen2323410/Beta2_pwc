@@ -143,7 +143,7 @@ export const uploadFileToDocSpace = async (file) => {
       throw new Error("Không nhận được thông tin file từ DocSpace");
     }
 
-    const directEditorUrl = `${cleanUrl}/doceditor?fileid=${uploadedFile.id}&version=1&share=${encodeURIComponent(
+    const directEditorUrl = `${cleanUrl}/doceditor?fileid=${uploadedFile.id}&action=edit&share=${encodeURIComponent(
       shareInfo.requestToken
     )}`;
 
@@ -180,7 +180,7 @@ export const findOrCreateDocSpaceFile = async (docItem) => {
       const sdkEditorUrl = `${cleanUrl}/sdk/editor?fileId=${existing.id}&key=${encodeURIComponent(
         shareInfo.requestToken
       )}`;
-      const directEditorUrl = `${cleanUrl}/doceditor?fileid=${existing.id}&version=1&share=${encodeURIComponent(
+      const directEditorUrl = `${cleanUrl}/doceditor?fileid=${existing.id}&action=edit&share=${encodeURIComponent(
         shareInfo.requestToken
       )}`;
       return {
@@ -234,7 +234,8 @@ export const findOrCreateDocSpaceFile = async (docItem) => {
 
 /**
  * Lấy URL trỏ thẳng vào trình soạn thảo Word của tài liệu này (mở trên tab mới)
- * Định dạng: /doceditor?version=1&share=...&fileId=...
+ * Định dạng: /doceditor?fileid=...&action=edit&share=...
+ * KHÔNG truyền tham số version=... vì sẽ khiến ONLYOFFICE mở ở chế độ Lịch sử chỉ đọc (View-only)
  */
 export const getDirectDocEditorUrl = async (docItem) => {
   const cleanUrl = getCleanUrl();
@@ -245,9 +246,9 @@ export const getDirectDocEditorUrl = async (docItem) => {
   const token = shareInfo.requestToken;
 
   if (fileId) {
-    return `${cleanUrl}/doceditor?version=${docItem.current_version || 1}&share=${encodeURIComponent(
+    return `${cleanUrl}/doceditor?fileid=${fileId}&action=edit&share=${encodeURIComponent(
       token
-    )}&fileId=${fileId}`;
+    )}`;
   }
 
   return shareInfo.shareLink;
@@ -255,30 +256,53 @@ export const getDirectDocEditorUrl = async (docItem) => {
 
 /**
  * Tải file DOCX mới nhất từ ONLYOFFICE DocSpace
+ * Sử dụng API /presigned và AuthorizationJwt header để tải tệp đã chỉnh sửa
  */
 export const fetchLatestDocSpaceBlob = async (docItem) => {
   if (!docItem) throw new Error("Thiếu thông tin tài liệu");
 
+  const cleanUrl = getCleanUrl();
   const files = await fetchDocSpaceFiles();
   const dsFile = files.find(
     (f) => f.title.toLowerCase() === docItem.name.toLowerCase()
   );
 
-  if (!dsFile || !dsFile.viewUrl) {
+  if (!dsFile) {
     throw new Error(`Không tìm thấy file "${docItem.name}" trên phòng PWC DocSpace`);
   }
 
-  const res = await fetch(dsFile.viewUrl, {
-    headers: {
-      Authorization: `Bearer ${DOCSPACE_API_KEY}`,
-    },
-  });
+  // 1. Gọi endpoint /presigned để lấy link tải và mã token JWT ủy quyền
+  const presignedRes = await fetch(
+    `${cleanUrl}/api/2.0/files/file/${dsFile.id}/presigned`,
+    {
+      headers: {
+        Authorization: `Bearer ${DOCSPACE_API_KEY}`,
+      },
+    }
+  );
 
-  if (!res.ok) {
-    throw new Error(`Lỗi tải file từ DocSpace: HTTP ${res.status}`);
+  if (!presignedRes.ok) {
+    throw new Error(`Lỗi lấy link tải từ DocSpace: HTTP ${presignedRes.status}`);
   }
 
-  const blob = await res.blob();
+  const presignedData = await presignedRes.json();
+  const token = presignedData.response?.token;
+  const downloadUrl = presignedData.response?.url || dsFile.viewUrl;
+
+  if (!downloadUrl) {
+    throw new Error("DocSpace không cung cấp đường dẫn tải tệp");
+  }
+
+  // 2. Tải tệp DOCX từ DocSpace bằng AuthorizationJwt header
+  const downloadRes = await fetch(downloadUrl, {
+    headers: token ? { AuthorizationJwt: `Bearer ${token}` } : {},
+  });
+
+  if (!downloadRes.ok) {
+    throw new Error(`Lỗi tải nội dung file từ DocSpace: HTTP ${downloadRes.status}`);
+  }
+
+  const blob = await downloadRes.blob();
   const file = new File([blob], docItem.name, {
     type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   });
@@ -300,7 +324,7 @@ export const overwriteCurrentDocSpaceFile = async (docItem) => {
       throw new Error("Tài liệu không có storage_path hợp lệ");
     }
 
-    // 1. Upload ghi đè Storage
+    // 1. Upload ghi đè Storage (cacheControl: 0 để xóa cache ngay lập tức)
     const { error: uploadErr } = await supabase.storage
       .from("documents")
       .upload(storagePath, file, {
@@ -340,31 +364,15 @@ export const commitDocSpaceVersion = async (
   { targetVersion, commitMessage }
 ) => {
   try {
-    let fileToCommit;
-
-    // 1. Thử lấy file mới nhất từ DocSpace
-    try {
-      const { file } = await fetchLatestDocSpaceBlob(docItem);
-      fileToCommit = file;
-    } catch (dsErr) {
-      console.warn("Không lấy được từ DocSpace, dùng file hiện tại của Supabase:", dsErr);
-      if (docItem.file_url) {
-        const fileRes = await fetch(docItem.file_url);
-        const blob = await fileRes.blob();
-        fileToCommit = new File([blob], docItem.name, {
-          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        });
-      } else {
-        throw new Error("Không thể lấy dữ liệu file để commit phiên bản mới");
-      }
-    }
+    // 1. Tải bản mới nhất từ ONLYOFFICE DocSpace
+    const { file } = await fetchLatestDocSpaceBlob(docItem);
 
     // 2. Gọi createNewVersion với targetVersion và commitMessage
     const { createNewVersion } = await import("./documentService");
     const updatedDoc = await createNewVersion(
       docItem.id,
       docItem,
-      fileToCommit,
+      file,
       commitMessage || `Commit phiên bản v${targetVersion}`,
       targetVersion
     );
@@ -375,7 +383,7 @@ export const commitDocSpaceVersion = async (
       newVersion: updatedDoc.current_version,
     };
   } catch (err) {
-    console.error("Lỗi commit phiên bản mới:", err);
+    console.error("Lỗi commit phiên bản mới từ DocSpace:", err);
     throw err;
   }
 };

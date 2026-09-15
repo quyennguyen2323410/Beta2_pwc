@@ -4,6 +4,14 @@ import { X, Download, ExternalLink, FileText, AlertCircle } from "lucide-react";
 export default function FilePreviewModal({ document, onClose }) {
   if (!document) return null;
 
+  // URL có query timestamp chống cache
+  const freshUrl = React.useMemo(() => {
+    if (!document?.file_url) return "";
+    const sep = document.file_url.includes("?") ? "&" : "?";
+    const ts = new Date(document.updated_at || Date.now()).getTime();
+    return `${document.file_url}${sep}t=${ts}`;
+  }, [document?.file_url, document?.updated_at]);
+
   const renderContent = () => {
     switch (document.file_type) {
       case "image":
@@ -30,6 +38,10 @@ export default function FilePreviewModal({ document, onClose }) {
             </video>
           </div>
         );
+
+      case "docx":
+      case "doc":
+        return <DocxPreviewView document={document} />;
 
       case "pdf":
         return (
@@ -99,7 +111,7 @@ export default function FilePreviewModal({ document, onClose }) {
 
           <div className="flex items-center gap-2">
             <a
-              href={document.file_url}
+              href={freshUrl}
               download
               title="Tải về máy"
               className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-800 hover:text-white"
@@ -107,7 +119,7 @@ export default function FilePreviewModal({ document, onClose }) {
               <Download size={16} />
             </a>
             <a
-              href={document.file_url}
+              href={freshUrl}
               target="_blank"
               rel="noopener noreferrer"
               title="Mở trong tab mới"
@@ -133,3 +145,90 @@ export default function FilePreviewModal({ document, onClose }) {
     </div>
   );
 }
+
+/**
+ * Trình xem trước tệp Word (.docx) phiên bản chính thức lưu trên Supabase
+ */
+function DocxPreviewView({ document }) {
+  const [viewerSource, setViewerSource] = React.useState("office"); // "office" | "google"
+  const [loading, setLoading] = React.useState(true);
+
+  // Thêm query timestamp để chống Office Viewer / Google Viewer lưu cache tệp cũ
+  const freshUrl = React.useMemo(() => {
+    if (!document?.file_url) return "";
+    const sep = document.file_url.includes("?") ? "&" : "?";
+    const ts = new Date(document.updated_at || Date.now()).getTime();
+    return `${document.file_url}${sep}t=${ts}`;
+  }, [document?.file_url, document?.updated_at]);
+
+  const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
+    freshUrl
+  )}`;
+  const googleUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(
+    freshUrl
+  )}&embedded=true`;
+
+  const currentUrl = viewerSource === "office" ? officeUrl : googleUrl;
+
+  return (
+    <div className="flex h-[80vh] w-full flex-col p-3">
+      <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-900 border border-slate-800 px-3.5 py-2 text-xs">
+        <div className="flex items-center gap-2">
+          <span className="flex h-2 w-2 rounded-full bg-emerald-400" />
+          <span className="font-semibold text-slate-200">
+            Phiên bản: <strong className="text-cyan-400">v{document.current_version || 1}</strong>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] text-slate-400">Chế độ:</span>
+          <button
+            type="button"
+            onClick={() => {
+              setViewerSource("office");
+              setLoading(true);
+            }}
+            className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition ${
+              viewerSource === "office"
+                ? "bg-blue-600 text-white"
+                : "bg-slate-800 text-slate-400 hover:text-white"
+            }`}
+          >
+            Xem trực tiếp
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setViewerSource("google");
+              setLoading(true);
+            }}
+            className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition ${
+              viewerSource === "google"
+                ? "bg-blue-600 text-white"
+                : "bg-slate-800 text-slate-400 hover:text-white"
+            }`}
+          >
+            Xem dự phòng
+          </button>
+        </div>
+      </div>
+
+      <div className="relative flex-1 rounded-xl overflow-hidden border border-slate-700 bg-white">
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm z-10 text-white text-xs gap-2">
+            <span className="h-4 w-4 rounded-full border-2 border-cyan-400 border-t-transparent animate-spin" />
+            Đang tải tài liệu...
+          </div>
+        )}
+        <iframe
+          key={currentUrl}
+          src={currentUrl}
+          title={document.name}
+          onLoad={() => setLoading(false)}
+          className="h-full w-full border-0"
+        />
+      </div>
+    </div>
+  );
+}
+
