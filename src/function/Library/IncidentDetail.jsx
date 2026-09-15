@@ -14,9 +14,11 @@ import {
   Layers,
   Save,
   ChevronRight,
+  RotateCw,
 } from "lucide-react";
 import { fetchDmaErrorById, updateDmaError } from "../../API/dmaApi";
 import DocumentManagerView from "../Documents/DocumentManagerView";
+import IncidentTodoList from "./components/IncidentTodoList";
 
 export default function IncidentDetail() {
   const { id, group, device } = useParams();
@@ -25,6 +27,7 @@ export default function IncidentDetail() {
 
   const [incident, setIncident] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
   // Lấy tên nhóm và tên thiết bị từ incident hoặc từ params
@@ -45,10 +48,10 @@ export default function IncidentDetail() {
   });
 
   // Tải chi tiết sự cố trực tiếp từ Supabase
-  const loadIncidentDetail = async () => {
+  const loadIncidentDetail = async (isBackground = false) => {
     if (!id) return;
     try {
-      setLoading(true);
+      if (!isBackground) setLoading(true);
       setError(null);
       const data = await fetchDmaErrorById(id);
       if (!data) {
@@ -66,7 +69,17 @@ export default function IncidentDetail() {
       console.error("Lỗi khi tải chi tiết sự cố:", err);
       setError("Không thể nạp dữ liệu sự cố từ hệ thống. Vui lòng thử lại.");
     } finally {
-      setLoading(false);
+      if (!isBackground) setLoading(false);
+    }
+  };
+
+  // Làm mới dữ liệu không tải lại trang
+  const handleReloadIncident = async () => {
+    try {
+      setIsRefreshing(true);
+      await loadIncidentDetail(true);
+    } finally {
+      setIsRefreshing(false);
     }
   };
 
@@ -116,6 +129,24 @@ export default function IncidentDetail() {
     }
   };
 
+  // Lưu thay đổi từ TodoList (Thêm / Sửa / Xóa / Đổi thứ tự)
+  const handleSaveField = async (field, newText) => {
+    try {
+      await updateDmaError(id, { [field]: newText });
+      setIncident((prev) => ({
+        ...prev,
+        [field]: newText,
+      }));
+      setEditForm((prev) => ({
+        ...prev,
+        [field]: newText,
+      }));
+    } catch (err) {
+      console.error(`Lỗi cập nhật ${field}:`, err);
+      throw err;
+    }
+  };
+
   const cardClass =
     "rounded-[26px] border border-[#8db0ee] bg-white p-5 md:p-6 shadow-[0_10px_25px_rgba(37,99,235,0.06)]";
 
@@ -150,10 +181,30 @@ export default function IncidentDetail() {
   }
 
   const tabs = [
-    { key: "HuongKhacPhuc", label: "Hướng khắc phục", icon: <Wrench size={16} /> },
-    { key: "NguyenNhan", label: "Nguyên nhân", icon: <HelpCircle size={16} /> },
-    { key: "TinhTrang", label: "Tình trạng ban đầu", icon: <Activity size={16} /> },
-    { key: "TaiLieu", label: "Tài liệu kỹ thuật số", icon: <Layers size={16} /> },
+    {
+      key: "HuongKhacPhuc",
+      label: "Hướng khắc phục",
+      icon: <Wrench size={18} strokeWidth={2.5} />,
+      color: "text-blue-600",
+    },
+    {
+      key: "NguyenNhan",
+      label: "Nguyên nhân",
+      icon: <HelpCircle size={18} strokeWidth={2.5} />,
+      color: "text-amber-600",
+    },
+    {
+      key: "TinhTrang",
+      label: "Tình trạng ban đầu",
+      icon: <Activity size={18} strokeWidth={2.5} />,
+      color: "text-rose-600",
+    },
+    {
+      key: "TaiLieu",
+      label: "Tài liệu kỹ thuật số",
+      icon: <Layers size={18} strokeWidth={2.5} />,
+      color: "text-indigo-600",
+    },
   ];
 
   return (
@@ -238,8 +289,23 @@ export default function IncidentDetail() {
               </p>
             </div>
 
-            {/* Nút Chỉnh sửa sự cố */}
+            {/* Cụm nút thao tác Header */}
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleReloadIncident}
+                disabled={isRefreshing}
+                title="Tải lại toàn bộ dữ liệu mới nhất từ CSDL"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-xs font-bold text-slate-700 shadow-sm transition hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 active:scale-95 disabled:opacity-50"
+              >
+                <RotateCw
+                  size={15}
+                  strokeWidth={2.5}
+                  className={isRefreshing ? "animate-spin text-blue-600" : "text-blue-600"}
+                />
+                <span>{isRefreshing ? "Đang tải..." : "Làm mới"}</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => setOpenEditModal(true)}
@@ -252,22 +318,27 @@ export default function IncidentDetail() {
           </div>
 
           {/* 4 Tabs Điều hướng */}
-          <div className="mt-6 flex flex-wrap gap-2 border-t border-slate-100 pt-4">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                type="button"
-                onClick={() => setActiveTab(tab.key)}
-                className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-xs md:text-sm font-bold transition shadow-sm ${
-                  activeTab === tab.key
-                    ? "border-[#4f80de] bg-[#2f69d9] text-white shadow-blue-500/20"
-                    : "border-[#9bb8ee]/80 bg-white text-[#5d77a8] hover:bg-[#f4f8ff] hover:text-[#1d478d]"
-                }`}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
+          <div className="mt-6 flex flex-wrap gap-2.5 border-t border-slate-100 pt-4">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  type="button"
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`inline-flex items-center gap-2.5 rounded-2xl border px-4 py-2.5 text-xs md:text-sm font-extrabold transition-all shadow-sm ${
+                    isActive
+                      ? "border-[#2f69d9] bg-[#2f69d9] text-white shadow-md shadow-blue-500/25 scale-[1.02]"
+                      : "border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:bg-[#f4f8ff] hover:text-[#1d478d]"
+                  }`}
+                >
+                  <span className={isActive ? "text-white" : tab.color}>
+                    {tab.icon}
+                  </span>
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -280,27 +351,33 @@ export default function IncidentDetail() {
           }
         >
           {activeTab === "HuongKhacPhuc" && (
-            <div className="rounded-2xl border border-blue-100 bg-[#f4f8ff] p-5 md:p-6 leading-relaxed">
-              <div className="flex items-center gap-2 text-base font-bold text-[#1d478d] mb-3">
-                <Wrench size={18} />
-                Quy trình hướng dẫn xử lý sự cố:
-              </div>
-              <p className="whitespace-pre-line text-sm md:text-base text-slate-800 font-medium">
-                {incident.huong_khac_phuc || "Chưa có hướng dẫn xử lý cho sự cố này."}
-              </p>
-            </div>
+            <IncidentTodoList
+              title="Quy trình hướng dẫn xử lý sự cố"
+              icon={<Wrench size={18} />}
+              badgePrefix="Bước"
+              rawText={incident.huong_khac_phuc || ""}
+              onSave={(newText) => handleSaveField("huong_khac_phuc", newText)}
+              onReload={handleReloadIncident}
+              isReloading={isRefreshing}
+              storageKey={`huong_khac_phuc_${incident.id}`}
+              placeholder="Nhập bước xử lý tiếp theo... (VD: Kiểm tra nguồn điện, reset module truyền thông...)"
+              emptyMessage="Chưa có quy trình xử lý cho sự cố này. Hãy thêm các bước ở bên dưới!"
+            />
           )}
 
           {activeTab === "NguyenNhan" && (
-            <div className="rounded-2xl border border-blue-100 bg-[#f4f8ff] p-5 md:p-6 leading-relaxed">
-              <div className="flex items-center gap-2 text-base font-bold text-[#1d478d] mb-3">
-                <HelpCircle size={18} />
-                Phân tích nguyên nhân gây ra sự cố:
-              </div>
-              <p className="whitespace-pre-line text-sm md:text-base text-slate-800 font-medium">
-                {incident.nguyen_nhan || "Chưa có phân tích nguyên nhân cho sự cố này."}
-              </p>
-            </div>
+            <IncidentTodoList
+              title="Phân tích nguyên nhân gây ra sự cố"
+              icon={<HelpCircle size={18} />}
+              badgePrefix="Nguyên nhân"
+              rawText={incident.nguyen_nhan || ""}
+              onSave={(newText) => handleSaveField("nguyen_nhan", newText)}
+              onReload={handleReloadIncident}
+              isReloading={isRefreshing}
+              storageKey={`nguyen_nhan_${incident.id}`}
+              placeholder="Nhập nguyên nhân khả dĩ tiếp theo... (VD: Ăn mòn tiếp điểm, Mất sóng mạng viễn thông...)"
+              emptyMessage="Chưa có phân tích nguyên nhân cho sự cố này. Hãy thêm các nguyên nhân ở bên dưới!"
+            />
           )}
 
           {activeTab === "TinhTrang" && (
