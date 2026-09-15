@@ -231,6 +231,17 @@ export const createNewVersion = async (
     },
   ]);
 
+  // 4. Nếu là file Word (.docx, .doc), tự động đồng bộ đè lên DocSpace để khi mở Editor luôn có bản mới
+  const ext = (file.name || currentDoc.name || "").split(".").pop().toLowerCase();
+  if (["docx", "doc"].includes(ext)) {
+    try {
+      const { uploadFileToDocSpace } = await import("./docspaceService");
+      await uploadFileToDocSpace(file);
+    } catch (dsErr) {
+      console.warn("Lỗi đồng bộ bản mới sang DocSpace:", dsErr);
+    }
+  }
+
   return updatedDoc;
 };
 

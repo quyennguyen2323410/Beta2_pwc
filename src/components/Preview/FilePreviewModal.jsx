@@ -4,13 +4,14 @@ import { X, Download, ExternalLink, FileText, AlertCircle } from "lucide-react";
 export default function FilePreviewModal({ document, onClose }) {
   if (!document) return null;
 
-  // URL có query timestamp chống cache
+  // URL có query timestamp và version chống cache
   const freshUrl = React.useMemo(() => {
     if (!document?.file_url) return "";
     const sep = document.file_url.includes("?") ? "&" : "?";
     const ts = new Date(document.updated_at || Date.now()).getTime();
-    return `${document.file_url}${sep}t=${ts}`;
-  }, [document?.file_url, document?.updated_at]);
+    const ver = document.current_version || 1;
+    return `${document.file_url}${sep}v=${ver}&ts=${ts}`;
+  }, [document?.file_url, document?.updated_at, document?.current_version]);
 
   const renderContent = () => {
     const type = (document.file_type || "").toLowerCase();
@@ -167,13 +168,14 @@ function DocxPreviewView({ document }) {
   const [viewerSource, setViewerSource] = React.useState("office"); // "office" | "google"
   const [loading, setLoading] = React.useState(true);
 
-  // Thêm query timestamp để chống Office Viewer / Google Viewer lưu cache tệp cũ
+  // Thêm query timestamp và version để chống Office Viewer / Google Viewer lưu cache tệp cũ
   const freshUrl = React.useMemo(() => {
     if (!document?.file_url) return "";
     const sep = document.file_url.includes("?") ? "&" : "?";
     const ts = new Date(document.updated_at || Date.now()).getTime();
-    return `${document.file_url}${sep}t=${ts}`;
-  }, [document?.file_url, document?.updated_at]);
+    const ver = document.current_version || 1;
+    return `${document.file_url}${sep}v=${ver}&ts=${ts}`;
+  }, [document?.file_url, document?.updated_at, document?.current_version]);
 
   const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
     freshUrl

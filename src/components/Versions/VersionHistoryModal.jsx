@@ -10,11 +10,13 @@ import {
   FileText,
   AlertCircle,
   RefreshCw,
+  Eye,
 } from "lucide-react";
 import {
   fetchDocumentVersions,
   createNewVersion,
 } from "../../services/documentService";
+import FilePreviewModal from "../Preview/FilePreviewModal";
 
 export default function VersionHistoryModal({
   document,
@@ -28,6 +30,7 @@ export default function VersionHistoryModal({
   const [changeNote, setChangeNote] = useState("");
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [error, setError] = useState(null);
+  const [previewVersionDoc, setPreviewVersionDoc] = useState(null);
 
   const fileInputRef = useRef(null);
 
@@ -271,14 +274,33 @@ export default function VersionHistoryModal({
                             </div>
                           </div>
 
-                          <a
-                            href={ver.file_url}
-                            download
-                            title="Tải bản này về máy"
-                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-700 bg-slate-800 text-slate-300 transition hover:bg-cyan-600 hover:border-cyan-500 hover:text-white"
-                          >
-                            <Download size={15} />
-                          </a>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setPreviewVersionDoc({
+                                  ...document,
+                                  name: `${document.name} (v${ver.version})`,
+                                  file_url: ver.file_url,
+                                  current_version: ver.version,
+                                  updated_at: ver.created_at,
+                                })
+                              }
+                              title={`Xem trước phiên bản v${ver.version}`}
+                              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-700 bg-slate-800 text-slate-300 transition hover:bg-cyan-600 hover:border-cyan-500 hover:text-white"
+                            >
+                              <Eye size={15} />
+                            </button>
+
+                            <a
+                              href={ver.file_url}
+                              download
+                              title="Tải bản này về máy"
+                              className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-700 bg-slate-800 text-slate-300 transition hover:bg-cyan-600 hover:border-cyan-500 hover:text-white"
+                            >
+                              <Download size={15} />
+                            </a>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -289,6 +311,13 @@ export default function VersionHistoryModal({
           </div>
         </main>
       </div>
+
+      {previewVersionDoc && (
+        <FilePreviewModal
+          document={previewVersionDoc}
+          onClose={() => setPreviewVersionDoc(null)}
+        />
+      )}
     </div>
   );
 }

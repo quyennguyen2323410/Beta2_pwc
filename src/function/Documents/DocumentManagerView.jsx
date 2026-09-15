@@ -446,22 +446,13 @@ export default function DocumentManagerView({
 
           <button
             type="button"
-            onClick={handleSyncFromOnlyOffice}
-            disabled={syncing || loading}
-            title="Đồng bộ nội dung Word mới nhất từ ONLYOFFICE"
-            className="h-8 inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 text-xs font-semibold text-[#2f69d9] hover:bg-blue-100 transition disabled:opacity-50"
-          >
-            <RefreshCw size={12} className={syncing ? "animate-spin" : ""} />
-            {syncing ? "Đang đồng bộ..." : "Đồng bộ Word"}
-          </button>
-
-          <button
-            type="button"
             onClick={loadDocuments}
-            title="Làm mới danh sách"
-            className="h-8 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition"
+            disabled={loading}
+            title="Tải lại danh sách tài liệu mới nhất"
+            className="h-8 inline-flex items-center gap-2 rounded-lg border border-cyan-200 bg-gradient-to-r from-cyan-50 to-blue-50 px-3.5 text-xs font-bold text-[#185a9d] shadow-sm hover:from-cyan-100 hover:to-blue-100 hover:border-cyan-300 transition-all duration-200 disabled:opacity-50 cursor-pointer"
           >
-            <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
+            <RefreshCw size={13} className={loading ? "animate-spin text-cyan-600" : "text-cyan-600"} />
+            <span>{loading ? "Đang tải lại..." : "Tải lại danh sách"}</span>
           </button>
         </div>
       </div>
@@ -1058,6 +1049,7 @@ export default function DocumentManagerView({
               prev.map((d) => (d.id === updatedDoc.id ? updatedDoc : d))
             );
             setHistoryDoc(updatedDoc);
+            loadDocuments();
           }}
         />
       )}
