@@ -168,6 +168,11 @@ export default function DocumentManagerView({
   };
 
   const handleOpenWordEditor = async (doc) => {
+    if (userPermissions[doc.id] !== "edit") {
+      alert("Tài khoản của bạn chỉ có quyền xem, không có quyền chỉnh sửa file Word.");
+      return;
+    }
+
     try {
       setOpeningDocId(doc.id);
       const newTab = window.open("about:blank", "_blank");

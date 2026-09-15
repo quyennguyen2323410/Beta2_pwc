@@ -4,12 +4,12 @@ import Library from "./function/Library";
 import Overview from "./function/Overview";
 import InternalQA from "./function/InternalQA";
 import AI from "./function/AI";
+import UserManager from "./function/Users/UserManager";
 
 import Login from "./Login/Login";
 
 import LibraryDetail from "./function/Library/LibraryDetail";
 import IncidentDetail from "./function/Library/IncidentDetail";
-import DocumentManager from "./function/Documents/DocumentManager";
 
 export default function CellLink() {
   const getAuth = () => {
@@ -46,9 +46,9 @@ export default function CellLink() {
             { path: "Library/:group/:device/detail/:id", element: <IncidentDetail /> },
             { path: "Library/:group/:device/:id", element: <IncidentDetail /> },
             { path: "Library/detail/:id", element: <IncidentDetail /> },
-            { path: "Documents", element: <DocumentManager /> },
             { path: "QA", element: <InternalQA /> },
             { path: "AI", element: <AI /> },
+            { path: "Users", element: <UserManager /> },
           ],
         },
       ],

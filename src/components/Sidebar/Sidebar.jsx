@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { X, LogOut, ChevronDown, ChevronRight } from "lucide-react";
+import { X, LogOut, ChevronDown, ChevronRight, Users, Shield } from "lucide-react";
+import { getAuthUser, logoutUser } from "../../services/authService";
 
 export default function Sidebar({ onCloseMobile }) {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [devices, setDevices] = useState([]);
+  const [authUser, setAuthUser] = useState(() => getAuthUser());
   const [openLibraryMenu, setOpenLibraryMenu] = useState(
     location.pathname.startsWith("/Library"),
   );
@@ -29,10 +31,12 @@ export default function Sidebar({ onCloseMobile }) {
 
   useEffect(() => {
     loadDevicesFromStorage();
+    setAuthUser(getAuthUser());
 
     // lắng nghe khi localStorage thay đổi từ tab khác
     const handleStorage = () => {
       loadDevicesFromStorage();
+      setAuthUser(getAuthUser());
     };
 
     window.addEventListener("storage", handleStorage);
@@ -54,8 +58,7 @@ export default function Sidebar({ onCloseMobile }) {
   }, [devices]);
 
   const handleLogout = () => {
-    localStorage.removeItem("pwc_auth");
-    sessionStorage.removeItem("pwc_auth");
+    logoutUser();
     navigate("/Login", { replace: true });
   };
 
@@ -142,20 +145,6 @@ export default function Sidebar({ onCloseMobile }) {
         </div>
 
         <NavLink
-          to="/Documents"
-          onClick={() => onCloseMobile?.()}
-          className={({ isActive }) =>
-            `block rounded-2xl px-4 py-4 text-lg transition-all duration-200 border ${
-              isActive
-                ? "bg-cyan-500/20 border-cyan-300/40 text-white shadow-md"
-                : "bg-[#0b3b52]/80 border-white/5 text-white/95 hover:bg-[#104961]"
-            }`
-          }
-        >
-          Quản lý tài liệu & Word
-        </NavLink>
-
-        <NavLink
           to="/AI"
           onClick={() => onCloseMobile?.()}
           className={({ isActive }) =>
@@ -168,16 +157,64 @@ export default function Sidebar({ onCloseMobile }) {
         >
           Trợ lý AI
         </NavLink>
+
+        {/* Quản lý người dùng (Chỉ hiển thị cho Admin) */}
+        {authUser?.isAdmin && (
+          <NavLink
+            to="/Users"
+            onClick={() => onCloseMobile?.()}
+            className={({ isActive }) =>
+              `flex items-center gap-3 rounded-2xl px-4 py-4 text-lg transition-all duration-200 border ${
+                isActive
+                  ? "bg-cyan-500/20 border-cyan-300/40 text-white shadow-md"
+                  : "bg-[#0b3b52]/80 border-white/5 text-white/95 hover:bg-[#104961]"
+              }`
+            }
+          >
+            <Users size={20} className="shrink-0" />
+            <span>Quản lý người dùng</span>
+          </NavLink>
+        )}
       </div>
 
-      {/* Logout */}
-      <div className="mt-auto pt-6">
+      {/* User Info & Logout */}
+      <div className="mt-auto pt-6 space-y-3">
+        {authUser && (
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-3.5 backdrop-blur-xs flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cyan-400 font-bold text-[#06384b] text-sm">
+                {(authUser.username || "U").substring(0, 2).toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <div className="text-sm font-bold text-white truncate">
+                  {authUser.username}
+                </div>
+                <div className="text-[11px] text-cyan-200/80">
+                  {authUser.isAdmin ? (
+                    <span className="text-amber-300 font-semibold">Quản trị viên</span>
+                  ) : authUser.can_edit_word ? (
+                    <span className="text-emerald-300 font-medium">Được sửa Word</span>
+                  ) : (
+                    <span className="text-slate-300">Chỉ xem</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {authUser.isAdmin && (
+              <span className="shrink-0 rounded-lg bg-amber-400/20 border border-amber-300/30 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                ADMIN
+              </span>
+            )}
+          </div>
+        )}
+
         <button
           type="button"
           onClick={handleLogout}
-          className="flex w-full items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-4 text-lg font-semibold text-white shadow-md backdrop-blur-sm transition hover:bg-red-500/20 hover:border-red-300/30"
+          className="flex w-full items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3.5 text-base font-semibold text-white shadow-md backdrop-blur-sm transition hover:bg-red-500/20 hover:border-red-300/30"
         >
-          <LogOut size={20} />
+          <LogOut size={18} />
           Đăng xuất
         </button>
       </div>

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 
+import { loginUser } from "../services/authService";
+
 export default function Login() {
   const navigate = useNavigate();
 
@@ -13,6 +15,7 @@ export default function Login() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const savedUsername = localStorage.getItem("pwc_saved_username");
@@ -29,32 +32,24 @@ export default function Login() {
     }));
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
-    // Demo account
-    const DEMO_USERNAME = "admin";
-    const DEMO_PASSWORD = "123456";
-
-    if (
-      form.username.trim() === DEMO_USERNAME &&
-      form.password === DEMO_PASSWORD
-    ) {
-      if (form.remember) {
-        localStorage.setItem("pwc_auth", "true");
-        localStorage.setItem("pwc_saved_username", form.username.trim());
-        sessionStorage.removeItem("pwc_auth");
-      } else {
-        sessionStorage.setItem("pwc_auth", "true");
-        localStorage.removeItem("pwc_auth");
-      }
-
-      navigate("/Overview", { replace: true });
+    if (!form.username.trim() || !form.password) {
+      setError("Vui lòng nhập đầy đủ tài khoản và mật khẩu.");
       return;
     }
 
-    setError("Sai tài khoản hoặc mật khẩu.");
+    try {
+      setLoading(true);
+      await loginUser(form.username, form.password, form.remember);
+      navigate("/Overview", { replace: true });
+    } catch (err) {
+      setError(err.message || "Sai tài khoản hoặc mật khẩu.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -171,10 +166,11 @@ export default function Login() {
 
               <button
                 type="submit"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0f8fad] px-5 py-3.5 text-base font-bold text-white shadow-md transition hover:bg-[#0d7d97] active:scale-[0.99]"
+                disabled={loading}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0f8fad] px-5 py-3.5 text-base font-bold text-white shadow-md transition hover:bg-[#0d7d97] active:scale-[0.99] disabled:opacity-60"
               >
                 <LogIn size={18} />
-                Đăng nhập
+                {loading ? "Đang đăng nhập..." : "Đăng nhập"}
               </button>
             </form>
           </div>

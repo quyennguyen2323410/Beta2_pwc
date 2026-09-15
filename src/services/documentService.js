@@ -1,10 +1,13 @@
 import { supabase } from "../lib/supabase";
 import { uploadFileToDocSpace, PWC_PUBLIC_SHARE_URL } from "./docspaceService";
+import { getAuthUser } from "./authService";
 
 /**
  * Lấy thông tin tài khoản đang đăng nhập hiện tại
  */
 export const getCurrentUser = () => {
+  const authUser = getAuthUser();
+  if (authUser?.username) return authUser.username;
   const saved = localStorage.getItem("pwc_saved_username");
   return saved ? saved.trim() : "admin";
 };
@@ -315,14 +318,27 @@ export const removeDocumentPermission = async (permissionId) => {
  * Trả về: 'edit' (được chỉnh sửa) hoặc 'view' (chỉ được xem)
  */
 export const checkUserPermission = async (document, currentUser) => {
+  const authUser = getAuthUser();
   const user = (currentUser || getCurrentUser()).trim().toLowerCase();
 
-  // 1. Admin hoặc người tạo file luôn có quyền Edit
-  if (user === "admin" || (document.created_by && document.created_by.toLowerCase() === user)) {
+  // 1. Admin luôn có toàn quyền Edit
+  if (user === "admin" || authUser?.isAdmin || authUser?.role === "admin") {
     return "edit";
   }
 
-  // 2. Tra cứu trong bảng document_permissions
+  const isWord = ["docx", "doc"].includes(document.file_type?.toLowerCase());
+
+  // 2. Đối với tệp Word: kiểm tra cờ can_edit_word (chỉ 2 quyền: có hoặc không)
+  if (isWord) {
+    return authUser?.can_edit_word ? "edit" : "view";
+  }
+
+  // 3. Người tạo file nếu có quyền sửa Word thì được edit
+  if (document.created_by && document.created_by.toLowerCase() === user) {
+    return authUser?.can_edit_word ? "edit" : "view";
+  }
+
+  // 4. Tra cứu dự phòng trong bảng document_permissions nếu có
   try {
     const { data } = await supabase
       .from("document_permissions")
@@ -338,8 +354,8 @@ export const checkUserPermission = async (document, currentUser) => {
     console.warn("Lỗi kiểm tra quyền từ bảng document_permissions:", e);
   }
 
-  // 3. Quyền mặc định của tài liệu
-  return document.default_permission || "view";
+  // 5. Quyền mặc định
+  return authUser?.can_edit_word ? "edit" : (document.default_permission || "view");
 };
 
 /**
