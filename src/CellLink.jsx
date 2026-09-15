@@ -8,6 +8,7 @@ import AI from "./function/AI";
 import Login from "./Login/Login";
 
 import LibraryDetail from "./function/Library/LibraryDetail";
+import IncidentDetail from "./function/Library/IncidentDetail";
 import DocumentManager from "./function/Documents/DocumentManager";
 
 export default function CellLink() {
@@ -40,7 +41,11 @@ export default function CellLink() {
             { index: true, element: <Overview /> },
             { path: "Overview", element: <Overview /> },
             { path: "Library", element: <Library /> },
-            { path: "Library/:deviceId", element: <LibraryDetail /> },
+            { path: "Library/:group", element: <Library /> },
+            { path: "Library/:group/:device", element: <Library /> },
+            { path: "Library/:group/:device/detail/:id", element: <IncidentDetail /> },
+            { path: "Library/:group/:device/:id", element: <IncidentDetail /> },
+            { path: "Library/detail/:id", element: <IncidentDetail /> },
             { path: "Documents", element: <DocumentManager /> },
             { path: "QA", element: <InternalQA /> },
             { path: "AI", element: <AI /> },

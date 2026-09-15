@@ -24,19 +24,32 @@ export const getFileType = (fileName) => {
 
 /**
  * Lấy danh sách tài liệu từ Supabase Database
+ * Hỗ trợ lọc theo sự cố (su_co_id) nếu được truyền vào
  */
-export const fetchDocuments = async () => {
-  const { data, error } = await supabase
+export const fetchDocuments = async (filterOptions = {}) => {
+  let query = supabase
     .from("documents")
     .select("*, document_versions(id, version)")
     .order("created_at", { ascending: false });
 
+  if (filterOptions.su_co_id) {
+    query = query.eq("su_co_id", filterOptions.su_co_id);
+  }
+
+  const { data, error } = await query;
+
   if (error) {
     // Fallback nếu chưa tạo relationship document_versions
-    const { data: simpleData, error: simpleError } = await supabase
+    let simpleQuery = supabase
       .from("documents")
       .select("*")
       .order("created_at", { ascending: false });
+
+    if (filterOptions.su_co_id) {
+      simpleQuery = simpleQuery.eq("su_co_id", filterOptions.su_co_id);
+    }
+
+    const { data: simpleData, error: simpleError } = await simpleQuery;
 
     if (simpleError) {
       console.error("Lỗi lấy danh sách tài liệu:", simpleError);
@@ -49,8 +62,13 @@ export const fetchDocuments = async () => {
 
 /**
  * Upload file ban đầu (Phiên bản 1)
+ * Nhận thêm extraMeta: { su_co_id, thiet_bi_name, id_pq }
  */
-export const uploadDocument = async (file, changeSummary = "Khởi tạo tài liệu") => {
+export const uploadDocument = async (
+  file,
+  changeSummary = "Khởi tạo tài liệu",
+  extraMeta = {}
+) => {
   const user = getCurrentUser();
   const fileType = getFileType(file.name);
   const cleanFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -87,21 +105,31 @@ export const uploadDocument = async (file, changeSummary = "Khởi tạo tài li
   }
 
   // 4. Tạo record metadata trong bảng documents
+  const insertPayload = {
+    name: file.name,
+    file_type: fileType,
+    storage_path: uniqueStoragePath,
+    file_url: fileUrl,
+    size: file.size,
+    current_version: 1,
+    created_by: user,
+    updated_by: user,
+    default_permission: "view",
+  };
+
+  if (extraMeta.su_co_id) {
+    insertPayload.su_co_id = Number(extraMeta.su_co_id);
+  }
+  if (extraMeta.thiet_bi_name) {
+    insertPayload.thiet_bi_name = extraMeta.thiet_bi_name;
+  }
+  if (extraMeta.id_pq) {
+    insertPayload.id_pq = Number(extraMeta.id_pq);
+  }
+
   const { data: docData, error: dbError } = await supabase
     .from("documents")
-    .insert([
-      {
-        name: file.name,
-        file_type: fileType,
-        storage_path: uniqueStoragePath,
-        file_url: fileUrl,
-        size: file.size,
-        current_version: 1,
-        created_by: user,
-        updated_by: user,
-        default_permission: "view",
-      },
-    ])
+    .insert([insertPayload])
     .select()
     .single();
 

@@ -9,7 +9,7 @@ import {
   X,
   Wrench,
 } from "lucide-react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate, useParams } from "react-router-dom";
 
 import { fetchAllDmaData, createDmaError } from "../API/dmaApi";
 
@@ -22,6 +22,8 @@ const initialNewErrorState = {
 };
 
 export default function Library() {
+  const navigate = useNavigate();
+  const { group: routeGroup, device: routeDevice } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Raw API Data
@@ -59,13 +61,19 @@ export default function Library() {
       setLocations(locs);
       setTroubleList(troubles);
 
-      // Tự động thiết lập tab đầu tiên dựa vào URL hoặc mặc định
-      const urlGroup = searchParams.get("group");
+      // Tự động thiết lập tab đầu tiên dựa vào URL route params hoặc search params
+      const urlGroup = routeGroup ? decodeURIComponent(routeGroup) : searchParams.get("group");
+      const urlDevice = routeDevice ? decodeURIComponent(routeDevice) : searchParams.get("device");
       if (urlGroup) {
         const foundLoc = locs.find((l) => l.loai_thiet_bi === urlGroup);
         const foundTrouble = troubles.find((t) => t.loai_thiet_bi === urlGroup);
-        if (foundLoc) setSelectedPq(foundLoc.id_pq);
-        else if (foundTrouble) setSelectedPq(foundTrouble.id_pq);
+        if (foundLoc) {
+          setSelectedPq(foundLoc.id_pq);
+          if (urlDevice) setSelectedDmaId(urlDevice);
+        } else if (foundTrouble) {
+          setSelectedPq(foundTrouble.id_pq);
+          if (urlDevice) setSelectedDeviceName(urlDevice);
+        }
       } else if (locs.length > 0) {
         setSelectedPq(locs[0].id_pq || 1);
       } else if (troubles.length > 0) {
@@ -146,11 +154,28 @@ export default function Library() {
 
     const catObj = categories.find((c) => c.id_pq === numPq);
     if (catObj) {
-      const nextParams = new URLSearchParams(searchParams);
-      nextParams.set("group", catObj.loai_thiet_bi);
-      setSearchParams(nextParams);
+      navigate(`/Library/${encodeURIComponent(catObj.loai_thiet_bi)}`);
     }
   };
+
+  // Đồng bộ lại state khi route params thay đổi từ ngoài vào
+  useEffect(() => {
+    if (routeGroup) {
+      const g = decodeURIComponent(routeGroup);
+      const foundLoc = locations.find((l) => l.loai_thiet_bi === g);
+      const foundTrouble = troubleList.find((t) => t.loai_thiet_bi === g);
+      if (foundLoc && foundLoc.id_pq !== selectedPq) {
+        setSelectedPq(foundLoc.id_pq);
+      } else if (foundTrouble && foundTrouble.id_pq !== selectedPq) {
+        setSelectedPq(foundTrouble.id_pq);
+      }
+    }
+    if (routeDevice) {
+      const d = decodeURIComponent(routeDevice);
+      if (isLuongDma) setSelectedDmaId(d);
+      else if (isLuongSuCo) setSelectedDeviceName(d);
+    }
+  }, [routeGroup, routeDevice, locations, troubleList, isLuongDma, isLuongSuCo, selectedPq]);
 
   // --- LUỒNG 1: XỬ LÝ DỮ LIỆU DMA & GPS ---
   const filteredDmaList = useMemo(() => {
@@ -315,7 +340,13 @@ export default function Library() {
             {isLuongDma ? (
               <select
                 value={selectedDma?.ten_dma || ""}
-                onChange={(e) => setSelectedDmaId(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSelectedDmaId(val);
+                  const catObj = categories.find((c) => c.id_pq === Number(selectedPq));
+                  const catName = catObj?.loai_thiet_bi || `DMA`;
+                  navigate(`/Library/${encodeURIComponent(catName)}/${encodeURIComponent(val)}`);
+                }}
                 className="h-11 rounded-[12px] border border-[#8db0ee] bg-white px-3 font-medium text-[#244a8a] shadow-sm outline-none focus:ring-4 focus:ring-[#4f80de]/10"
               >
                 {filteredDmaList.map((item) => (
@@ -327,7 +358,12 @@ export default function Library() {
             ) : (
               <select
                 value={selectedDeviceName}
-                onChange={(e) => setSelectedDeviceName(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSelectedDeviceName(val);
+                  const catName = currentCategorySuCo?.loai_thiet_bi || "ThietBi";
+                  navigate(`/Library/${encodeURIComponent(catName)}/${encodeURIComponent(val)}`);
+                }}
                 className="h-11 rounded-[12px] border border-[#8db0ee] bg-white px-3 font-medium text-[#244a8a] shadow-sm outline-none focus:ring-4 focus:ring-[#4f80de]/10"
               >
                 {currentDeviceList.map((dev) => (
@@ -496,32 +532,42 @@ export default function Library() {
                             Không tìm thấy dữ liệu sự cố phù hợp.
                           </div>
                         ) : (
-                          filteredErrors.map((err, idx) => (
-                            <div
-                              key={err.id || idx}
-                              onClick={() => {
-                                setSelectedErrorId(err.id);
-                                setViewMode("detail");
-                              }}
-                              className="group flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-[#8db0ee]/60 bg-white p-4 transition hover:border-[#2f69d9] hover:shadow-md"
-                            >
-                              <div>
-                                <div className="text-xs font-bold uppercase tracking-wider text-[#6c8ec3]">
-                                  Mã Lỗi #{idx + 1}
-                                </div>
-                                <div className="mt-1 text-base font-bold text-[#1d478d]">
-                                  {err.loi_so}
-                                </div>
-                                <div className="mt-1 text-sm text-slate-600">
-                                  <b>Tình trạng:</b> {err.tinh_trang}
-                                </div>
-                              </div>
+                          filteredErrors.map((err, idx) => {
+                            const catName = currentCategorySuCo?.loai_thiet_bi || "ThietBi";
+                            const devName = selectedDeviceObj?.ten_thiet_bi || "Chung";
+                            const incidentPath = `/Library/${encodeURIComponent(catName)}/${encodeURIComponent(devName)}/detail/${err.id}`;
 
-                              <span className="rounded-lg bg-[#f4f8ff] px-3 py-1.5 text-xs font-semibold text-[#2d5ab2] group-hover:bg-[#2f69d9] group-hover:text-white">
-                                Xem hướng xử lý
-                              </span>
-                            </div>
-                          ))
+                            return (
+                              <div
+                                key={err.id || idx}
+                                onClick={() => navigate(incidentPath)}
+                                className="group flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-[#8db0ee]/60 bg-white p-4 transition hover:border-[#2f69d9] hover:shadow-md"
+                              >
+                                <div>
+                                  <div className="text-xs font-bold uppercase tracking-wider text-[#6c8ec3]">
+                                    Mã Lỗi #{idx + 1}
+                                  </div>
+                                  <div className="mt-1 text-base font-bold text-[#1d478d]">
+                                    {err.loi_so}
+                                  </div>
+                                  <div className="mt-1 text-sm text-slate-600">
+                                    <b>Tình trạng:</b> {err.tinh_trang}
+                                  </div>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(incidentPath);
+                                  }}
+                                  className="rounded-lg bg-[#f4f8ff] px-3 py-1.5 text-xs font-semibold text-[#2d5ab2] group-hover:bg-[#2f69d9] group-hover:text-white transition"
+                                >
+                                  Xem hướng xử lý
+                                </button>
+                              </div>
+                            );
+                          })
                         )}
                       </div>
                     </div>

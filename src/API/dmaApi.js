@@ -148,3 +148,71 @@ export const createDmaError = async (errorData) => {
     throw error;
   }
 };
+
+/**
+ * Lấy chi tiết 1 sự cố theo ID từ bảng pwc_errors kèm theo thông tin loại thiết bị
+ */
+export const fetchDmaErrorById = async (id) => {
+  try {
+    const { data: errorData, error: err } = await supabase
+      .from("pwc_errors")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (err) throw err;
+    if (!errorData) return null;
+
+    // Lấy thông tin loại thiết bị từ pwc_device_types nếu có id_pq
+    let loai_thiet_bi = "";
+    if (errorData.id_pq) {
+      const { data: typeData } = await supabase
+        .from("pwc_device_types")
+        .select("loai_thiet_bi")
+        .eq("id_pq", errorData.id_pq)
+        .single();
+      loai_thiet_bi = typeData?.loai_thiet_bi || "";
+    }
+
+    return {
+      id: errorData.id,
+      id_pq: errorData.id_pq,
+      ten_thiet_bi: errorData.name || "",
+      loi_so: errorData.loi || 1,
+      tinh_trang: errorData.tinh_trang || "",
+      nguyen_nhan: errorData.nguyen_nhan || "",
+      huong_khac_phuc: errorData.huong_khac_phuc || "",
+      loai_thiet_bi: loai_thiet_bi,
+    };
+  } catch (error) {
+    console.error("API Error [fetchDmaErrorById]:", error);
+    throw error;
+  }
+};
+
+/**
+ * Cập nhật thông tin sự cố vào bảng pwc_errors
+ */
+export const updateDmaError = async (id, updateData) => {
+  try {
+    const payload = {};
+    if (updateData.huong_khac_phuc !== undefined) payload.huong_khac_phuc = updateData.huong_khac_phuc;
+    if (updateData.nguyen_nhan !== undefined) payload.nguyen_nhan = updateData.nguyen_nhan;
+    if (updateData.tinh_trang !== undefined) payload.tinh_trang = updateData.tinh_trang;
+    if (updateData.loi !== undefined) payload.loi = parseInt(updateData.loi);
+    if (updateData.name !== undefined) payload.name = updateData.name;
+
+    const { data, error } = await supabase
+      .from("pwc_errors")
+      .update(payload)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("API Error [updateDmaError]:", error);
+    throw error;
+  }
+};

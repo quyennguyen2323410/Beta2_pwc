@@ -13,32 +13,46 @@ export default function FilePreviewModal({ document, onClose }) {
   }, [document?.file_url, document?.updated_at]);
 
   const renderContent = () => {
-    switch (document.file_type) {
-      case "image":
-        return (
-          <div className="flex h-full max-h-[80vh] items-center justify-center p-4">
-            <img
-              src={document.file_url}
-              alt={document.name}
-              className="max-h-full max-w-full rounded-xl object-contain shadow-2xl"
-            />
-          </div>
-        );
+    const type = (document.file_type || "").toLowerCase();
+    const isImg = [
+      "image",
+      "jpg",
+      "jpeg",
+      "png",
+      "webp",
+      "gif",
+      "svg",
+    ].includes(type);
+    const isVid = ["video", "mp4", "webm", "mov", "avi"].includes(type);
 
-      case "video":
-        return (
-          <div className="flex h-full max-h-[80vh] items-center justify-center p-4">
-            <video
-              src={document.file_url}
-              controls
-              autoPlay
-              className="max-h-full max-w-full rounded-xl shadow-2xl"
-            >
-              Trình duyệt của bạn không hỗ trợ thẻ video HTML5.
-            </video>
-          </div>
-        );
+    if (isImg) {
+      return (
+        <div className="flex h-full min-h-[50vh] max-h-[85vh] w-full items-center justify-center p-3 bg-slate-950/90 select-none">
+          <img
+            src={freshUrl || document.file_url}
+            alt={document.name}
+            className="max-h-[82vh] max-w-full rounded-lg object-contain shadow-2xl"
+          />
+        </div>
+      );
+    }
 
+    if (isVid) {
+      return (
+        <div className="flex h-full min-h-[50vh] max-h-[85vh] w-full items-center justify-center p-3 bg-black">
+          <video
+            src={freshUrl || document.file_url}
+            controls
+            autoPlay
+            className="max-h-[82vh] max-w-full rounded-lg object-contain shadow-2xl"
+          >
+            Trình duyệt của bạn không hỗ trợ thẻ video HTML5.
+          </video>
+        </div>
+      );
+    }
+
+    switch (type) {
       case "docx":
       case "doc":
         return <DocxPreviewView document={document} />;
