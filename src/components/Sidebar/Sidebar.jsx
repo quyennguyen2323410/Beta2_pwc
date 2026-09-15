@@ -88,9 +88,11 @@ export default function Sidebar({ onCloseMobile }) {
       {/* Brand */}
 
       <div className="mb-4 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 bg-cyan-400 text-lg font-bold text-[#214e95] text-2xl">
-          PW
-        </div>
+        <img
+          src="/pht logo.jpg"
+          alt="PWC Logo"
+          className="h-12 w-12 rounded-full object-cover bg-white p-0.5 shadow-md border border-white/30"
+        />
         <div>
           <div className="text-2xl font-bold text-cyan-50/90">
             PWC Watercare

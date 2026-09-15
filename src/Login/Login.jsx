@@ -59,9 +59,11 @@ export default function Login() {
         <div className="hidden lg:flex bg-gradient-to-br from-[#062f43] via-[#0b4560] to-[#2d5f99] text-white p-12">
           <div className="m-auto max-w-xl">
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-cyan-400 text-[#06384b] text-2xl font-extrabold shadow-md">
-                PW
-              </div>
+              <img
+                src="/pht logo.jpg"
+                alt="PWC Logo"
+                className="h-16 w-16 rounded-full object-cover bg-white p-1 shadow-md border border-white/30"
+              />
               <div>
                 <h1 className="text-3xl font-bold">PWC WaterCare AI</h1>
                 <p className="mt-2 text-white/85 text-lg">
