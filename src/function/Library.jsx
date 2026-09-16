@@ -81,8 +81,17 @@ export default function Library() {
   const [apiError, setApiError] = useState(null);
 
   // State Tìm kiếm toàn cục
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(
+    () => searchParams.get("q") || searchParams.get("search") || "",
+  );
   const [searchFilterType, setSearchFilterType] = useState("all"); // 'all' | 'errors' | 'dmas'
+
+  useEffect(() => {
+    const q = searchParams.get("q") || searchParams.get("search");
+    if (q !== null && q !== undefined) {
+      setSearch(q);
+    }
+  }, [searchParams]);
 
   const [selectedDmaId, setSelectedDmaId] = useState("");
   const [selectedDeviceName, setSelectedDeviceName] = useState("");
