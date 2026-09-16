@@ -225,7 +225,7 @@ export default function IncidentDetail() {
     },
     {
       key: "NguyenNhan",
-      label: "Nguyên nhân",
+      label: "Nguyên nhân & Hướng khắc phục",
       icon: <HelpCircle size={18} strokeWidth={2.5} />,
       color: "text-amber-600",
     },
