@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import {
   Plus,
   Search,
@@ -9,6 +9,7 @@ import {
   X,
   Wrench,
   ChevronRight,
+  ChevronDown,
   Layers,
   FileQuestion,
   RotateCw,
@@ -18,6 +19,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useSearchParams, useNavigate, useParams } from "react-router-dom";
+import { getCategoryIcon } from "../lib/categoryIcons";
 
 import {
   fetchAllDmaData,
@@ -102,6 +104,22 @@ export default function Library() {
   const [viewMode, setViewMode] = useState("list"); // 'list' | 'detail'
   const [openAddModal, setOpenAddModal] = useState(false);
   const [newError, setNewError] = useState(initialNewErrorState);
+
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
+  const categoryDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(e.target)
+      ) {
+        setIsCategoryDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const isLuongDma = Number(selectedPq) <= 2; // Luồng 1: DMA & GPS
   const isLuongSuCo = Number(selectedPq) >= 3; // Luồng 2: Sự cố thiết bị
@@ -561,18 +579,82 @@ export default function Library() {
         <main className="rounded-[28px] border border-[#7ba2e6]/80 bg-gradient-to-br from-white via-[#f8fbff] to-[#eef5ff] p-4 shadow-[0_18px_40px_rgba(35,72,138,0.10)] lg:p-5">
           {/* THANH ĐIỀU HƯỚNG & LỌC */}
           <section className="grid gap-3 lg:grid-cols-[220px_340px_1fr]">
-            {/* DROPDOWN 1: Chọn Phân quyền / Loại Thiết bị */}
-            <select
-              value={selectedPq}
-              onChange={(e) => handleCategoryChange(e.target.value)}
-              className="h-11 rounded-[12px] border border-[#8db0ee] bg-white px-3 font-medium text-[#244a8a] shadow-sm outline-none focus:ring-4 focus:ring-[#4f80de]/10"
-            >
-              {categories.map((item) => (
-                <option key={item.id_pq} value={item.id_pq}>
-                  {item.loai_thiet_bi}
-                </option>
-              ))}
-            </select>
+            {/* DROPDOWN 1: Chọn Phân quyền / Loại Thiết bị kèm Icon */}
+            <div ref={categoryDropdownRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setIsCategoryDropdownOpen((prev) => !prev)}
+                className="flex h-11 w-full items-center justify-between gap-2 rounded-[12px] border border-[#8db0ee] bg-white px-3 font-medium text-[#244a8a] shadow-sm outline-none transition hover:border-[#4f80de] focus:ring-4 focus:ring-[#4f80de]/10"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <img
+                    src={getCategoryIcon(
+                      categories.find((c) => c.id_pq === Number(selectedPq))
+                        ?.loai_thiet_bi,
+                      selectedPq,
+                    )}
+                    alt=""
+                    className="h-6 w-6 shrink-0 rounded-full object-cover border border-blue-200 bg-white"
+                  />
+                  <span className="truncate text-sm font-bold text-[#183f82]">
+                    {categories.find((c) => c.id_pq === Number(selectedPq))
+                      ?.loai_thiet_bi || "Chọn danh mục"}
+                  </span>
+                </div>
+                <ChevronDown
+                  size={16}
+                  className={`shrink-0 text-blue-500 transition-transform duration-200 ${
+                    isCategoryDropdownOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {isCategoryDropdownOpen && (
+                <div className="absolute left-0 top-full z-50 mt-1.5 w-full min-w-[250px] rounded-2xl border border-[#8db0ee]/80 bg-white/95 p-1.5 shadow-[0_16px_35px_rgba(30,64,175,0.18)] backdrop-blur-xl">
+                  <div className="max-h-[340px] overflow-y-auto space-y-1">
+                    {categories.map((item) => {
+                      const isSelected =
+                        Number(item.id_pq) === Number(selectedPq);
+                      const iconSrc = getCategoryIcon(
+                        item.loai_thiet_bi,
+                        item.id_pq,
+                      );
+                      return (
+                        <button
+                          key={item.id_pq}
+                          type="button"
+                          onClick={() => {
+                            handleCategoryChange(item.id_pq);
+                            setIsCategoryDropdownOpen(false);
+                          }}
+                          className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-sm transition ${
+                            isSelected
+                              ? "bg-blue-600 font-bold text-white shadow-xs"
+                              : "text-[#183f82] hover:bg-blue-50/80 font-medium"
+                          }`}
+                        >
+                          <img
+                            src={iconSrc}
+                            alt=""
+                            className={`h-7 w-7 shrink-0 rounded-full object-cover border ${
+                              isSelected
+                                ? "border-white/50 bg-white"
+                                : "border-blue-100 bg-white"
+                            }`}
+                          />
+                          <span className="truncate flex-1">
+                            {item.loai_thiet_bi}
+                          </span>
+                          {isSelected && (
+                            <span className="text-xs font-black">✓</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* DROPDOWN 2: Linh hoạt theo Luồng DMA hoặc Sự cố kèm Nút Quản lý Option */}
             <div className="flex items-center gap-1.5">

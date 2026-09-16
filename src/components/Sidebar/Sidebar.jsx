@@ -107,9 +107,6 @@ export default function Sidebar({
               <div className="text-lg font-black tracking-tight text-cyan-50/95 truncate">
                 Sổ tay vận hành
               </div>
-              <div className="text-[10px] text-cyan-200/70 font-semibold tracking-wider uppercase">
-                PWC Watercare
-              </div>
             </div>
           )}
         </div>

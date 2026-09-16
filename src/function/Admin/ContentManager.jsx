@@ -343,7 +343,7 @@ export default function ContentManager() {
       setModalType("dma_edit");
     } else {
       setModalData({
-        idPq: currentCategory.id_pq,
+        idPq: currentCategory?.id_pq || selectedPq,
         oldName: option.name,
         newName: option.name,
       });

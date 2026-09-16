@@ -274,15 +274,52 @@ export const renameDeviceOption = async (idPq, oldName, newName) => {
     const cleanNew = (newName || "").trim();
     if (!cleanNew) throw new Error("Tên mới không được để trống.");
 
-    const { data, error } = await supabase
-      .from("pwc_errors")
-      .update({ name: cleanNew })
-      .eq("id_pq", Number(idPq))
-      .eq("name", oldName)
-      .select();
+    const cleanOld = (oldName || "").trim();
 
-    if (error) throw error;
-    return data;
+    // Lấy tất cả bản ghi pwc_errors thuộc danh mục idPq
+    let query = supabase.from("pwc_errors").select("id, name, id_pq");
+    if (idPq !== null && idPq !== undefined) {
+      query = query.eq("id_pq", Number(idPq));
+    }
+    const { data: catErrors, error: fetchErr } = await query;
+    if (fetchErr) throw fetchErr;
+
+    // Tìm các ID trùng khớp với oldName (xử lý case-insensitive, trim, và trường hợp "Chung")
+    const matchingIds = (catErrors || [])
+      .filter((e) => {
+        const eName = (e.name || "").trim();
+        if (cleanOld.toLowerCase() === "chung" || cleanOld === "") {
+          return !eName || eName.toLowerCase() === "chung";
+        }
+        return (
+          eName === cleanOld ||
+          eName.toLowerCase() === cleanOld.toLowerCase()
+        );
+      })
+      .map((e) => e.id);
+
+    if (matchingIds.length > 0) {
+      const { data, error } = await supabase
+        .from("pwc_errors")
+        .update({ name: cleanNew })
+        .in("id", matchingIds)
+        .select();
+
+      if (error) throw error;
+      return data;
+    } else {
+      // Fallback: update theo id_pq và tên ilike nếu có
+      let updateQuery = supabase.from("pwc_errors").update({ name: cleanNew });
+      if (idPq !== null && idPq !== undefined) {
+        updateQuery = updateQuery.eq("id_pq", Number(idPq));
+      }
+      const { data, error } = await updateQuery
+        .ilike("name", cleanOld)
+        .select();
+
+      if (error) throw error;
+      return data;
+    }
   } catch (error) {
     console.error("API Error [renameDeviceOption]:", error);
     throw error;
@@ -292,15 +329,46 @@ export const renameDeviceOption = async (idPq, oldName, newName) => {
 // 3. Xóa một Option / Thiết bị (Xóa toàn bộ các sự cố thuộc Option đó)
 export const deleteDeviceOption = async (idPq, optionName) => {
   try {
-    const { data, error } = await supabase
-      .from("pwc_errors")
-      .delete()
-      .eq("id_pq", Number(idPq))
-      .eq("name", optionName)
-      .select();
+    const cleanName = (optionName || "").trim();
 
-    if (error) throw error;
-    return data;
+    let query = supabase.from("pwc_errors").select("id, name, id_pq");
+    if (idPq !== null && idPq !== undefined) {
+      query = query.eq("id_pq", Number(idPq));
+    }
+    const { data: catErrors, error: fetchErr } = await query;
+    if (fetchErr) throw fetchErr;
+
+    const matchingIds = (catErrors || [])
+      .filter((e) => {
+        const eName = (e.name || "").trim();
+        if (cleanName.toLowerCase() === "chung" || cleanName === "") {
+          return !eName || eName.toLowerCase() === "chung";
+        }
+        return (
+          eName === cleanName ||
+          eName.toLowerCase() === cleanName.toLowerCase()
+        );
+      })
+      .map((e) => e.id);
+
+    if (matchingIds.length > 0) {
+      const { data, error } = await supabase
+        .from("pwc_errors")
+        .delete()
+        .in("id", matchingIds)
+        .select();
+
+      if (error) throw error;
+      return data;
+    } else {
+      let delQuery = supabase.from("pwc_errors").delete();
+      if (idPq !== null && idPq !== undefined) {
+        delQuery = delQuery.eq("id_pq", Number(idPq));
+      }
+      const { data, error } = await delQuery.ilike("name", cleanName).select();
+      if (error) throw error;
+      return data;
+    }
   } catch (error) {
     console.error("API Error [deleteDeviceOption]:", error);
     throw error;

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { fetchAllDmaData } from "../API/dmaApi";
+import { getCategoryIcon } from "../lib/categoryIcons";
 
 // Component Highlight từ khóa tìm kiếm
 function HighlightText({ text, query }) {
@@ -200,8 +201,7 @@ export default function Overview() {
       title: "Quy trình xử lý lỗi PRV",
       desc: "Áp cao, không giữ áp, rò rỉ, kẹt màng van",
       count: prvCount,
-      icon: FileText,
-      color: "from-blue-500/10 to-cyan-500/10 text-blue-600 border-blue-200/60",
+      imageSrc: "/image.png",
       action: () => {
         const cat = troubleList.find((c) =>
           c.loai_thiet_bi?.toUpperCase().includes("PRV"),
@@ -214,8 +214,7 @@ export default function Overview() {
       title: "Hướng dẫn kiểm tra Logger",
       desc: "Mất kết nối, pin yếu, SIM lỗi, mất dữ liệu",
       count: loggerCount,
-      icon: HelpCircle,
-      color: "from-indigo-500/10 to-blue-500/10 text-indigo-600 border-indigo-200/60",
+      imageSrc: "/image copy.png",
       action: () => {
         const cat = troubleList.find((c) =>
           c.loai_thiet_bi?.toUpperCase().includes("LOGGER"),
@@ -228,8 +227,7 @@ export default function Overview() {
       title: "Datasheet thiết bị",
       desc: "Thông số kỹ thuật, catalogue, manual PDF",
       count: "28 tài liệu",
-      icon: FolderOpen,
-      color: "from-teal-500/10 to-emerald-500/10 text-teal-600 border-teal-200/60",
+      imageSrc: "/image copy 3.png",
       action: () => navigate("/Library"),
     },
   ];
@@ -252,13 +250,12 @@ export default function Overview() {
             className={`${glassCard} relative overflow-hidden p-6 sm:p-8`}
           >
             <div className="max-w-4xl">
-              <h1 className="text-[26px] font-black uppercase leading-tight tracking-tight text-[#123a77] sm:text-[34px] lg:text-[38px]">
-                Tổng quan tài liệu xử lý
+              <h1 className="text-[28px] font-black uppercase leading-tight tracking-tight text-[#123a77] sm:text-[38px] lg:text-[44px]">
+                Tổng quan xử lý
               </h1>
 
-              <p className="mt-4 text-[15px] leading-7 text-[#4d6798] sm:text-[17px]">
-                Hệ thống hỗ trợ kỹ sư vận hành theo dõi tình trạng thiết bị và
-                phương án xử lý lỗi nhanh chóng.
+              <p className="mt-4 text-[15px] leading-7 font-medium text-[#4d6798] sm:text-[17px]">
+                Hệ thống hỗ trợ vận hành thiết bị và phương án xử lý nhanh chóng - Chính xác
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -517,7 +514,6 @@ export default function Overview() {
               /* KHI CHƯA NHẬP TỪ KHÓA -> HIỂN THỊ DANH MỤC TRUY CẬP NHANH */
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {knowledgeItems.map((item) => {
-                  const IconComponent = item.icon;
                   return (
                     <button
                       key={item.title}
@@ -527,10 +523,12 @@ export default function Overview() {
                     >
                       <div>
                         <div className="mb-3 flex items-center justify-between">
-                          <div
-                            className={`flex h-11 w-11 items-center justify-center rounded-2xl border bg-gradient-to-br ${item.color}`}
-                          >
-                            <IconComponent size={22} />
+                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-200/80 bg-white p-1 shadow-sm transition group-hover:scale-105">
+                            <img
+                              src={item.imageSrc}
+                              alt={item.title}
+                              className="h-full w-full object-contain rounded-xl"
+                            />
                           </div>
                           <span className="rounded-xl bg-blue-50 px-2.5 py-1 text-xs font-black text-blue-700">
                             {item.count}

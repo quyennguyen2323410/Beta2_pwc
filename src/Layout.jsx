@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { Outlet } from "react-router-dom";
-import { Menu, PanelLeftOpen, PanelLeftClose } from "lucide-react";
+import { Menu } from "lucide-react";
+import PWAInstallPrompt from "./components/PWA/PWAInstallPrompt";
 
 export default function Layout() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -64,6 +65,9 @@ export default function Layout() {
           <div className="min-w-0">
             <Outlet />
           </div>
+
+          {/* Banner cài đặt PWA (Tự động hiển thị khi hỗ trợ) */}
+          <PWAInstallPrompt />
         </main>
       </div>
     </div>
