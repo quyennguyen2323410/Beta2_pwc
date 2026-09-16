@@ -23,6 +23,9 @@ import {
   Camera,
   Plus,
   CheckCircle2,
+  BookOpen,
+  Layers,
+  Sparkles,
 } from "lucide-react";
 import {
   fetchDocuments,
@@ -70,13 +73,20 @@ export default function DocumentManagerView({
   su_co_id = null,
   thiet_bi_name = "",
   id_pq = null,
+  category_name = "",
   isEmbedded = false,
+  defaultScope = null,
 }) {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(null);
   const [error, setError] = useState(null);
+
+  // Phân loại phạm vi: 'incident' (tài liệu sự cố) | 'general' (tài liệu kỹ thuật chung) | 'all' (tất cả)
+  const [scopeFilter, setScopeFilter] = useState(
+    defaultScope || (su_co_id ? "incident" : "general")
+  );
 
   // Search keyword
   const [searchTerm, setSearchTerm] = useState("");
@@ -112,7 +122,33 @@ export default function DocumentManagerView({
     try {
       setLoading(true);
       setError(null);
-      const docs = await fetchDocuments(su_co_id ? { su_co_id } : {});
+
+      let docs = [];
+      if (su_co_id) {
+        // Tải đồng thời cả tài liệu sự cố này VÀ tài liệu kỹ thuật chung của hạng mục
+        const [incDocs, genDocs] = await Promise.all([
+          fetchDocuments({ su_co_id }),
+          fetchDocuments({ is_general: true, thiet_bi_name, id_pq }),
+        ]);
+
+        const markedInc = (incDocs || []).map((d) => ({ ...d, isGeneral: false }));
+        const markedGen = (genDocs || []).map((d) => ({ ...d, isGeneral: true }));
+
+        const seenIds = new Set();
+        const merged = [];
+        [...markedInc, ...markedGen].forEach((d) => {
+          if (!seenIds.has(d.id)) {
+            seenIds.add(d.id);
+            merged.push(d);
+          }
+        });
+        docs = merged;
+      } else {
+        // Bên ngoài danh mục: tải toàn bộ tài liệu chung
+        const genDocs = await fetchDocuments({ is_general: true, thiet_bi_name, id_pq });
+        docs = (genDocs || []).map((d) => ({ ...d, isGeneral: true }));
+      }
+
       setDocuments(docs);
 
       const perms = {};
@@ -133,7 +169,7 @@ export default function DocumentManagerView({
 
   useEffect(() => {
     loadDocuments();
-  }, [su_co_id]);
+  }, [su_co_id, thiet_bi_name, id_pq]);
 
   const handleOpenFile = (doc) => {
     setPreviewDoc(doc);
@@ -194,10 +230,13 @@ export default function DocumentManagerView({
     }
   };
 
-  const handleFileUpload = async (files, customCategory = "") => {
+  const handleFileUpload = async (files, customCategory = "", forceScope = null) => {
     if (!files || files.length === 0) return;
     const fileList = Array.from(files);
     if (fileList.length === 0) return;
+
+    // Xác định đích tải lên: nếu forceScope được truyền vào, hoặc nếu đang ở tab 'general', hoặc nếu không có su_co_id
+    const targetScope = forceScope || (su_co_id ? (scopeFilter === "general" ? "general" : "incident") : "general");
 
     try {
       setUploading(true);
@@ -216,7 +255,9 @@ export default function DocumentManagerView({
 
         try {
           const extraMeta = {};
-          if (su_co_id) extraMeta.su_co_id = su_co_id;
+          if (targetScope === "incident" && su_co_id) {
+            extraMeta.su_co_id = su_co_id;
+          }
           if (thiet_bi_name) extraMeta.thiet_bi_name = thiet_bi_name;
           if (id_pq) extraMeta.id_pq = id_pq;
 
@@ -229,12 +270,14 @@ export default function DocumentManagerView({
               : "Tài liệu kỹ thuật";
           }
 
-          const summaryText = su_co_id
-            ? `${assignedCategory} (${thiet_bi_name || "Thiết bị"})`
-            : "Khởi tạo tài liệu ban đầu";
+          const scopeText = targetScope === "general" ? "Hồ sơ Tiêu chuẩn" : "Sự cố";
+          const summaryText = `${assignedCategory} [${scopeText}] (${thiet_bi_name || category_name || "Thiết bị"})`;
 
           const newDoc = await uploadDocument(file, summaryText, extraMeta);
-          newDocs.push(newDoc);
+          newDocs.push({
+            ...newDoc,
+            isGeneral: targetScope === "general" || !newDoc.su_co_id,
+          });
         } catch (fileErr) {
           console.error(`Lỗi tải tệp ${file.name}:`, fileErr);
           failedFiles.push(`${file.name} (${fileErr.message || "Lỗi"})`);
@@ -288,17 +331,38 @@ export default function DocumentManagerView({
     }
   };
 
+  // Tính số lượng tài liệu từng nhóm
+  const incidentDocsCount = useMemo(() => {
+    return documents.filter((d) => !d.isGeneral && d.su_co_id == su_co_id).length;
+  }, [documents, su_co_id]);
+
+  const generalDocsCount = useMemo(() => {
+    return documents.filter((d) => d.isGeneral || !d.su_co_id).length;
+  }, [documents]);
+
+  // Lọc tài liệu theo tab phân loại (Sự cố | Chung | Tất cả)
+  const currentScopeDocs = useMemo(() => {
+    if (!su_co_id) return documents;
+    if (scopeFilter === "incident") {
+      return documents.filter((d) => !d.isGeneral && d.su_co_id == su_co_id);
+    }
+    if (scopeFilter === "general") {
+      return documents.filter((d) => d.isGeneral || !d.su_co_id);
+    }
+    return documents; // 'all'
+  }, [documents, su_co_id, scopeFilter]);
+
   // Lọc theo từ khóa tìm kiếm
   const matchedDocs = useMemo(() => {
-    if (!searchTerm.trim()) return documents;
+    if (!searchTerm.trim()) return currentScopeDocs;
     const kw = searchTerm.toLowerCase().trim();
-    return documents.filter(
+    return currentScopeDocs.filter(
       (d) =>
         d.name?.toLowerCase().includes(kw) ||
         d.thiet_bi_name?.toLowerCase().includes(kw) ||
         d.file_type?.toLowerCase().includes(kw)
     );
-  }, [documents, searchTerm]);
+  }, [currentScopeDocs, searchTerm]);
 
   // Phân vùng 1: Danh sách tài liệu kỹ thuật
   const technicalDocs = useMemo(() => {
@@ -415,6 +479,114 @@ export default function DocumentManagerView({
         onChange={(e) => handleFileUpload(e.target.files)}
       />
 
+      {/* BANNER / SCOPE CONTROLLER */}
+      {su_co_id ? (
+        /* SCOPE SWITCHER BAR KHI Ở TRONG CHI TIẾT SỰ CỐ */
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-200/80 bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-white p-3.5 shadow-xs">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setScopeFilter("incident")}
+              className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all shadow-xs ${
+                scopeFilter === "incident"
+                  ? "bg-[#183f82] text-white ring-2 ring-blue-400/40"
+                  : "bg-white text-slate-700 hover:bg-slate-50 border border-slate-200"
+              }`}
+            >
+              <AlertTriangle
+                size={14}
+                className={scopeFilter === "incident" ? "text-amber-300" : "text-amber-500"}
+              />
+              <span>Tài liệu sự cố #{su_co_id}</span>
+              <span
+                className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
+                  scopeFilter === "incident"
+                    ? "bg-white/20 text-white"
+                    : "bg-blue-100 text-blue-800"
+                }`}
+              >
+                {incidentDocsCount}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setScopeFilter("general")}
+              className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all shadow-xs ${
+                scopeFilter === "general"
+                  ? "bg-emerald-700 text-white ring-2 ring-emerald-400/40"
+                  : "bg-white text-slate-700 hover:bg-slate-50 border border-slate-200"
+              }`}
+            >
+              <BookOpen
+                size={14}
+                className={scopeFilter === "general" ? "text-emerald-200" : "text-emerald-600"}
+              />
+              <span>Hồ sơ Kỹ thuật Tiêu chuẩn ({thiet_bi_name || category_name || "Hạng mục"})</span>
+              <span
+                className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
+                  scopeFilter === "general"
+                    ? "bg-white/20 text-white"
+                    : "bg-emerald-100 text-emerald-800"
+                }`}
+              >
+                {generalDocsCount}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setScopeFilter("all")}
+              className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all shadow-xs ${
+                scopeFilter === "all"
+                  ? "bg-slate-800 text-white ring-2 ring-slate-400/40"
+                  : "bg-white text-slate-700 hover:bg-slate-50 border border-slate-200"
+              }`}
+            >
+              <Layers size={14} />
+              <span>Tất cả tệp</span>
+              <span
+                className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
+                  scopeFilter === "all" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-700"
+                }`}
+              >
+                {documents.length}
+              </span>
+            </button>
+          </div>
+
+          <div className="text-xs text-slate-600 font-medium hidden md:block">
+            {scopeFilter === "incident" && "📌 Đang hiển thị tài liệu đính kèm đặc thù cho sự cố này"}
+            {scopeFilter === "general" && `📚 Đang tra cứu Hồ sơ Kỹ thuật Tiêu chuẩn của ${thiet_bi_name || category_name || "thiết bị"}`}
+            {scopeFilter === "all" && "📂 Đang tổng hợp toàn bộ tài liệu sự cố và hồ sơ kỹ thuật tiêu chuẩn"}
+          </div>
+        </div>
+      ) : (
+        /* BANNER KHI Ở NGOÀI TRANG DANH MỤC THƯ VIỆN */
+        <div className="rounded-2xl border border-emerald-200/90 bg-gradient-to-r from-emerald-50/80 via-teal-50/50 to-white p-4 shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-md shadow-emerald-700/20">
+                <BookOpen size={22} />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-emerald-950">
+                  Kho Hồ sơ Kỹ thuật Tiêu chuẩn & Hướng dẫn Vận hành
+                </h3>
+                <p className="text-xs text-emerald-800/80 mt-0.5">
+                  Hạng mục: <b>{thiet_bi_name || category_name || "Thiết bị"}</b> (Catalog, Datasheet, Sơ đồ cấu tạo, Quy trình bảo dưỡng tiêu chuẩn)
+                </p>
+              </div>
+            </div>
+
+            <div className="inline-flex items-center gap-2 rounded-xl bg-emerald-100/70 border border-emerald-200 px-3 py-1.5 text-xs font-bold text-emerald-900">
+              <Sparkles size={14} className="text-emerald-600" />
+              <span>Hồ sơ Tiêu chuẩn</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* TOP CONTROL BAR: Tinh tế, thanh lịch */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-xl bg-white p-4 border border-slate-200/80 shadow-sm">
         <div className="flex items-center gap-3">
@@ -426,7 +598,7 @@ export default function DocumentManagerView({
               Tài liệu kỹ thuật số & Đa phương tiện
             </h3>
             <p className="text-xs text-slate-500">
-              Tổng số {documents.length} tệp ({technicalDocs.length} tài liệu văn bản, {mediaDocs.length} ảnh/video)
+              Tổng số {matchedDocs.length} tệp ({technicalDocs.length} tài liệu văn bản, {mediaDocs.length} ảnh/video)
             </p>
           </div>
         </div>
@@ -525,10 +697,21 @@ export default function DocumentManagerView({
               <div className="lg:col-span-5 rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50/30 via-white to-slate-50 p-4 shadow-sm flex flex-col justify-between relative overflow-hidden">
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[11px] font-semibold text-[#1e40af]">
-                      <FileText size={12} />
-                      Tài liệu chính
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[11px] font-semibold text-[#1e40af]">
+                        <FileText size={12} />
+                        Tài liệu chính
+                      </span>
+                      {primaryDoc.isGeneral ? (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                          <BookOpen size={10} /> Hồ sơ Tiêu chuẩn
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-bold text-blue-700">
+                          <AlertTriangle size={10} /> Sự cố #{primaryDoc.su_co_id}
+                        </span>
+                      )}
+                    </div>
 
                     <button
                       type="button"
@@ -689,6 +872,15 @@ export default function DocumentManagerView({
                           >
                             {badge.label}
                           </span>
+                          {doc.isGeneral ? (
+                            <span className="shrink-0 rounded bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700">
+                              Tiêu chuẩn
+                            </span>
+                          ) : (
+                            <span className="shrink-0 rounded bg-blue-50 border border-blue-200 px-1.5 py-0.5 text-[9px] font-bold text-blue-700">
+                              Sự cố
+                            </span>
+                          )}
                           <div className="min-w-0">
                             <div className="text-xs font-semibold text-slate-800 truncate group-hover:text-blue-600 transition">
                               {doc.name}
@@ -882,8 +1074,19 @@ export default function DocumentManagerView({
                 {/* Info & Actions */}
                 <div className="p-3 bg-slate-900 flex items-center justify-between text-xs border-t border-slate-800">
                   <div className="truncate mr-2">
-                    <div className="font-semibold text-white truncate" title={featuredMedia.name}>
-                      {featuredMedia.name}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="font-semibold text-white truncate" title={featuredMedia.name}>
+                        {featuredMedia.name}
+                      </span>
+                      {featuredMedia.isGeneral ? (
+                        <span className="inline-flex items-center rounded bg-emerald-900/80 border border-emerald-500/50 px-1.5 py-0.2 text-[9px] font-bold text-emerald-300">
+                          Tiêu chuẩn
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center rounded bg-blue-900/80 border border-blue-500/50 px-1.5 py-0.2 text-[9px] font-bold text-blue-300">
+                          Sự cố #{featuredMedia.su_co_id}
+                        </span>
+                      )}
                     </div>
                     <div className="text-[10px] text-slate-400">
                       {featuredMedia.created_at
@@ -978,6 +1181,15 @@ export default function DocumentManagerView({
                               </span>
                             </>
                           )}
+
+                          {/* Badge phạm vi trên thumbnail */}
+                          <span
+                            className={`absolute top-1 left-1 rounded px-1.5 py-0.2 text-[8px] font-black text-white shadow-xs ${
+                              item.isGeneral ? "bg-emerald-600/90" : "bg-blue-600/90"
+                            }`}
+                          >
+                            {item.isGeneral ? "Tiêu chuẩn" : "Sự cố"}
+                          </span>
                         </div>
 
                         {/* Caption & Actions */}

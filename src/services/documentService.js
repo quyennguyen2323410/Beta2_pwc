@@ -37,6 +37,24 @@ export const fetchDocuments = async (filterOptions = {}) => {
 
   if (filterOptions.su_co_id) {
     query = query.eq("su_co_id", filterOptions.su_co_id);
+  } else if (filterOptions.is_general) {
+    query = query.is("su_co_id", null);
+    if (filterOptions.thiet_bi_name && filterOptions.id_pq) {
+      query = query.or(
+        `thiet_bi_name.eq."${filterOptions.thiet_bi_name}",id_pq.eq.${filterOptions.id_pq}`
+      );
+    } else if (filterOptions.thiet_bi_name) {
+      query = query.eq("thiet_bi_name", filterOptions.thiet_bi_name);
+    } else if (filterOptions.id_pq) {
+      query = query.eq("id_pq", filterOptions.id_pq);
+    }
+  } else {
+    if (filterOptions.thiet_bi_name) {
+      query = query.eq("thiet_bi_name", filterOptions.thiet_bi_name);
+    }
+    if (filterOptions.id_pq) {
+      query = query.eq("id_pq", filterOptions.id_pq);
+    }
   }
 
   const { data, error } = await query;
@@ -50,6 +68,24 @@ export const fetchDocuments = async (filterOptions = {}) => {
 
     if (filterOptions.su_co_id) {
       simpleQuery = simpleQuery.eq("su_co_id", filterOptions.su_co_id);
+    } else if (filterOptions.is_general) {
+      simpleQuery = simpleQuery.is("su_co_id", null);
+      if (filterOptions.thiet_bi_name && filterOptions.id_pq) {
+        simpleQuery = simpleQuery.or(
+          `thiet_bi_name.eq."${filterOptions.thiet_bi_name}",id_pq.eq.${filterOptions.id_pq}`
+        );
+      } else if (filterOptions.thiet_bi_name) {
+        simpleQuery = simpleQuery.eq("thiet_bi_name", filterOptions.thiet_bi_name);
+      } else if (filterOptions.id_pq) {
+        simpleQuery = simpleQuery.eq("id_pq", filterOptions.id_pq);
+      }
+    } else {
+      if (filterOptions.thiet_bi_name) {
+        simpleQuery = simpleQuery.eq("thiet_bi_name", filterOptions.thiet_bi_name);
+      }
+      if (filterOptions.id_pq) {
+        simpleQuery = simpleQuery.eq("id_pq", filterOptions.id_pq);
+      }
     }
 
     const { data: simpleData, error: simpleError } = await simpleQuery;

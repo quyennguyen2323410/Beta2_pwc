@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   Wrench,
   AlertTriangle,
+  AlertCircle,
   CheckCircle2,
   Edit3,
   X,
@@ -15,10 +16,12 @@ import {
   Save,
   ChevronRight,
   RotateCw,
+  Copy,
 } from "lucide-react";
 import { fetchDmaErrorById, updateDmaError } from "../../API/dmaApi";
 import DocumentManagerView from "../Documents/DocumentManagerView";
 import IncidentTodoList from "./components/IncidentTodoList";
+import CauseRemedyTree from "./components/CauseRemedyTree";
 
 export default function IncidentDetail() {
   const { id, group, device } = useParams();
@@ -34,8 +37,14 @@ export default function IncidentDetail() {
   const groupName = incident?.loai_thiet_bi || (group ? decodeURIComponent(group) : "");
   const deviceName = incident?.ten_thiet_bi || (device ? decodeURIComponent(device) : "");
 
-  // Tab: 'HuongKhacPhuc' | 'NguyenNhan' | 'TinhTrang' | 'TaiLieu'
-  const [activeTab, setActiveTab] = useState("HuongKhacPhuc");
+  // Tab: 'TinhTrang' (Đầu tiên) | 'NguyenNhan' (Xổ ra hướng khắc phục) | 'TaiLieu'
+  const [activeTab, setActiveTab] = useState("TinhTrang");
+
+  // State inline edit cho Tình trạng
+  const [isEditingTinhTrang, setIsEditingTinhTrang] = useState(false);
+  const [tinhTrangInput, setTinhTrangInput] = useState("");
+  const [isSavingTinhTrang, setIsSavingTinhTrang] = useState(false);
+  const [copiedTinhTrang, setCopiedTinhTrang] = useState(false);
 
   // State Modal chỉnh sửa sự cố
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -58,6 +67,7 @@ export default function IncidentDetail() {
         setError(`Không tìm thấy thông tin sự cố với mã #${id}`);
       } else {
         setIncident(data);
+        setTinhTrangInput(data.tinh_trang || "");
         setEditForm({
           loi_so: data.loi_so || 1,
           tinh_trang: data.tinh_trang || "",
@@ -100,7 +110,7 @@ export default function IncidentDetail() {
     }
   };
 
-  // Lưu chỉnh sửa thông tin sự cố
+  // Lưu chỉnh sửa thông tin sự cố từ Modal
   const handleSaveEdit = async (e) => {
     e.preventDefault();
     try {
@@ -119,6 +129,7 @@ export default function IncidentDetail() {
         nguyen_nhan: editForm.nguyen_nhan,
         huong_khac_phuc: editForm.huong_khac_phuc,
       }));
+      setTinhTrangInput(editForm.tinh_trang);
 
       setOpenEditModal(false);
     } catch (err) {
@@ -129,20 +140,44 @@ export default function IncidentDetail() {
     }
   };
 
-  // Lưu thay đổi từ TodoList (Thêm / Sửa / Xóa / Đổi thứ tự)
-  const handleSaveField = async (field, newText) => {
+  // Lưu riêng trường Tình trạng trực tiếp
+  const handleSaveTinhTrang = async () => {
     try {
-      await updateDmaError(id, { [field]: newText });
+      setIsSavingTinhTrang(true);
+      await updateDmaError(id, { tinh_trang: tinhTrangInput });
       setIncident((prev) => ({
         ...prev,
-        [field]: newText,
+        tinh_trang: tinhTrangInput,
       }));
       setEditForm((prev) => ({
         ...prev,
-        [field]: newText,
+        tinh_trang: tinhTrangInput,
+      }));
+      setIsEditingTinhTrang(false);
+    } catch (err) {
+      console.error("Lỗi cập nhật tình trạng:", err);
+      alert("Cập nhật tình trạng thất bại: " + err.message);
+    } finally {
+      setIsSavingTinhTrang(false);
+    }
+  };
+
+  // Lưu đồng thời Nguyên nhân & Hướng khắc phục từ Tree Component
+  const handleSaveCauseAndRemedy = async ({ nguyen_nhan, huong_khac_phuc }) => {
+    try {
+      await updateDmaError(id, { nguyen_nhan, huong_khac_phuc });
+      setIncident((prev) => ({
+        ...prev,
+        nguyen_nhan,
+        huong_khac_phuc,
+      }));
+      setEditForm((prev) => ({
+        ...prev,
+        nguyen_nhan,
+        huong_khac_phuc,
       }));
     } catch (err) {
-      console.error(`Lỗi cập nhật ${field}:`, err);
+      console.error("Lỗi cập nhật nguyên nhân & hướng khắc phục:", err);
       throw err;
     }
   };
@@ -180,11 +215,12 @@ export default function IncidentDetail() {
     );
   }
 
+  // 3 Tabs theo cấu trúc mới: Tình trạng (ở đầu) -> Nguyên nhân (xổ ra Hướng khắc phục) -> Tài liệu kỹ thuật số
   const tabs = [
     {
-      key: "HuongKhacPhuc",
-      label: "Hướng khắc phục",
-      icon: <Wrench size={18} strokeWidth={2.5} />,
+      key: "TinhTrang",
+      label: "Tình trạng",
+      icon: <Activity size={18} strokeWidth={2.5} />,
       color: "text-blue-600",
     },
     {
@@ -192,12 +228,6 @@ export default function IncidentDetail() {
       label: "Nguyên nhân",
       icon: <HelpCircle size={18} strokeWidth={2.5} />,
       color: "text-amber-600",
-    },
-    {
-      key: "TinhTrang",
-      label: "Tình trạng ban đầu",
-      icon: <Activity size={18} strokeWidth={2.5} />,
-      color: "text-rose-600",
     },
     {
       key: "TaiLieu",
@@ -317,7 +347,7 @@ export default function IncidentDetail() {
             </div>
           </div>
 
-          {/* 4 Tabs Điều hướng */}
+          {/* 3 Tabs Điều hướng Mới */}
           <div className="mt-6 flex flex-wrap gap-2.5 border-t border-slate-100 pt-4">
             {tabs.map((tab) => {
               const isActive = activeTab === tab.key;
@@ -350,54 +380,131 @@ export default function IncidentDetail() {
               : cardClass
           }
         >
-          {activeTab === "HuongKhacPhuc" && (
-            <IncidentTodoList
-              title="Quy trình hướng dẫn xử lý sự cố"
-              icon={<Wrench size={18} />}
-              badgePrefix="Bước"
-              rawText={incident.huong_khac_phuc || ""}
-              onSave={(newText) => handleSaveField("huong_khac_phuc", newText)}
-              onReload={handleReloadIncident}
-              isReloading={isRefreshing}
-              storageKey={`huong_khac_phuc_${incident.id}`}
-              placeholder="Nhập bước xử lý tiếp theo... (VD: Kiểm tra nguồn điện, reset module truyền thông...)"
-              emptyMessage="Chưa có quy trình xử lý cho sự cố này. Hãy thêm các bước ở bên dưới!"
-            />
-          )}
-
-          {activeTab === "NguyenNhan" && (
-            <IncidentTodoList
-              title="Phân tích nguyên nhân gây ra sự cố"
-              icon={<HelpCircle size={18} />}
-              badgePrefix="Nguyên nhân"
-              rawText={incident.nguyen_nhan || ""}
-              onSave={(newText) => handleSaveField("nguyen_nhan", newText)}
-              onReload={handleReloadIncident}
-              isReloading={isRefreshing}
-              storageKey={`nguyen_nhan_${incident.id}`}
-              placeholder="Nhập nguyên nhân khả dĩ tiếp theo... (VD: Ăn mòn tiếp điểm, Mất sóng mạng viễn thông...)"
-              emptyMessage="Chưa có phân tích nguyên nhân cho sự cố này. Hãy thêm các nguyên nhân ở bên dưới!"
-            />
-          )}
-
+          {/* TAB 1: TÌNH TRẠNG (Ở ĐẦU TIÊN) */}
           {activeTab === "TinhTrang" && (
-            <div className="rounded-2xl border border-blue-100 bg-[#f4f8ff] p-5 md:p-6 leading-relaxed">
-              <div className="flex items-center gap-2 text-base font-bold text-[#1d478d] mb-3">
-                <Activity size={18} />
-                Mô tả tình trạng ban đầu khi phát hiện:
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 via-sky-50 to-indigo-50 p-4 md:p-5 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-600 text-white shadow-md shadow-blue-500/20 ring-4 ring-blue-100">
+                    <Activity size={22} strokeWidth={2.5} />
+                  </div>
+                  <div>
+                    <h3 className="text-base md:text-lg font-extrabold text-[#183f82]">
+                      Tình trạng sự cố
+                    </h3>
+                    <p className="text-xs font-semibold text-slate-500">
+                      Mô tả hiện tượng và ghi nhận ban đầu khi phát hiện lỗi thiết bị
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (incident.tinh_trang) {
+                        navigator.clipboard.writeText(incident.tinh_trang);
+                        setCopiedTinhTrang(true);
+                        setTimeout(() => setCopiedTinhTrang(false), 2000);
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-white px-3 py-2 text-blue-700 shadow-sm transition hover:bg-blue-50 hover:border-blue-300 active:scale-95"
+                  >
+                    <Copy size={14} />
+                    <span>{copiedTinhTrang ? "Đã sao chép!" : "Sao chép"}</span>
+                  </button>
+
+                  {!isEditingTinhTrang && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTinhTrangInput(incident.tinh_trang || "");
+                        setIsEditingTinhTrang(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-white shadow-sm transition hover:bg-blue-700 active:scale-95"
+                    >
+                      <Edit3 size={14} />
+                      <span>Chỉnh sửa tình trạng</span>
+                    </button>
+                  )}
+                </div>
               </div>
-              <p className="whitespace-pre-line text-sm md:text-base text-slate-800 font-medium">
-                {incident.tinh_trang || "Chưa có thông tin tình trạng ban đầu."}
-              </p>
+
+              {/* Nội dung Tình trạng */}
+              <div className="rounded-2xl border border-blue-100 bg-white p-5 md:p-6 shadow-sm">
+                {isEditingTinhTrang ? (
+                  <div className="space-y-3">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                      Chỉnh sửa nội dung tình trạng:
+                    </label>
+                    <textarea
+                      rows={4}
+                      value={tinhTrangInput}
+                      onChange={(e) => setTinhTrangInput(e.target.value)}
+                      placeholder="Nhập mô tả chi tiết tình trạng lỗi khi phát hiện..."
+                      className="w-full rounded-2xl border-2 border-blue-500 bg-white p-3 text-sm md:text-base font-medium text-slate-800 focus:outline-none focus:ring-4 focus:ring-blue-500/15 shadow-inner"
+                    />
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleSaveTinhTrang}
+                        disabled={isSavingTinhTrang}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-blue-700 active:scale-95 disabled:opacity-50"
+                      >
+                        {isSavingTinhTrang ? (
+                          <>
+                            <Loader2 size={14} className="animate-spin" /> Đang lưu...
+                          </>
+                        ) : (
+                          <>
+                            <Save size={14} /> Lưu tình trạng
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingTinhTrang(false)}
+                        className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                      >
+                        Hủy
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-start gap-3">
+                    <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+                      <AlertCircle size={16} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="whitespace-pre-line text-sm md:text-base font-semibold leading-relaxed text-slate-800">
+                        {incident.tinh_trang || "Chưa có thông tin mô tả tình trạng cho sự cố này."}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
-          {/* TAB THỨ 4: TÀI LIỆU KỸ THUẬT SỐ & MEDIA */}
+          {/* TAB 2: NGUYÊN NHÂN (XỔ RA HƯỚNG KHẮC PHỤC DẠNG HƯỚNG 01, HƯỚNG 02...) */}
+          {activeTab === "NguyenNhan" && (
+            <CauseRemedyTree
+              rawNguyenNhan={incident.nguyen_nhan || ""}
+              rawHuongKhacPhuc={incident.huong_khac_phuc || ""}
+              onSave={handleSaveCauseAndRemedy}
+              onReload={handleReloadIncident}
+              isReloading={isRefreshing}
+              storageKey={`incident_tree_${incident.id}`}
+            />
+          )}
+
+          {/* TAB 3: TÀI LIỆU KỸ THUẬT SỐ & MEDIA */}
           {activeTab === "TaiLieu" && (
             <DocumentManagerView
               su_co_id={incident.id}
-              thiet_bi_name={incident.ten_thiet_bi}
+              thiet_bi_name={incident.ten_thiet_bi || deviceName}
               id_pq={incident.id_pq}
+              category_name={groupName || incident.loai_thiet_bi || ""}
               isEmbedded={true}
             />
           )}
@@ -439,7 +546,7 @@ export default function IncidentDetail() {
 
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                  Tình trạng ban đầu
+                  Tình trạng
                 </label>
                 <textarea
                   rows={3}

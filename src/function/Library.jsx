@@ -12,11 +12,13 @@ import {
   Layers,
   FileQuestion,
   RotateCw,
+  BookOpen,
 } from "lucide-react";
 import { useSearchParams, useNavigate, useParams } from "react-router-dom";
 
 import { fetchAllDmaData, createDmaError, updateDmaError } from "../API/dmaApi";
 import IncidentTodoList from "./Library/components/IncidentTodoList";
+import DocumentManagerView from "./Documents/DocumentManagerView";
 
 const initialNewErrorState = {
   ten_thiet_bi: "",
@@ -74,6 +76,7 @@ export default function Library() {
   const [selectedErrorId, setSelectedErrorId] = useState(null);
 
   const [activeTab, setActiveTab] = useState("HuongKhacPhuc"); // 'HuongKhacPhuc' | 'NguyenNhan' | 'TinhTrang'
+  const [activeMainTab, setActiveMainTab] = useState("incidents"); // 'incidents' | 'documents'
   const [viewMode, setViewMode] = useState("list"); // 'list' | 'detail'
   const [openAddModal, setOpenAddModal] = useState(false);
   const [newError, setNewError] = useState(initialNewErrorState);
@@ -775,87 +778,141 @@ export default function Library() {
                 {/* ========================================================= */}
                 {isLuongDma && (
                   <div className="space-y-4">
-                    {/* Banner Thông tin DMA */}
-                    <div className="rounded-[22px] border border-[#8db0ee] bg-gradient-to-br from-[#eff6ff] via-white to-[#eef4ff] p-4 shadow-sm">
-                      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex items-start gap-3">
-                          <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2f69d9] to-[#5f93f0] text-white shadow-md">
-                            <MapPin size={20} />
-                          </div>
-                          <div>
-                            <h1 className="text-[22px] font-bold text-[#183f82]">
-                              DMA {selectedDma?.ten_dma || "---"} (
-                              {selectedDma?.loai_thiet_bi})
-                            </h1>
-                            <p className="mt-1 text-sm text-[#4f72ad]">
-                              Vị trí:{" "}
-                              <b>{selectedDma?.vi_tri_dma || "Chưa xác định"}</b>{" "}
-                              | Thiết bị:{" "}
-                              <b>{selectedDma?.thiet_bi || "N/A"}</b>
-                            </p>
-                          </div>
-                        </div>
+                    {/* Switcher Tab: Vị trí DMA vs Tài liệu chung */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setActiveMainTab("incidents")}
+                        className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all shadow-xs ${
+                          activeMainTab === "incidents"
+                            ? "bg-[#183f82] text-white shadow-blue-900/20 ring-2 ring-blue-400/40"
+                            : "bg-white text-slate-700 hover:bg-slate-50 border border-slate-200"
+                        }`}
+                      >
+                        <MapPin size={15} />
+                        <span>Vị trí DMA & Tọa độ GPS</span>
+                      </button>
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleOpenMap(
-                              selectedDma?.vi_do,
-                              selectedDma?.kinh_do,
-                            )
+                      <button
+                        type="button"
+                        onClick={() => setActiveMainTab("documents")}
+                        className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all shadow-xs ${
+                          activeMainTab === "documents"
+                            ? "bg-emerald-700 text-white shadow-emerald-900/20 ring-2 ring-emerald-400/40"
+                            : "bg-white text-slate-700 hover:bg-slate-50 border border-slate-200"
+                        }`}
+                      >
+                        <BookOpen
+                          size={15}
+                          className={
+                            activeMainTab === "documents"
+                              ? "text-emerald-200"
+                              : "text-emerald-600"
                           }
-                          className="inline-flex items-center gap-2 rounded-[12px] bg-[#2f69d9] px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-[#1d478d]"
-                        >
-                          <MapPin size={16} /> Mở Google Maps GPS
-                        </button>
-                      </div>
+                        />
+                        <span>
+                          Hồ sơ Kỹ thuật Tiêu chuẩn DMA (
+                          {selectedDma?.ten_dma || `Vùng ${selectedPq}`})
+                        </span>
+                      </button>
                     </div>
 
-                    {/* Chi tiết vị trí & Tọa độ */}
-                    <div className="grid gap-4 xl:grid-cols-2">
-                      <div className={cardClass}>
-                        <h2 className="mb-3 text-[18px] font-bold text-[#183f82]">
-                          Thông tin kỹ thuật vị trí DMA
-                        </h2>
-                        <div className="space-y-2 text-[#4c6898]">
-                          <div className="rounded-lg bg-[#f4f8ff] p-3">
-                            <b>Mã DMA:</b> {selectedDma?.ten_dma || "---"}
-                          </div>
-                          <div className="rounded-lg bg-[#f4f8ff] p-3">
-                            <b>Vùng Phân Quyền:</b>{" "}
-                            {selectedDma?.loai_thiet_bi || "---"}
-                          </div>
-                          <div className="rounded-lg bg-[#f4f8ff] p-3">
-                            <b>Vị trí chi tiết:</b>{" "}
-                            {selectedDma?.vi_tri_dma || "---"}
-                          </div>
-                          <div className="rounded-lg bg-[#f4f8ff] p-3">
-                            <b>Thiết bị kèm theo:</b>{" "}
-                            {selectedDma?.thiet_bi || "---"}
-                          </div>
-                        </div>
-                      </div>
+                    {activeMainTab === "documents" ? (
+                      <DocumentManagerView
+                        su_co_id={null}
+                        thiet_bi_name={selectedDma?.ten_dma || ""}
+                        id_pq={selectedPq}
+                        category_name={
+                          selectedDma?.loai_thiet_bi || `DMA Vùng ${selectedPq}`
+                        }
+                        isEmbedded={true}
+                        defaultScope="general"
+                      />
+                    ) : (
+                      <>
+                        {/* Banner Thông tin DMA */}
+                        <div className="rounded-[22px] border border-[#8db0ee] bg-gradient-to-br from-[#eff6ff] via-white to-[#eef4ff] p-4 shadow-sm">
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex items-start gap-3">
+                              <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2f69d9] to-[#5f93f0] text-white shadow-md">
+                                <MapPin size={20} />
+                              </div>
+                              <div>
+                                <h1 className="text-[22px] font-bold text-[#183f82]">
+                                  DMA {selectedDma?.ten_dma || "---"} (
+                                  {selectedDma?.loai_thiet_bi})
+                                </h1>
+                                <p className="mt-1 text-sm text-[#4f72ad]">
+                                  Vị trí:{" "}
+                                  <b>{selectedDma?.vi_tri_dma || "Chưa xác định"}</b>{" "}
+                                  | Thiết bị:{" "}
+                                  <b>{selectedDma?.thiet_bi || "N/A"}</b>
+                                </p>
+                              </div>
+                            </div>
 
-                      <div className={cardClass}>
-                        <h2 className="mb-3 text-[18px] font-bold text-[#183f82]">
-                          Tọa độ địa lý GPS
-                        </h2>
-                        <div className="space-y-2 text-[#4c6898]">
-                          <div className="rounded-lg bg-[#f4f8ff] p-3">
-                            <b>Kinh độ (Longitude):</b>{" "}
-                            {selectedDma?.kinh_do || "---"}
-                          </div>
-                          <div className="rounded-lg bg-[#f4f8ff] p-3">
-                            <b>Vĩ độ (Latitude):</b>{" "}
-                            {selectedDma?.vi_do || "---"}
-                          </div>
-                          <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-xs text-blue-700">
-                            * Tọa độ GPS đồng bộ trực tiếp từ Supabase Database.
-                            Nhấn "Mở Google Maps GPS" để xem bản đồ thực địa.
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleOpenMap(
+                                  selectedDma?.vi_do,
+                                  selectedDma?.kinh_do,
+                                )
+                              }
+                              className="inline-flex items-center gap-2 rounded-[12px] bg-[#2f69d9] px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-[#1d478d]"
+                            >
+                              <MapPin size={16} /> Mở Google Maps GPS
+                            </button>
                           </div>
                         </div>
-                      </div>
-                    </div>
+
+                        {/* Chi tiết vị trí & Tọa độ */}
+                        <div className="grid gap-4 xl:grid-cols-2">
+                          <div className={cardClass}>
+                            <h2 className="mb-3 text-[18px] font-bold text-[#183f82]">
+                              Thông tin kỹ thuật vị trí DMA
+                            </h2>
+                            <div className="space-y-2 text-[#4c6898]">
+                              <div className="rounded-lg bg-[#f4f8ff] p-3">
+                                <b>Mã DMA:</b> {selectedDma?.ten_dma || "---"}
+                              </div>
+                              <div className="rounded-lg bg-[#f4f8ff] p-3">
+                                <b>Vùng Phân Quyền:</b>{" "}
+                                {selectedDma?.loai_thiet_bi || "---"}
+                              </div>
+                              <div className="rounded-lg bg-[#f4f8ff] p-3">
+                                <b>Vị trí chi tiết:</b>{" "}
+                                {selectedDma?.vi_tri_dma || "---"}
+                              </div>
+                              <div className="rounded-lg bg-[#f4f8ff] p-3">
+                                <b>Thiết bị kèm theo:</b>{" "}
+                                {selectedDma?.thiet_bi || "---"}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className={cardClass}>
+                            <h2 className="mb-3 text-[18px] font-bold text-[#183f82]">
+                              Tọa độ địa lý GPS
+                            </h2>
+                            <div className="space-y-2 text-[#4c6898]">
+                              <div className="rounded-lg bg-[#f4f8ff] p-3">
+                                <b>Kinh độ (Longitude):</b>{" "}
+                                {selectedDma?.kinh_do || "---"}
+                              </div>
+                              <div className="rounded-lg bg-[#f4f8ff] p-3">
+                                <b>Vĩ độ (Latitude):</b>{" "}
+                                {selectedDma?.vi_do || "---"}
+                              </div>
+                              <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50/50 p-4 text-xs text-blue-700">
+                                * Tọa độ GPS đồng bộ trực tiếp từ Supabase Database.
+                                Nhấn "Mở Google Maps GPS" để xem bản đồ thực địa.
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
 
@@ -863,8 +920,68 @@ export default function Library() {
                 {/* LUỒNG 2: SỰ CỐ & KHẮC PHỤC THIẾT BỊ (id_pq >= 3) */}
                 {/* ========================================================= */}
                 {isLuongSuCo && (
-                  <div>
-                    {viewMode === "list" ? (
+                  <div className="space-y-4">
+                    {/* Switcher Tab: Danh sách sự cố vs Kho tài liệu chung */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setActiveMainTab("incidents")}
+                        className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all shadow-xs ${
+                          activeMainTab === "incidents"
+                            ? "bg-[#183f82] text-white shadow-blue-900/20 ring-2 ring-blue-400/40"
+                            : "bg-white text-slate-700 hover:bg-slate-50 border border-slate-200"
+                        }`}
+                      >
+                        <Wrench size={15} />
+                        <span>Danh sách sự cố & Khắc phục</span>
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
+                            activeMainTab === "incidents"
+                              ? "bg-white/20 text-white"
+                              : "bg-blue-100 text-blue-800"
+                          }`}
+                        >
+                          {filteredErrors.length}
+                        </span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setActiveMainTab("documents")}
+                        className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all shadow-xs ${
+                          activeMainTab === "documents"
+                            ? "bg-emerald-700 text-white shadow-emerald-900/20 ring-2 ring-emerald-400/40"
+                            : "bg-white text-slate-700 hover:bg-slate-50 border border-slate-200"
+                        }`}
+                      >
+                        <BookOpen
+                          size={15}
+                          className={
+                            activeMainTab === "documents"
+                              ? "text-emerald-200"
+                              : "text-emerald-600"
+                          }
+                        />
+                        <span>
+                          Hồ sơ Kỹ thuật Tiêu chuẩn (
+                          {selectedDeviceObj?.ten_thiet_bi ||
+                            currentCategorySuCo?.loai_thiet_bi ||
+                            "Hạng mục"}
+                          )
+                        </span>
+                      </button>
+                    </div>
+
+                    {activeMainTab === "documents" ? (
+                      <DocumentManagerView
+                        su_co_id={null}
+                        thiet_bi_name={selectedDeviceObj?.ten_thiet_bi || ""}
+                        id_pq={selectedPq}
+                        category_name={currentCategorySuCo?.loai_thiet_bi || ""}
+                        isEmbedded={true}
+                        defaultScope="general"
+                      />
+                    ) : viewMode === "list" ? (
                       <div className="space-y-4">
                         {/* Header thông tin thiết bị */}
                         <div className="rounded-[22px] border border-[#8db0ee] bg-gradient-to-br from-[#eff6ff] via-white to-[#eef4ff] p-4 shadow-sm">
