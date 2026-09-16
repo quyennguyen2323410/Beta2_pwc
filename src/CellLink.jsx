@@ -10,6 +10,7 @@ import Login from "./Login/Login";
 
 import LibraryDetail from "./function/Library/LibraryDetail";
 import IncidentDetail from "./function/Library/IncidentDetail";
+import ContentManager from "./function/Admin/ContentManager";
 
 export default function CellLink() {
   const getAuth = () => {
@@ -49,6 +50,9 @@ export default function CellLink() {
             { path: "QA", element: <InternalQA /> },
             { path: "AI", element: <AI /> },
             { path: "Users", element: <UserManager /> },
+            { path: "Admin", element: <ContentManager /> },
+            { path: "Admin/Content", element: <ContentManager /> },
+            { path: "Admin/Library", element: <ContentManager /> },
           ],
         },
       ],

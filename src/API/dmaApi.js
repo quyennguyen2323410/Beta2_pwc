@@ -216,3 +216,306 @@ export const updateDmaError = async (id, updateData) => {
     throw error;
   }
 };
+
+/**
+ * Xóa sự cố từ bảng pwc_errors
+ */
+export const deleteDmaError = async (id) => {
+  try {
+    const { data, error } = await supabase
+      .from("pwc_errors")
+      .delete()
+      .eq("id", id)
+      .select();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("API Error [deleteDmaError]:", error);
+    throw error;
+  }
+};
+
+/**
+ * THAO TÁC CRUD TRỰC TIẾP TRÊN OPTION (TÊN THIẾT BỊ / MỤC CON) CỦA CATEGORY
+ */
+
+// 1. Thêm một Option / Thiết bị mới vào Category
+export const createDeviceOption = async (idPq, optionName) => {
+  try {
+    const cleanName = (optionName || "").trim();
+    if (!cleanName) throw new Error("Tên Option / Thiết bị không được để trống.");
+
+    const { data, error } = await supabase
+      .from("pwc_errors")
+      .insert([
+        {
+          id_pq: Number(idPq),
+          name: cleanName,
+          loi: 1,
+          tinh_trang: "Chưa ghi nhận sự cố",
+          nguyen_nhan: "—",
+          huong_khac_phuc: "—",
+        },
+      ])
+      .select();
+
+    if (error) throw error;
+    return data?.[0];
+  } catch (error) {
+    console.error("API Error [createDeviceOption]:", error);
+    throw error;
+  }
+};
+
+// 2. Đổi tên một Option / Thiết bị (Cập nhật toàn bộ các sự cố thuộc Option đó)
+export const renameDeviceOption = async (idPq, oldName, newName) => {
+  try {
+    const cleanNew = (newName || "").trim();
+    if (!cleanNew) throw new Error("Tên mới không được để trống.");
+
+    const { data, error } = await supabase
+      .from("pwc_errors")
+      .update({ name: cleanNew })
+      .eq("id_pq", Number(idPq))
+      .eq("name", oldName)
+      .select();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("API Error [renameDeviceOption]:", error);
+    throw error;
+  }
+};
+
+// 3. Xóa một Option / Thiết bị (Xóa toàn bộ các sự cố thuộc Option đó)
+export const deleteDeviceOption = async (idPq, optionName) => {
+  try {
+    const { data, error } = await supabase
+      .from("pwc_errors")
+      .delete()
+      .eq("id_pq", Number(idPq))
+      .eq("name", optionName)
+      .select();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("API Error [deleteDeviceOption]:", error);
+    throw error;
+  }
+};
+
+/* =========================================================
+ * BỔ SUNG: TOÀN BỘ CÁC HÀM CRUD QUẢN TRỊ NỘI DUNG (ADMIN)
+ * ========================================================= */
+
+/**
+ * 1. QUẢN LÝ LOẠI THIẾT BỊ / DANH MỤC (pwc_device_types)
+ */
+
+export const fetchDeviceTypesAdmin = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("pwc_device_types")
+      .select("*")
+      .order("id_pq", { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("API Error [fetchDeviceTypesAdmin]:", error);
+    throw error;
+  }
+};
+
+export const createDeviceType = async ({ id_pq, loai_thiet_bi }) => {
+  try {
+    let nextPq = Number(id_pq);
+    if (!nextPq || isNaN(nextPq)) {
+      // Tự động tìm id_pq lớn nhất + 1
+      const { data: existing } = await supabase
+        .from("pwc_device_types")
+        .select("id_pq")
+        .order("id_pq", { ascending: false })
+        .limit(1);
+
+      const maxPq = existing?.[0]?.id_pq ? Number(existing[0].id_pq) : 13;
+      nextPq = Math.max(maxPq + 1, 3);
+    }
+
+    const { data, error } = await supabase
+      .from("pwc_device_types")
+      .insert([
+        {
+          id_pq: nextPq,
+          loai_thiet_bi: (loai_thiet_bi || "").trim(),
+        },
+      ])
+      .select();
+
+    if (error) throw error;
+    return data?.[0];
+  } catch (error) {
+    console.error("API Error [createDeviceType]:", error);
+    throw error;
+  }
+};
+
+export const updateDeviceType = async (oldIdPq, { id_pq, loai_thiet_bi }) => {
+  try {
+    const payload = {
+      loai_thiet_bi: (loai_thiet_bi || "").trim(),
+    };
+    if (id_pq !== undefined && !isNaN(Number(id_pq))) {
+      payload.id_pq = Number(id_pq);
+    }
+
+    const { data, error } = await supabase
+      .from("pwc_device_types")
+      .update(payload)
+      .eq("id_pq", oldIdPq)
+      .select();
+
+    if (error) throw error;
+    return data?.[0];
+  } catch (error) {
+    console.error("API Error [updateDeviceType]:", error);
+    throw error;
+  }
+};
+
+export const deleteDeviceType = async (idPq) => {
+  try {
+    const numPq = Number(idPq);
+    const { data, error } = await supabase
+      .from("pwc_device_types")
+      .delete()
+      .eq("id_pq", numPq)
+      .select();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("API Error [deleteDeviceType]:", error);
+    throw error;
+  }
+};
+
+/**
+ * 2. QUẢN LÝ ĐIỂM ĐO DMA & TỌA ĐỘ GPS (pwc_dma_devices)
+ */
+
+export const fetchDmaDevicesAdmin = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("pwc_dma_devices")
+      .select("*")
+      .order("id_pq", { ascending: true })
+      .order("id", { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("API Error [fetchDmaDevicesAdmin]:", error);
+    throw error;
+  }
+};
+
+export const createDmaDevice = async ({ id_pq, dma_code, vi_tri, thiet_bi, kinh_do, vi_do }) => {
+  try {
+    const payload = {
+      id_pq: Number(id_pq) || 1,
+      dma_code: (dma_code || "").toString().trim(),
+      vi_tri: (vi_tri || "").trim(),
+      thiet_bi: (thiet_bi || "").trim(),
+      kinh_do: kinh_do !== "" && kinh_do !== null && !isNaN(Number(kinh_do)) ? Number(kinh_do) : null,
+      vi_do: vi_do !== "" && vi_do !== null && !isNaN(Number(vi_do)) ? Number(vi_do) : null,
+    };
+
+    const { data, error } = await supabase
+      .from("pwc_dma_devices")
+      .insert([payload])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("API Error [createDmaDevice]:", error);
+    throw error;
+  }
+};
+
+export const updateDmaDevice = async (id, updateData) => {
+  try {
+    const payload = {};
+    if (updateData.id_pq !== undefined) payload.id_pq = Number(updateData.id_pq);
+    if (updateData.dma_code !== undefined) payload.dma_code = (updateData.dma_code || "").toString().trim();
+    if (updateData.vi_tri !== undefined) payload.vi_tri = (updateData.vi_tri || "").trim();
+    if (updateData.thiet_bi !== undefined) payload.thiet_bi = (updateData.thiet_bi || "").trim();
+    if (updateData.kinh_do !== undefined) {
+      payload.kinh_do = updateData.kinh_do !== "" && updateData.kinh_do !== null && !isNaN(Number(updateData.kinh_do))
+        ? Number(updateData.kinh_do)
+        : null;
+    }
+    if (updateData.vi_do !== undefined) {
+      payload.vi_do = updateData.vi_do !== "" && updateData.vi_do !== null && !isNaN(Number(updateData.vi_do))
+        ? Number(updateData.vi_do)
+        : null;
+    }
+
+    const { data, error } = await supabase
+      .from("pwc_dma_devices")
+      .update(payload)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("API Error [updateDmaDevice]:", error);
+    throw error;
+  }
+};
+
+export const deleteDmaDevice = async (id) => {
+  try {
+    const { data, error } = await supabase
+      .from("pwc_dma_devices")
+      .delete()
+      .eq("id", id)
+      .select();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error("API Error [deleteDmaDevice]:", error);
+    throw error;
+  }
+};
+
+/**
+ * 3. QUẢN LÝ SỰ CỐ & HƯỚNG DẪN XỬ LÝ (pwc_errors)
+ */
+
+export const fetchErrorsAdmin = async (idPqFilter = null) => {
+  try {
+    let query = supabase.from("pwc_errors").select("*");
+    if (idPqFilter !== null && idPqFilter !== undefined && idPqFilter !== "all") {
+      query = query.eq("id_pq", Number(idPqFilter));
+    }
+    const { data, error } = await query
+      .order("id_pq", { ascending: true })
+      .order("id", { ascending: true });
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("API Error [fetchErrorsAdmin]:", error);
+    throw error;
+  }
+};
+

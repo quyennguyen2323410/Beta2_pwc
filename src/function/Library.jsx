@@ -13,10 +13,23 @@ import {
   FileQuestion,
   RotateCw,
   BookOpen,
+  Database,
+  Edit2,
+  Trash2,
 } from "lucide-react";
 import { useSearchParams, useNavigate, useParams } from "react-router-dom";
 
-import { fetchAllDmaData, createDmaError, updateDmaError } from "../API/dmaApi";
+import {
+  fetchAllDmaData,
+  createDmaError,
+  updateDmaError,
+  createDeviceOption,
+  renameDeviceOption,
+  deleteDeviceOption,
+  createDmaDevice,
+  updateDmaDevice,
+  deleteDmaDevice,
+} from "../API/dmaApi";
 import IncidentTodoList from "./Library/components/IncidentTodoList";
 import DocumentManagerView from "./Documents/DocumentManagerView";
 
@@ -406,6 +419,103 @@ export default function Library() {
     }
   };
 
+  // =========================================================================
+  // THAO TÁC QUẢN LÝ NHANH OPTION (THÊM / ĐỔI TÊN / XÓA) TRỰC TIẾP TRÊN DROPDOWN 2
+  // =========================================================================
+  const [optionModal, setOptionModal] = useState(null); // 'add' | 'rename'
+  const [optionInputName, setOptionInputName] = useState("");
+  const [optionSubmitting, setOptionSubmitting] = useState(false);
+
+  const currentCatObj = categories.find((c) => c.id_pq === Number(selectedPq));
+  const currentCatName = currentCatObj?.loai_thiet_bi || "";
+  const currentOptionName = isLuongDma ? selectedDma?.ten_dma : selectedDeviceName;
+
+  const handleQuickAddOption = async (e) => {
+    e.preventDefault();
+    if (!optionInputName.trim()) return;
+    try {
+      setOptionSubmitting(true);
+      const name = optionInputName.trim();
+      if (isLuongDma) {
+        await createDmaDevice({
+          id_pq: Number(selectedPq),
+          dma_code: name,
+          vi_tri: "",
+          thiet_bi: "Bộ mạch PHT",
+        });
+        await loadAllData(true);
+        setSelectedDmaId(name);
+        navigate(`/Library/${encodeURIComponent(currentCatName)}/${encodeURIComponent(name)}`);
+      } else {
+        await createDeviceOption(Number(selectedPq), name);
+        await loadAllData(true);
+        setSelectedDeviceName(name);
+        navigate(`/Library/${encodeURIComponent(currentCatName)}/${encodeURIComponent(name)}`);
+      }
+      setOptionModal(null);
+      setOptionInputName("");
+    } catch (err) {
+      alert("Lỗi khi thêm Option: " + err.message);
+    } finally {
+      setOptionSubmitting(false);
+    }
+  };
+
+  const handleQuickRenameOption = async (e) => {
+    e.preventDefault();
+    if (!optionInputName.trim()) return;
+    try {
+      setOptionSubmitting(true);
+      const newName = optionInputName.trim();
+      if (isLuongDma) {
+        if (selectedDma?.stt) {
+          await updateDmaDevice(selectedDma.stt, { dma_code: newName });
+        }
+        await loadAllData(true);
+        setSelectedDmaId(newName);
+        navigate(`/Library/${encodeURIComponent(currentCatName)}/${encodeURIComponent(newName)}`);
+      } else {
+        await renameDeviceOption(Number(selectedPq), currentOptionName, newName);
+        await loadAllData(true);
+        setSelectedDeviceName(newName);
+        navigate(`/Library/${encodeURIComponent(currentCatName)}/${encodeURIComponent(newName)}`);
+      }
+      setOptionModal(null);
+      setOptionInputName("");
+    } catch (err) {
+      alert("Lỗi khi đổi tên Option: " + err.message);
+    } finally {
+      setOptionSubmitting(false);
+    }
+  };
+
+  const handleQuickDeleteOption = async () => {
+    if (!currentOptionName) return;
+    if (
+      !window.confirm(
+        `Bạn có chắc muốn xóa Option "${currentOptionName}" khỏi danh mục "${currentCatName}"?\nToàn bộ các sự cố hoặc điểm đo thuộc Option này sẽ bị xóa vĩnh viễn!`
+      )
+    ) {
+      return;
+    }
+    try {
+      setOptionSubmitting(true);
+      if (isLuongDma) {
+        if (selectedDma?.stt) {
+          await deleteDmaDevice(selectedDma.stt);
+        }
+      } else {
+        await deleteDeviceOption(Number(selectedPq), currentOptionName);
+      }
+      await loadAllData(true);
+      navigate(`/Library/${encodeURIComponent(currentCatName)}`);
+    } catch (err) {
+      alert("Lỗi khi xóa Option: " + err.message);
+    } finally {
+      setOptionSubmitting(false);
+    }
+  };
+
   const cardClass =
     "rounded-[20px] border border-[#8db0ee] bg-white/90 p-4 shadow-[0_10px_30px_rgba(34,73,137,0.08)] backdrop-blur-sm transition-all duration-300";
 
@@ -441,7 +551,7 @@ export default function Library() {
       <div className="w-full px-3 py-3 sm:px-4 sm:py-5 lg:px-6 xl:px-8">
         <main className="rounded-[28px] border border-[#7ba2e6]/80 bg-gradient-to-br from-white via-[#f8fbff] to-[#eef5ff] p-4 shadow-[0_18px_40px_rgba(35,72,138,0.10)] lg:p-5">
           {/* THANH ĐIỀU HƯỚNG & LỌC */}
-          <section className="grid gap-3 lg:grid-cols-[240px_240px_1fr]">
+          <section className="grid gap-3 lg:grid-cols-[220px_340px_1fr]">
             {/* DROPDOWN 1: Chọn Phân quyền / Loại Thiết bị */}
             <select
               value={selectedPq}
@@ -455,50 +565,95 @@ export default function Library() {
               ))}
             </select>
 
-            {/* DROPDOWN 2: Linh hoạt theo Luồng DMA hoặc Sự cố */}
-            {isLuongDma ? (
-              <select
-                value={selectedDma?.ten_dma || ""}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setSelectedDmaId(val);
-                  const catObj = categories.find(
-                    (c) => c.id_pq === Number(selectedPq),
-                  );
-                  const catName = catObj?.loai_thiet_bi || `DMA`;
-                  navigate(
-                    `/Library/${encodeURIComponent(catName)}/${encodeURIComponent(val)}`,
-                  );
-                }}
-                className="h-11 rounded-[12px] border border-[#8db0ee] bg-white px-3 font-medium text-[#244a8a] shadow-sm outline-none focus:ring-4 focus:ring-[#4f80de]/10"
-              >
-                {filteredDmaList.map((item) => (
-                  <option key={item.stt || item.ten_dma} value={item.ten_dma}>
-                    DMA: {item.ten_dma}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <select
-                value={selectedDeviceName}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setSelectedDeviceName(val);
-                  const catName =
-                    currentCategorySuCo?.loai_thiet_bi || "ThietBi";
-                  navigate(
-                    `/Library/${encodeURIComponent(catName)}/${encodeURIComponent(val)}`,
-                  );
-                }}
-                className="h-11 rounded-[12px] border border-[#8db0ee] bg-white px-3 font-medium text-[#244a8a] shadow-sm outline-none focus:ring-4 focus:ring-[#4f80de]/10"
-              >
-                {currentDeviceList.map((dev) => (
-                  <option key={dev.ten_thiet_bi} value={dev.ten_thiet_bi}>
-                    Thiết bị: {dev.ten_thiet_bi}
-                  </option>
-                ))}
-              </select>
-            )}
+            {/* DROPDOWN 2: Linh hoạt theo Luồng DMA hoặc Sự cố kèm Nút Quản lý Option */}
+            <div className="flex items-center gap-1.5">
+              <div className="min-w-0 flex-1">
+                {isLuongDma ? (
+                  <select
+                    value={selectedDma?.ten_dma || ""}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSelectedDmaId(val);
+                      const catObj = categories.find(
+                        (c) => c.id_pq === Number(selectedPq),
+                      );
+                      const catName = catObj?.loai_thiet_bi || `DMA`;
+                      navigate(
+                        `/Library/${encodeURIComponent(catName)}/${encodeURIComponent(val)}`,
+                      );
+                    }}
+                    className="h-11 w-full truncate rounded-[12px] border border-[#8db0ee] bg-white px-3 font-medium text-[#244a8a] shadow-sm outline-none focus:ring-4 focus:ring-[#4f80de]/10"
+                  >
+                    {filteredDmaList.map((item) => (
+                      <option key={item.stt || item.ten_dma} value={item.ten_dma}>
+                        DMA: {item.ten_dma}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <select
+                    value={selectedDeviceName}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSelectedDeviceName(val);
+                      const catName =
+                        currentCategorySuCo?.loai_thiet_bi || "ThietBi";
+                      navigate(
+                        `/Library/${encodeURIComponent(catName)}/${encodeURIComponent(val)}`,
+                      );
+                    }}
+                    className="h-11 w-full truncate rounded-[12px] border border-[#8db0ee] bg-white px-3 font-medium text-[#244a8a] shadow-sm outline-none focus:ring-4 focus:ring-[#4f80de]/10"
+                  >
+                    {currentDeviceList.map((dev) => (
+                      <option key={dev.ten_thiet_bi} value={dev.ten_thiet_bi}>
+                        Thiết bị: {dev.ten_thiet_bi}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
+              {/* Nút thao tác CRUD nhanh trên Option */}
+              <div className="flex items-center gap-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOptionInputName("");
+                    setOptionModal("add");
+                  }}
+                  title="Thêm Option / Thiết bị mới cho danh mục này"
+                  className="flex h-11 w-9 items-center justify-center rounded-[12px] border border-[#8db0ee] bg-white text-[#244a8a] shadow-sm transition hover:bg-amber-50 hover:border-amber-400 hover:text-amber-700"
+                >
+                  <Plus size={16} strokeWidth={2.5} />
+                </button>
+
+                {currentOptionName && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOptionInputName(currentOptionName);
+                        setOptionModal("rename");
+                      }}
+                      title="Đổi tên Option / Thiết bị này"
+                      className="flex h-11 w-9 items-center justify-center rounded-[12px] border border-[#8db0ee] bg-white text-[#244a8a] shadow-sm transition hover:bg-blue-50 hover:border-blue-400 hover:text-blue-700"
+                    >
+                      <Edit2 size={14} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleQuickDeleteOption}
+                      disabled={optionSubmitting}
+                      title="Xóa Option / Thiết bị này khỏi danh mục"
+                      className="flex h-11 w-9 items-center justify-center rounded-[12px] border border-[#8db0ee] bg-white text-slate-500 shadow-sm transition hover:bg-rose-50 hover:border-rose-400 hover:text-rose-600 disabled:opacity-50"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
 
             {/* Ô TÌM KIẾM TOÀN CỤC & NÚT LÀM MỚI */}
             <div className="flex items-center gap-2">
@@ -543,6 +698,16 @@ export default function Library() {
                 <span className="hidden sm:inline">
                   {isRefreshingLibrary ? "Đang tải..." : "Làm mới"}
                 </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => navigate("/Admin")}
+                title="Quản trị nội dung: Danh mục, Điểm đo DMA & GPS, Sự cố thiết bị"
+                className="flex h-11 shrink-0 items-center gap-1.5 rounded-[12px] border border-cyan-500/30 bg-gradient-to-r from-cyan-600 to-blue-600 px-3.5 text-xs font-bold text-white shadow-sm transition hover:from-cyan-700 hover:to-blue-700 active:scale-95"
+              >
+                <Database size={16} strokeWidth={2.2} />
+                <span className="hidden sm:inline">Quản trị dữ liệu</span>
               </button>
             </div>
           </section>
@@ -1299,6 +1464,81 @@ export default function Library() {
                 Lưu dữ liệu
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL THÊM / ĐỔI TÊN OPTION TRỰC TIẾP TRÊN DROPDOWN 2 */}
+      {optionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
+          <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="text-base font-bold text-slate-800">
+                  {optionModal === "add"
+                    ? `Thêm Option vào "${currentCatName}"`
+                    : `Đổi tên Option "${currentOptionName}"`}
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {optionModal === "add"
+                    ? "Tạo một mục con mới để hiển thị trong Dropdown 2."
+                    : "Cập nhật tên hiển thị trong Dropdown 2."}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOptionModal(null)}
+                className="p-1 text-slate-400 hover:text-slate-600"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form
+              onSubmit={
+                optionModal === "add"
+                  ? handleQuickAddOption
+                  : handleQuickRenameOption
+              }
+              className="mt-4 space-y-4"
+            >
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase">
+                  {isLuongDma ? "Mã trạm DMA mới" : "Tên Option / Thiết bị mới"} <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  value={optionInputName}
+                  onChange={(e) => setOptionInputName(e.target.value)}
+                  placeholder={isLuongDma ? "Ví dụ: 1125, 1030..." : "Ví dụ: Van NeoFlow GF, Sofrel 4G..."}
+                  className="mt-1.5 w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-800 focus:border-amber-500 focus:outline-hidden"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setOptionModal(null)}
+                  disabled={optionSubmitting}
+                  className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={optionSubmitting}
+                  className="rounded-xl bg-amber-500 px-5 py-2 text-xs font-bold text-white shadow-xs hover:bg-amber-600 disabled:opacity-50"
+                >
+                  {optionSubmitting
+                    ? "Đang lưu..."
+                    : optionModal === "add"
+                    ? "Thêm Option"
+                    : "Lưu tên mới"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

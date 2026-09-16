@@ -65,7 +65,7 @@ export default function Login() {
                 className="h-16 w-16 rounded-full object-cover bg-white p-1 shadow-md border border-white/30"
               />
               <div>
-                <h1 className="text-3xl font-bold">PWC WaterCare AI</h1>
+                <h1 className="text-3xl font-bold">Sổ tay vận hành</h1>
                 <p className="mt-2 text-white/85 text-lg">
                   Nền tảng vận hành kỹ thuật ngành nước
                 </p>
@@ -100,7 +100,7 @@ export default function Login() {
             </h2>
 
             <p className="mt-3 text-slate-600">
-              Đăng nhập để truy cập nền tảng PWC WaterCare AI.
+              Đăng nhập để truy cập nền tảng Sổ tay vận hành.
             </p>
 
             <form onSubmit={handleLogin} className="mt-8 space-y-5">
