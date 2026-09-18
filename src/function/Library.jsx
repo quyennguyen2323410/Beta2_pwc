@@ -1322,11 +1322,8 @@ export default function Library() {
                                     className="group flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-[#8db0ee]/60 bg-white p-4 transition hover:border-[#2f69d9] hover:shadow-md"
                                   >
                                     <div>
-                                      <div className="text-xs font-bold uppercase tracking-wider text-[#6c8ec3]">
-                                        Mã Lỗi #{idx + 1}
-                                      </div>
-                                      <div className="mt-1 text-base font-bold text-[#1d478d]">
-                                        {err.loi_so}
+                                      <div className="text-sm font-bold text-[#1d478d]">
+                                        Sự cố: {err.loi_so}
                                       </div>
                                       <div className="mt-1 text-sm text-slate-600">
                                         <b>Tình trạng:</b> {err.tinh_trang}

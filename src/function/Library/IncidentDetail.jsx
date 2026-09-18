@@ -317,7 +317,7 @@ export default function IncidentDetail() {
             )}
             <ChevronRight size={13} className="text-slate-400" />
             <span className="rounded-md bg-blue-100 px-2 py-0.5 text-blue-800 font-bold">
-              Mã lỗi: {incident.loi_so}
+              Sự cố: {incident.loi_so}
             </span>
           </nav>
 
@@ -326,93 +326,88 @@ export default function IncidentDetail() {
               <button
                 type="button"
                 onClick={handleBack}
-                className="mb-3 inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold text-[#4f72ad] transition hover:bg-[#f0f5ff] hover:text-[#1d478d]"
+                className="mb-2 inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold text-[#4f72ad] transition hover:bg-[#f0f5ff] hover:text-[#1d478d]"
               >
                 <ArrowLeft size={15} /> Quay lại danh sách
               </button>
 
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-blue-100 px-3 py-0.5 text-xs font-bold text-blue-700">
-                  Mã sự cố #{incident.id}
-                </span>
-
-                {isEditingLoi ? (
-                  <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-300 bg-blue-50/90 px-2.5 py-0.5 shadow-xs">
-                    <span className="text-xs font-bold text-blue-800">Mã lỗi:</span>
-                    <input
-                      type="number"
-                      min="1"
-                      value={loiInput}
-                      onChange={(e) => setLoiInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") handleSaveLoi();
-                        if (e.key === "Escape") {
-                          setLoiInput(incident.loi_so || 1);
-                          setIsEditingLoi(false);
-                        }
-                      }}
-                      className="w-16 rounded border border-blue-400 bg-white px-1.5 py-0 text-xs font-bold text-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      autoFocus
-                    />
-                    <button
-                      type="button"
-                      onClick={handleSaveLoi}
-                      disabled={isSavingLoi}
-                      title="Lưu mã lỗi"
-                      className="rounded p-0.5 text-blue-700 hover:bg-blue-200 disabled:opacity-50"
-                    >
-                      {isSavingLoi ? (
-                        <Loader2 size={12} className="animate-spin" />
-                      ) : (
-                        <CheckCircle2 size={13} />
-                      )}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setLoiInput(incident.loi_so || 1);
-                        setIsEditingLoi(false);
-                      }}
-                      title="Hủy"
-                      className="rounded p-0.5 text-slate-500 hover:bg-slate-200"
-                    >
-                      <X size={12} />
-                    </button>
-                  </div>
-                ) : (
-                  <span className="group inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-0.5 text-xs font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-blue-700">
-                    <span>
-                      Mã lỗi: <b className="text-blue-700 font-bold">{incident.loi_so}</b>
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setLoiInput(incident.loi_so || 1);
-                        setIsEditingLoi(true);
-                      }}
-                      title="Chỉnh sửa mã lỗi"
-                      className="rounded-full p-0.5 text-slate-400 hover:text-blue-600 hover:bg-blue-100 transition active:scale-90"
-                    >
-                      <Edit3 size={12} />
-                    </button>
-                  </span>
-                )}
-              </div>
-
-              <div className="flex items-center gap-3.5 mt-3">
+              <div className="flex items-center gap-3.5 mt-2">
                 <img
                   src={getCategoryIcon(
                     incident.loai_thiet_bi || groupName,
                     incident.id_pq,
                   )}
                   alt=""
-                  className="h-11 w-11 shrink-0 rounded-full object-cover border border-[#8db0ee] bg-white p-0.5 shadow-sm"
+                  className="h-12 w-12 shrink-0 rounded-full object-cover border border-[#8db0ee] bg-white p-0.5 shadow-sm"
                 />
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-extrabold text-[#183f82]">
-                    Mã lỗi: {incident.loi_so}
-                  </h1>
-                  <p className="mt-0.5 text-sm text-[#4f72ad]">
+                  {isEditingLoi ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl md:text-3xl font-extrabold text-[#183f82]">
+                        Sự cố:
+                      </span>
+                      <input
+                        type="number"
+                        min="1"
+                        value={loiInput}
+                        onChange={(e) => setLoiInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSaveLoi();
+                          if (e.key === "Escape") {
+                            setLoiInput(incident.loi_so || 1);
+                            setIsEditingLoi(false);
+                          }
+                        }}
+                        className="w-20 rounded-xl border-2 border-blue-500 bg-white px-2.5 py-1 text-xl md:text-2xl font-extrabold text-[#183f82] focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={handleSaveLoi}
+                        disabled={isSavingLoi}
+                        title="Lưu số sự cố"
+                        className="inline-flex items-center gap-1 rounded-xl bg-blue-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        {isSavingLoi ? (
+                          <Loader2 size={15} className="animate-spin" />
+                        ) : (
+                          <>
+                            <CheckCircle2 size={15} /> Lưu
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setLoiInput(incident.loi_so || 1);
+                          setIsEditingLoi(false);
+                        }}
+                        title="Hủy"
+                        className="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+                      >
+                        <X size={15} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2.5 group">
+                      <h1 className="text-2xl md:text-3xl font-extrabold text-[#183f82]">
+                        Sự cố: {incident.loi_so}
+                      </h1>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setLoiInput(incident.loi_so || 1);
+                          setIsEditingLoi(true);
+                        }}
+                        title="Chỉnh sửa số sự cố"
+                        className="rounded-lg p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition active:scale-95"
+                      >
+                        <Edit3 size={18} />
+                      </button>
+                    </div>
+                  )}
+
+                  <p className="mt-1 text-sm text-[#4f72ad]">
                     Thiết bị: <b className="text-slate-800">{incident.ten_thiet_bi}</b>
                     {incident.loai_thiet_bi && (
                       <>
@@ -637,7 +632,7 @@ export default function IncidentDetail() {
             <form onSubmit={handleSaveEdit} className="mt-4 space-y-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                  Mã lỗi
+                  Sự cố (Số thứ tự sự cố)
                 </label>
                 <input
                   type="number"

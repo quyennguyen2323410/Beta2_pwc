@@ -334,7 +334,7 @@ export default function DMASearchPage() {
                   >
                     <div className="flex items-center gap-2 font-bold text-amber-700">
                       <span className="rounded-md bg-amber-100 px-2 py-0.5 text-xs">
-                        Mã lỗi #{err.loi_so}
+                        Sự cố #{err.loi_so}
                       </span>
                       <span>{err.tinh_trang}</span>
                     </div>
