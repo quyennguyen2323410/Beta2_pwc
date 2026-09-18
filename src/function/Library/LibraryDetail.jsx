@@ -8,6 +8,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { fetchDmaLocations, fetchSuCoThietBiList } from "../../API/dmaApi";
+import { getCategoryIcon } from "../../lib/categoryIcons";
 
 export default function DMASearchPage() {
   // States chứa dữ liệu từ API
@@ -220,10 +221,15 @@ export default function DMASearchPage() {
           <div className="grid gap-6 md:grid-cols-3">
             {/* THÔNG TIN CHÍNH DMA */}
             <div className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:col-span-2">
-              <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                  <MapPin size={24} />
-                </div>
+              <div className="flex items-center gap-3.5 border-b border-slate-100 pb-4">
+                <img
+                  src={getCategoryIcon(
+                    currentDetail?.loai_thiet_bi_chung || allCategories.find((c) => c.id_pq === selectedCatId)?.loai_thiet_bi,
+                    selectedCatId,
+                  )}
+                  alt=""
+                  className="h-12 w-12 shrink-0 rounded-full object-cover border border-blue-200 bg-white p-0.5 shadow-sm"
+                />
                 <div>
                   <h2 className="text-2xl font-bold text-slate-800">
                     DMA {currentDetail?.ten_dma || "---"}
@@ -293,10 +299,15 @@ export default function DMASearchPage() {
         {!isDMAMode && (
           <div className="space-y-6">
             <div className="rounded-2xl border border-amber-100 bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-                  <AlertTriangle size={24} />
-                </div>
+              <div className="flex items-center gap-3.5 border-b border-slate-100 pb-4">
+                <img
+                  src={getCategoryIcon(
+                    allCategories.find((c) => c.id_pq === selectedCatId)?.loai_thiet_bi,
+                    selectedCatId,
+                  )}
+                  alt=""
+                  className="h-12 w-12 shrink-0 rounded-full object-cover border border-blue-200 bg-white p-0.5 shadow-sm"
+                />
                 <div>
                   <h2 className="text-2xl font-bold text-slate-800">
                     {currentDetail?.ten_thiet_bi || "Chọn thiết bị"}

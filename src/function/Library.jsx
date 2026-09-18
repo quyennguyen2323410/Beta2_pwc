@@ -919,8 +919,13 @@ export default function Library() {
                             <div>
                               {/* Header thẻ: Phân loại & Tên thiết bị */}
                               <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-                                <span className="inline-flex items-center gap-1 rounded-lg bg-[#eef4ff] px-2.5 py-1 text-xs font-bold text-[#2b59b3]">
-                                  <Layers size={13} /> {item.loai_thiet_bi}
+                                <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#eef4ff] px-2.5 py-1 text-xs font-bold text-[#2b59b3]">
+                                  <img
+                                    src={getCategoryIcon(item.loai_thiet_bi, item.id_pq)}
+                                    alt=""
+                                    className="h-3.5 w-3.5 rounded-full object-cover shrink-0"
+                                  />
+                                  <span>{item.loai_thiet_bi}</span>
                                 </span>
                                 <span className="text-xs font-semibold text-slate-600 bg-slate-100 rounded-md px-2 py-0.5">
                                   {item.ten_thiet_bi}
@@ -985,9 +990,14 @@ export default function Library() {
                         >
                           <div>
                             <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
-                              <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-800">
-                                <MapPin size={13} /> {loc.loai_thiet_bi}
-                              </span>
+                                <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-800">
+                                  <img
+                                    src={getCategoryIcon(loc.loai_thiet_bi, loc.id_pq)}
+                                    alt=""
+                                    className="h-3.5 w-3.5 rounded-full object-cover shrink-0"
+                                  />
+                                  <span>{loc.loai_thiet_bi}</span>
+                                </span>
                               <span className="text-xs font-semibold text-slate-500">
                                 DMA #{loc.ten_dma}
                               </span>
@@ -1090,9 +1100,14 @@ export default function Library() {
                         <div className="rounded-[22px] border border-[#8db0ee] bg-gradient-to-br from-[#eff6ff] via-white to-[#eef4ff] p-4 shadow-sm">
                           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex items-start gap-3">
-                              <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2f69d9] to-[#5f93f0] text-white shadow-md">
-                                <MapPin size={20} />
-                              </div>
+                              <img
+                                src={getCategoryIcon(
+                                  selectedDma?.loai_thiet_bi,
+                                  selectedPq,
+                                )}
+                                alt=""
+                                className="mt-0.5 h-11 w-11 shrink-0 rounded-full object-cover border border-[#8db0ee] bg-white p-0.5 shadow-sm"
+                              />
                               <div>
                                 <h1 className="text-[22px] font-bold text-[#183f82]">
                                   DMA {selectedDma?.ten_dma || "---"} (
@@ -1243,9 +1258,14 @@ export default function Library() {
                         <div className="rounded-[22px] border border-[#8db0ee] bg-gradient-to-br from-[#eff6ff] via-white to-[#eef4ff] p-4 shadow-sm">
                           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex items-center gap-3">
-                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2f69d9] text-white shadow">
-                                <Wrench size={18} />
-                              </div>
+                              <img
+                                src={getCategoryIcon(
+                                  currentCategorySuCo?.loai_thiet_bi,
+                                  selectedPq,
+                                )}
+                                alt=""
+                                className="h-11 w-11 shrink-0 rounded-full object-cover border border-[#8db0ee] bg-white p-0.5 shadow-sm"
+                              />
                               <div>
                                 <h1 className="text-[20px] font-bold text-[#183f82]">
                                   Loại thiết bị:{" "}
@@ -1341,13 +1361,25 @@ export default function Library() {
                           >
                             <ArrowLeft size={16} /> Quay lại danh sách
                           </button>
-                          <h1 className="text-[22px] font-bold text-[#183f82]">
-                            Sự cố: {selectedErrorObj?.loi_so}
-                          </h1>
-                          <p className="text-sm text-[#4f72ad]">
-                            Thiết bị: <b>{selectedDeviceObj?.ten_thiet_bi}</b> |
-                            Phân loại: <b>{currentCategorySuCo?.loai_thiet_bi}</b>
-                          </p>
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={getCategoryIcon(
+                                currentCategorySuCo?.loai_thiet_bi,
+                                selectedPq,
+                              )}
+                              alt=""
+                              className="h-11 w-11 shrink-0 rounded-full object-cover border border-[#8db0ee] bg-white p-0.5 shadow-sm"
+                            />
+                            <div>
+                              <h1 className="text-[22px] font-bold text-[#183f82]">
+                                Sự cố: {selectedErrorObj?.loi_so}
+                              </h1>
+                              <p className="text-sm text-[#4f72ad]">
+                                Thiết bị: <b>{selectedDeviceObj?.ten_thiet_bi}</b> |{" "}
+                                Phân loại: <b>{currentCategorySuCo?.loai_thiet_bi}</b>
+                              </p>
+                            </div>
+                          </div>
 
                           <div className="mt-4 flex gap-2">
                             {[

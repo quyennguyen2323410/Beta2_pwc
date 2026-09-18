@@ -22,6 +22,7 @@ import { fetchDmaErrorById, updateDmaError } from "../../API/dmaApi";
 import DocumentManagerView from "../Documents/DocumentManagerView";
 import IncidentTodoList from "./components/IncidentTodoList";
 import CauseRemedyTree from "./components/CauseRemedyTree";
+import { getCategoryIcon } from "../../lib/categoryIcons";
 
 export default function IncidentDetail() {
   const { id, group, device } = useParams();
@@ -304,19 +305,30 @@ export default function IncidentDetail() {
                 </span>
               </div>
 
-              <h1 className="mt-2 text-2xl md:text-3xl font-extrabold text-[#183f82]">
-                Sự cố: {incident.loi_so}
-              </h1>
-
-              <p className="mt-1 text-sm text-[#4f72ad]">
-                Thiết bị: <b className="text-slate-800">{incident.ten_thiet_bi}</b>
-                {incident.loai_thiet_bi && (
-                  <>
-                    {" "}| Phân loại:{" "}
-                    <b className="text-slate-800">{incident.loai_thiet_bi}</b>
-                  </>
-                )}
-              </p>
+              <div className="flex items-center gap-3.5 mt-3">
+                <img
+                  src={getCategoryIcon(
+                    incident.loai_thiet_bi || groupName,
+                    incident.id_pq,
+                  )}
+                  alt=""
+                  className="h-11 w-11 shrink-0 rounded-full object-cover border border-[#8db0ee] bg-white p-0.5 shadow-sm"
+                />
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-extrabold text-[#183f82]">
+                    Sự cố: {incident.loi_so}
+                  </h1>
+                  <p className="mt-0.5 text-sm text-[#4f72ad]">
+                    Thiết bị: <b className="text-slate-800">{incident.ten_thiet_bi}</b>
+                    {incident.loai_thiet_bi && (
+                      <>
+                        {" "}| Phân loại:{" "}
+                        <b className="text-slate-800">{incident.loai_thiet_bi}</b>
+                      </>
+                    )}
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Cụm nút thao tác Header */}

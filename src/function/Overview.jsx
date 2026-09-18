@@ -405,8 +405,12 @@ export default function Overview() {
                         >
                           <div>
                             <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
-                              <span className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700">
-                                <Layers size={12} />
+                              <span className="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700">
+                                <img
+                                  src={getCategoryIcon(item.loai_thiet_bi, item.id_pq)}
+                                  alt=""
+                                  className="h-3.5 w-3.5 rounded-full object-cover shrink-0"
+                                />
                                 <HighlightText
                                   text={item.loai_thiet_bi}
                                   query={search}
@@ -466,8 +470,12 @@ export default function Overview() {
                         >
                           <div>
                             <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
-                              <span className="inline-flex items-center gap-1 rounded-lg bg-cyan-50 px-2 py-0.5 text-xs font-bold text-cyan-700">
-                                <MapPin size={12} />
+                              <span className="inline-flex items-center gap-1.5 rounded-lg bg-cyan-50 px-2 py-0.5 text-xs font-bold text-cyan-700">
+                                <img
+                                  src={getCategoryIcon(loc.loai_thiet_bi, loc.id_pq)}
+                                  alt=""
+                                  className="h-3.5 w-3.5 rounded-full object-cover shrink-0"
+                                />
                                 <HighlightText
                                   text={loc.loai_thiet_bi}
                                   query={search}
