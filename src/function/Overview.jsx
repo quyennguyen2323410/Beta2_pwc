@@ -426,7 +426,7 @@ export default function Overview() {
 
                             <h3 className="mt-2.5 text-sm font-bold text-[#183f82] group-hover:text-blue-600 transition">
                               <HighlightText
-                                text={`Lỗi số ${item.loi_so || 1}: ${item.tinh_trang || "Sự cố thiết bị"}`}
+                                text={`Mã lỗi ${item.loi_so || 1}: ${item.tinh_trang || "Sự cố thiết bị"}`}
                                 query={search}
                               />
                             </h3>

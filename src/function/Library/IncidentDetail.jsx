@@ -47,6 +47,11 @@ export default function IncidentDetail() {
   const [isSavingTinhTrang, setIsSavingTinhTrang] = useState(false);
   const [copiedTinhTrang, setCopiedTinhTrang] = useState(false);
 
+  // State inline edit cho Mã lỗi
+  const [isEditingLoi, setIsEditingLoi] = useState(false);
+  const [loiInput, setLoiInput] = useState(1);
+  const [isSavingLoi, setIsSavingLoi] = useState(false);
+
   // State Modal chỉnh sửa sự cố
   const [openEditModal, setOpenEditModal] = useState(false);
   const [savingEdit, setSavingEdit] = useState(false);
@@ -69,6 +74,7 @@ export default function IncidentDetail() {
       } else {
         setIncident(data);
         setTinhTrangInput(data.tinh_trang || "");
+        setLoiInput(data.loi_so || 1);
         setEditForm({
           loi_so: data.loi_so || 1,
           tinh_trang: data.tinh_trang || "",
@@ -131,6 +137,7 @@ export default function IncidentDetail() {
         huong_khac_phuc: editForm.huong_khac_phuc,
       }));
       setTinhTrangInput(editForm.tinh_trang);
+      setLoiInput(editForm.loi_so);
 
       setOpenEditModal(false);
     } catch (err) {
@@ -138,6 +145,34 @@ export default function IncidentDetail() {
       alert("Cập nhật thất bại: " + err.message);
     } finally {
       setSavingEdit(false);
+    }
+  };
+
+  // Lưu riêng trường Mã lỗi trực tiếp
+  const handleSaveLoi = async () => {
+    const val = parseInt(loiInput);
+    if (isNaN(val) || val <= 0) {
+      alert("Vui lòng nhập mã lỗi hợp lệ (số nguyên > 0)");
+      return;
+    }
+    try {
+      setIsSavingLoi(true);
+      await updateDmaError(id, { loi: val });
+      setIncident((prev) => ({
+        ...prev,
+        loi_so: val,
+      }));
+      setEditForm((prev) => ({
+        ...prev,
+        loi_so: val,
+      }));
+      setLoiInput(val);
+      setIsEditingLoi(false);
+    } catch (err) {
+      console.error("Lỗi cập nhật mã lỗi:", err);
+      alert("Cập nhật mã lỗi thất bại: " + err.message);
+    } finally {
+      setIsSavingLoi(false);
     }
   };
 
@@ -282,7 +317,7 @@ export default function IncidentDetail() {
             )}
             <ChevronRight size={13} className="text-slate-400" />
             <span className="rounded-md bg-blue-100 px-2 py-0.5 text-blue-800 font-bold">
-              Sự cố: {incident.loi_so}
+              Mã lỗi: {incident.loi_so}
             </span>
           </nav>
 
@@ -300,9 +335,68 @@ export default function IncidentDetail() {
                 <span className="rounded-full bg-blue-100 px-3 py-0.5 text-xs font-bold text-blue-700">
                   Mã sự cố #{incident.id}
                 </span>
-                <span className="rounded-full bg-slate-100 px-3 py-0.5 text-xs font-semibold text-slate-600">
-                  Lỗi số: {incident.loi_so}
-                </span>
+
+                {isEditingLoi ? (
+                  <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-300 bg-blue-50/90 px-2.5 py-0.5 shadow-xs">
+                    <span className="text-xs font-bold text-blue-800">Mã lỗi:</span>
+                    <input
+                      type="number"
+                      min="1"
+                      value={loiInput}
+                      onChange={(e) => setLoiInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleSaveLoi();
+                        if (e.key === "Escape") {
+                          setLoiInput(incident.loi_so || 1);
+                          setIsEditingLoi(false);
+                        }
+                      }}
+                      className="w-16 rounded border border-blue-400 bg-white px-1.5 py-0 text-xs font-bold text-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSaveLoi}
+                      disabled={isSavingLoi}
+                      title="Lưu mã lỗi"
+                      className="rounded p-0.5 text-blue-700 hover:bg-blue-200 disabled:opacity-50"
+                    >
+                      {isSavingLoi ? (
+                        <Loader2 size={12} className="animate-spin" />
+                      ) : (
+                        <CheckCircle2 size={13} />
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLoiInput(incident.loi_so || 1);
+                        setIsEditingLoi(false);
+                      }}
+                      title="Hủy"
+                      className="rounded p-0.5 text-slate-500 hover:bg-slate-200"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ) : (
+                  <span className="group inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-0.5 text-xs font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-blue-700">
+                    <span>
+                      Mã lỗi: <b className="text-blue-700 font-bold">{incident.loi_so}</b>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLoiInput(incident.loi_so || 1);
+                        setIsEditingLoi(true);
+                      }}
+                      title="Chỉnh sửa mã lỗi"
+                      className="rounded-full p-0.5 text-slate-400 hover:text-blue-600 hover:bg-blue-100 transition active:scale-90"
+                    >
+                      <Edit3 size={12} />
+                    </button>
+                  </span>
+                )}
               </div>
 
               <div className="flex items-center gap-3.5 mt-3">
@@ -316,7 +410,7 @@ export default function IncidentDetail() {
                 />
                 <div>
                   <h1 className="text-2xl md:text-3xl font-extrabold text-[#183f82]">
-                    Sự cố: {incident.loi_so}
+                    Mã lỗi: {incident.loi_so}
                   </h1>
                   <p className="mt-0.5 text-sm text-[#4f72ad]">
                     Thiết bị: <b className="text-slate-800">{incident.ten_thiet_bi}</b>
@@ -543,16 +637,17 @@ export default function IncidentDetail() {
             <form onSubmit={handleSaveEdit} className="mt-4 space-y-4">
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                  Lỗi số / Mã lỗi
+                  Mã lỗi
                 </label>
                 <input
                   type="number"
+                  min="1"
                   value={editForm.loi_so}
                   onChange={(e) =>
                     setEditForm({ ...editForm, loi_so: parseInt(e.target.value) || 1 })
                   }
                   required
-                  className="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:border-blue-500 focus:outline-none"
+                  className="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:border-blue-500 focus:outline-none font-bold text-slate-800"
                 />
               </div>
 

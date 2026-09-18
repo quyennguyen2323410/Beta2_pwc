@@ -1372,7 +1372,7 @@ export default function Library() {
                             />
                             <div>
                               <h1 className="text-[22px] font-bold text-[#183f82]">
-                                Sự cố: {selectedErrorObj?.loi_so}
+                                Mã lỗi: {selectedErrorObj?.loi_so}
                               </h1>
                               <p className="text-sm text-[#4f72ad]">
                                 Thiết bị: <b>{selectedDeviceObj?.ten_thiet_bi}</b> |{" "}

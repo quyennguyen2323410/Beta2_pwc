@@ -1323,7 +1323,7 @@ export default function ContentManager() {
 
             <form onSubmit={handleSaveError} className="mt-4 space-y-3">
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase">Mã lỗi số</label>
+                <label className="block text-xs font-bold text-slate-600 uppercase">Mã lỗi</label>
                 <input
                   type="number"
                   min={1}
