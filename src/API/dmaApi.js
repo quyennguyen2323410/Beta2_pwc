@@ -306,6 +306,18 @@ export const renameDeviceOption = async (idPq, oldName, newName) => {
         .select();
 
       if (error) throw error;
+
+      // Đồng bộ tên thiết bị trong bảng documents
+      try {
+        let docUpdateQuery = supabase.from("documents").update({ thiet_bi_name: cleanNew });
+        if (idPq !== null && idPq !== undefined) {
+          docUpdateQuery = docUpdateQuery.eq("id_pq", Number(idPq));
+        }
+        await docUpdateQuery.ilike("thiet_bi_name", cleanOld);
+      } catch (docSyncErr) {
+        console.warn("Chưa đồng bộ tên tài liệu documents khi đổi tên option:", docSyncErr);
+      }
+
       return data;
     } else {
       // Fallback: update theo id_pq và tên ilike nếu có
@@ -318,6 +330,17 @@ export const renameDeviceOption = async (idPq, oldName, newName) => {
         .select();
 
       if (error) throw error;
+
+      try {
+        let docUpdateQuery = supabase.from("documents").update({ thiet_bi_name: cleanNew });
+        if (idPq !== null && idPq !== undefined) {
+          docUpdateQuery = docUpdateQuery.eq("id_pq", Number(idPq));
+        }
+        await docUpdateQuery.ilike("thiet_bi_name", cleanOld);
+      } catch (docSyncErr) {
+        console.warn("Chưa đồng bộ tên tài liệu documents khi đổi tên option:", docSyncErr);
+      }
+
       return data;
     }
   } catch (error) {
@@ -518,6 +541,20 @@ export const createDmaDevice = async ({ id_pq, dma_code, vi_tri, thiet_bi, kinh_
 
 export const updateDmaDevice = async (id, updateData) => {
   try {
+    let oldDmaCode = null;
+    if (updateData.dma_code !== undefined) {
+      try {
+        const { data: currentItem } = await supabase
+          .from("pwc_dma_devices")
+          .select("dma_code")
+          .eq("id", id)
+          .maybeSingle();
+        if (currentItem?.dma_code) oldDmaCode = currentItem.dma_code;
+      } catch (e) {
+        // ignore
+      }
+    }
+
     const payload = {};
     if (updateData.id_pq !== undefined) payload.id_pq = Number(updateData.id_pq);
     if (updateData.dma_code !== undefined) payload.dma_code = (updateData.dma_code || "").toString().trim();
@@ -542,6 +579,19 @@ export const updateDmaDevice = async (id, updateData) => {
       .single();
 
     if (error) throw error;
+
+    // Đồng bộ sang bảng documents nếu đổi dma_code
+    if (oldDmaCode && payload.dma_code && oldDmaCode !== payload.dma_code) {
+      try {
+        await supabase
+          .from("documents")
+          .update({ thiet_bi_name: payload.dma_code })
+          .eq("thiet_bi_name", oldDmaCode);
+      } catch (docErr) {
+        console.warn("Chưa đồng bộ tên tài liệu DMA documents:", docErr);
+      }
+    }
+
     return data;
   } catch (error) {
     console.error("API Error [updateDmaDevice]:", error);

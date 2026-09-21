@@ -71,6 +71,7 @@ const isMediaFile = (fileType) => {
 
 export default function DocumentManagerView({
   su_co_id = null,
+  loi_so = null,
   thiet_bi_name = "",
   id_pq = null,
   category_name = "",
@@ -122,13 +123,17 @@ export default function DocumentManagerView({
     try {
       setLoading(true);
       setError(null);
+      setPrimaryDocId(null);
+      setPrimaryMediaId(null);
+
+      const cleanDeviceName = (thiet_bi_name || "").trim();
 
       let docs = [];
       if (su_co_id) {
-        // Tải đồng thời cả tài liệu sự cố này VÀ tài liệu kỹ thuật chung của hạng mục
+        // Tải đồng thời cả tài liệu sự cố này VÀ tài liệu kỹ thuật riêng của thiết bị
         const [incDocs, genDocs] = await Promise.all([
           fetchDocuments({ su_co_id }),
-          fetchDocuments({ is_general: true, thiet_bi_name, id_pq }),
+          fetchDocuments({ is_general: true, thiet_bi_name: cleanDeviceName, id_pq }),
         ]);
 
         const markedInc = (incDocs || []).map((d) => ({ ...d, isGeneral: false }));
@@ -144,8 +149,8 @@ export default function DocumentManagerView({
         });
         docs = merged;
       } else {
-        // Bên ngoài danh mục: tải toàn bộ tài liệu chung
-        const genDocs = await fetchDocuments({ is_general: true, thiet_bi_name, id_pq });
+        // Hồ sơ kỹ thuật tiêu chuẩn riêng của thiết bị/DMA được chọn
+        const genDocs = await fetchDocuments({ is_general: true, thiet_bi_name: cleanDeviceName, id_pq });
         docs = (genDocs || []).map((d) => ({ ...d, isGeneral: true }));
       }
 
@@ -258,8 +263,8 @@ export default function DocumentManagerView({
           if (targetScope === "incident" && su_co_id) {
             extraMeta.su_co_id = su_co_id;
           }
-          if (thiet_bi_name) extraMeta.thiet_bi_name = thiet_bi_name;
-          if (id_pq) extraMeta.id_pq = id_pq;
+          if (thiet_bi_name) extraMeta.thiet_bi_name = thiet_bi_name.trim();
+          if (id_pq) extraMeta.id_pq = Number(id_pq);
 
           // Tự động phân loại danh mục nếu không truyền cứng
           let assignedCategory = customCategory;
@@ -497,7 +502,7 @@ export default function DocumentManagerView({
                 size={14}
                 className={scopeFilter === "incident" ? "text-amber-300" : "text-amber-500"}
               />
-              <span>Tài liệu sự cố #{su_co_id}</span>
+              <span>Tài liệu sự cố: {loi_so !== null && loi_so !== undefined ? loi_so : su_co_id}</span>
               <span
                 className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
                   scopeFilter === "incident"
@@ -556,7 +561,7 @@ export default function DocumentManagerView({
           </div>
 
           <div className="text-xs text-slate-600 font-medium hidden md:block">
-            {scopeFilter === "incident" && "📌 Đang hiển thị tài liệu đính kèm đặc thù cho sự cố này"}
+            {scopeFilter === "incident" && `📌 Đang hiển thị tài liệu đính kèm đặc thù cho sự cố ${loi_so !== null && loi_so !== undefined ? loi_so : su_co_id}`}
             {scopeFilter === "general" && `📚 Đang tra cứu Hồ sơ Kỹ thuật Tiêu chuẩn của ${thiet_bi_name || category_name || "thiết bị"}`}
             {scopeFilter === "all" && "📂 Đang tổng hợp toàn bộ tài liệu sự cố và hồ sơ kỹ thuật tiêu chuẩn"}
           </div>
@@ -708,7 +713,7 @@ export default function DocumentManagerView({
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 border border-blue-200 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                          <AlertTriangle size={10} /> Sự cố #{primaryDoc.su_co_id}
+                          <AlertTriangle size={10} /> Sự cố: {primaryDoc.su_co_id == su_co_id && loi_so !== null && loi_so !== undefined ? loi_so : primaryDoc.su_co_id}
                         </span>
                       )}
                     </div>
@@ -1084,7 +1089,7 @@ export default function DocumentManagerView({
                         </span>
                       ) : (
                         <span className="inline-flex items-center rounded bg-blue-900/80 border border-blue-500/50 px-1.5 py-0.2 text-[9px] font-bold text-blue-300">
-                          Sự cố #{featuredMedia.su_co_id}
+                          Sự cố: {featuredMedia.su_co_id == su_co_id && loi_so !== null && loi_so !== undefined ? loi_so : featuredMedia.su_co_id}
                         </span>
                       )}
                     </div>

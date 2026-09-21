@@ -603,6 +603,7 @@ export default function IncidentDetail() {
           {activeTab === "TaiLieu" && (
             <DocumentManagerView
               su_co_id={incident.id}
+              loi_so={incident.loi_so}
               thiet_bi_name={incident.ten_thiet_bi || deviceName}
               id_pq={incident.id_pq}
               category_name={groupName || incident.loai_thiet_bi || ""}
@@ -618,7 +619,7 @@ export default function IncidentDetail() {
           <div className="w-full max-w-xl rounded-3xl border border-[#9bb8ee] bg-white p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="text-lg font-bold text-[#183f82]">
-                Chỉnh sửa sự cố #{incident.id} ({incident.ten_thiet_bi})
+                Chỉnh sửa sự cố: {incident.loi_so || incident.id} ({incident.ten_thiet_bi})
               </h3>
               <button
                 type="button"

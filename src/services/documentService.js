@@ -38,22 +38,21 @@ export const fetchDocuments = async (filterOptions = {}) => {
   if (filterOptions.su_co_id) {
     query = query.eq("su_co_id", filterOptions.su_co_id);
   } else if (filterOptions.is_general) {
-    query = query.is("su_co_id", null);
-    if (filterOptions.thiet_bi_name && filterOptions.id_pq) {
-      query = query.or(
-        `thiet_bi_name.eq."${filterOptions.thiet_bi_name}",id_pq.eq.${filterOptions.id_pq}`
-      );
-    } else if (filterOptions.thiet_bi_name) {
-      query = query.eq("thiet_bi_name", filterOptions.thiet_bi_name);
+    // Hồ sơ Kỹ thuật Tiêu chuẩn riêng cho từng thiết bị/DMA được chọn ở Input 2
+    if (filterOptions.thiet_bi_name) {
+      query = query.eq("thiet_bi_name", filterOptions.thiet_bi_name.trim());
+      if (filterOptions.id_pq) {
+        query = query.eq("id_pq", Number(filterOptions.id_pq));
+      }
     } else if (filterOptions.id_pq) {
-      query = query.eq("id_pq", filterOptions.id_pq);
+      query = query.eq("id_pq", Number(filterOptions.id_pq));
     }
   } else {
     if (filterOptions.thiet_bi_name) {
-      query = query.eq("thiet_bi_name", filterOptions.thiet_bi_name);
+      query = query.eq("thiet_bi_name", filterOptions.thiet_bi_name.trim());
     }
     if (filterOptions.id_pq) {
-      query = query.eq("id_pq", filterOptions.id_pq);
+      query = query.eq("id_pq", Number(filterOptions.id_pq));
     }
   }
 
@@ -69,22 +68,20 @@ export const fetchDocuments = async (filterOptions = {}) => {
     if (filterOptions.su_co_id) {
       simpleQuery = simpleQuery.eq("su_co_id", filterOptions.su_co_id);
     } else if (filterOptions.is_general) {
-      simpleQuery = simpleQuery.is("su_co_id", null);
-      if (filterOptions.thiet_bi_name && filterOptions.id_pq) {
-        simpleQuery = simpleQuery.or(
-          `thiet_bi_name.eq."${filterOptions.thiet_bi_name}",id_pq.eq.${filterOptions.id_pq}`
-        );
-      } else if (filterOptions.thiet_bi_name) {
-        simpleQuery = simpleQuery.eq("thiet_bi_name", filterOptions.thiet_bi_name);
+      if (filterOptions.thiet_bi_name) {
+        simpleQuery = simpleQuery.eq("thiet_bi_name", filterOptions.thiet_bi_name.trim());
+        if (filterOptions.id_pq) {
+          simpleQuery = simpleQuery.eq("id_pq", Number(filterOptions.id_pq));
+        }
       } else if (filterOptions.id_pq) {
-        simpleQuery = simpleQuery.eq("id_pq", filterOptions.id_pq);
+        simpleQuery = simpleQuery.eq("id_pq", Number(filterOptions.id_pq));
       }
     } else {
       if (filterOptions.thiet_bi_name) {
-        simpleQuery = simpleQuery.eq("thiet_bi_name", filterOptions.thiet_bi_name);
+        simpleQuery = simpleQuery.eq("thiet_bi_name", filterOptions.thiet_bi_name.trim());
       }
       if (filterOptions.id_pq) {
-        simpleQuery = simpleQuery.eq("id_pq", filterOptions.id_pq);
+        simpleQuery = simpleQuery.eq("id_pq", Number(filterOptions.id_pq));
       }
     }
 
@@ -160,7 +157,7 @@ export const uploadDocument = async (
     insertPayload.su_co_id = Number(extraMeta.su_co_id);
   }
   if (extraMeta.thiet_bi_name) {
-    insertPayload.thiet_bi_name = extraMeta.thiet_bi_name;
+    insertPayload.thiet_bi_name = extraMeta.thiet_bi_name.trim();
   }
   if (extraMeta.id_pq) {
     insertPayload.id_pq = Number(extraMeta.id_pq);
