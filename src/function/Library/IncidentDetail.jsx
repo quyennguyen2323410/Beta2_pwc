@@ -47,7 +47,7 @@ export default function IncidentDetail() {
   const [isSavingTinhTrang, setIsSavingTinhTrang] = useState(false);
   const [copiedTinhTrang, setCopiedTinhTrang] = useState(false);
 
-  // State inline edit cho Mã lỗi
+  // State inline edit cho Số sự cố
   const [isEditingLoi, setIsEditingLoi] = useState(false);
   const [loiInput, setLoiInput] = useState(1);
   const [isSavingLoi, setIsSavingLoi] = useState(false);
@@ -148,11 +148,11 @@ export default function IncidentDetail() {
     }
   };
 
-  // Lưu riêng trường Mã lỗi trực tiếp
+  // Lưu riêng trường Số sự cố trực tiếp
   const handleSaveLoi = async () => {
     const val = parseInt(loiInput);
     if (isNaN(val) || val <= 0) {
-      alert("Vui lòng nhập mã lỗi hợp lệ (số nguyên > 0)");
+      alert("Vui lòng nhập số sự cố hợp lệ (số nguyên > 0)");
       return;
     }
     try {
@@ -169,8 +169,8 @@ export default function IncidentDetail() {
       setLoiInput(val);
       setIsEditingLoi(false);
     } catch (err) {
-      console.error("Lỗi cập nhật mã lỗi:", err);
-      alert("Cập nhật mã lỗi thất bại: " + err.message);
+      console.error("Lỗi cập nhật sự cố:", err);
+      alert("Cập nhật số sự cố thất bại: " + err.message);
     } finally {
       setIsSavingLoi(false);
     }
@@ -251,7 +251,7 @@ export default function IncidentDetail() {
     );
   }
 
-  // 3 Tabs theo cấu trúc mới: Tình trạng (ở đầu) -> Nguyên nhân (xổ ra Hướng khắc phục) -> Tài liệu kỹ thuật số
+  // 3 Tabs theo cấu trúc mới: Tình trạng (ở đầu) -> Nguyên nhân (xổ ra Hướng khắc phục) -> Tài liệu kỹ thuật
   const tabs = [
     {
       key: "TinhTrang",
@@ -267,7 +267,7 @@ export default function IncidentDetail() {
     },
     {
       key: "TaiLieu",
-      label: "Tài liệu kỹ thuật số",
+      label: "Tài liệu kỹ thuật",
       icon: <Layers size={18} strokeWidth={2.5} />,
       color: "text-indigo-600",
     },
@@ -494,7 +494,7 @@ export default function IncidentDetail() {
                       Tình trạng sự cố
                     </h3>
                     <p className="text-xs font-semibold text-slate-500">
-                      Mô tả hiện tượng và ghi nhận ban đầu khi phát hiện lỗi thiết bị
+                      Mô tả hiện tượng và ghi nhận ban đầu khi phát hiện sự cố thiết bị
                     </p>
                   </div>
                 </div>
@@ -542,7 +542,7 @@ export default function IncidentDetail() {
                       rows={4}
                       value={tinhTrangInput}
                       onChange={(e) => setTinhTrangInput(e.target.value)}
-                      placeholder="Nhập mô tả chi tiết tình trạng lỗi khi phát hiện..."
+                      placeholder="Nhập mô tả chi tiết tình trạng sự cố khi phát hiện..."
                       className="w-full rounded-2xl border-2 border-blue-500 bg-white p-3 text-sm md:text-base font-medium text-slate-800 focus:outline-none focus:ring-4 focus:ring-blue-500/15 shadow-inner"
                     />
                     <div className="flex items-center gap-2">
@@ -599,7 +599,7 @@ export default function IncidentDetail() {
             />
           )}
 
-          {/* TAB 3: TÀI LIỆU KỸ THUẬT SỐ & MEDIA */}
+          {/* TAB 3: TÀI LIỆU KỸ THUẬT & MEDIA */}
           {activeTab === "TaiLieu" && (
             <DocumentManagerView
               su_co_id={incident.id}
@@ -657,7 +657,7 @@ export default function IncidentDetail() {
                   onChange={(e) =>
                     setEditForm({ ...editForm, tinh_trang: e.target.value })
                   }
-                  placeholder="Mô tả chi tiết tình trạng lỗi khi xuất hiện..."
+                  placeholder="Mô tả chi tiết tình trạng sự cố khi xuất hiện..."
                   className="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:border-blue-500 focus:outline-none"
                 />
               </div>
@@ -672,7 +672,7 @@ export default function IncidentDetail() {
                   onChange={(e) =>
                     setEditForm({ ...editForm, nguyen_nhan: e.target.value })
                   }
-                  placeholder="Nguyên nhân kỹ thuật dẫn đến lỗi..."
+                  placeholder="Nguyên nhân kỹ thuật dẫn đến sự cố..."
                   className="w-full rounded-xl border border-slate-300 p-2.5 text-sm focus:border-blue-500 focus:outline-none"
                 />
               </div>

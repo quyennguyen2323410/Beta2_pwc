@@ -472,7 +472,7 @@ export default function ContentManager() {
   };
 
   const handleDeleteError = async (errItem) => {
-    if (!window.confirm(`Xác nhận xóa sự cố (Lỗi ${errItem.loi}) của Option "${errItem.name}"?`)) {
+    if (!window.confirm(`Xác nhận xóa sự cố (Sự cố ${errItem.loi}) của Option "${errItem.name}"?`)) {
       return;
     }
     try {
@@ -884,12 +884,12 @@ export default function ContentManager() {
                 </div>
               </div>
             ) : (
-              /* Chi tiết Option Thiết bị kỹ thuật: Danh sách Lỗi & Khắc phục */
+              /* Chi tiết Option Thiết bị kỹ thuật: Danh sách Sự cố & Khắc phục */
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                   <div>
                     <span className="text-xs font-bold text-amber-600 uppercase">
-                      Danh sách Lỗi & Khắc phục
+                      Danh sách Sự cố & Khắc phục
                     </span>
                     <h2 className="text-xl font-black text-slate-900 truncate max-w-xs">
                       {currentOptionDetail.name}
@@ -899,11 +899,11 @@ export default function ContentManager() {
                     onClick={() => handleOpenErrorModal("error_add")}
                     className="inline-flex items-center gap-1.5 rounded-xl bg-cyan-700 px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-cyan-800 transition"
                   >
-                    <Plus size={14} /> Thêm Lỗi
+                    <Plus size={14} /> Thêm Sự cố
                   </button>
                 </div>
 
-                {/* Danh sách các lỗi của thiết bị này */}
+                {/* Danh sách các sự cố của thiết bị này */}
                 <div className="space-y-3 overflow-y-auto max-h-[580px] pr-1">
                   {currentOptionDetail.errors.length === 0 ? (
                     <div className="py-12 text-center text-slate-400 text-xs">
@@ -917,7 +917,7 @@ export default function ContentManager() {
                       >
                         <div className="flex items-center justify-between">
                           <span className="inline-flex items-center gap-1 rounded-lg bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-900">
-                            Lỗi #{err.loi || 1}
+                            Sự cố #{err.loi || 1}
                           </span>
 
                           <div className="flex items-center gap-1">
@@ -1134,7 +1134,7 @@ export default function ContentManager() {
                     className="mt-1 w-full rounded-2xl border border-slate-200 px-3.5 py-2.5 text-sm font-bold text-slate-800 focus:border-amber-500 focus:outline-hidden"
                   />
                   <p className="mt-1.5 text-xs text-slate-500">
-                    Option này sẽ là 1 lựa chọn mới trong Dropdown 2. Sau khi thêm, bạn có thể thêm các mã lỗi và hướng dẫn xử lý cho Option này.
+                    Option này sẽ là 1 lựa chọn mới trong Dropdown 2. Sau khi thêm, bạn có thể thêm các mã sự cố và hướng dẫn xử lý cho Option này.
                   </p>
                 </div>
               )}
@@ -1323,7 +1323,7 @@ export default function ContentManager() {
 
             <form onSubmit={handleSaveError} className="mt-4 space-y-3">
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase">Mã lỗi</label>
+                <label className="block text-xs font-bold text-slate-600 uppercase">Mã sự cố</label>
                 <input
                   type="number"
                   min={1}
@@ -1334,12 +1334,12 @@ export default function ContentManager() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase">Tình trạng / Hiện tượng lỗi</label>
+                <label className="block text-xs font-bold text-slate-600 uppercase">Tình trạng / Hiện tượng sự cố</label>
                 <textarea
                   rows={2}
                   value={modalData.tinh_trang || ""}
                   onChange={(e) => setModalData({ ...modalData, tinh_trang: e.target.value })}
-                  placeholder="Mô tả hiện tượng lỗi quan sát được..."
+                  placeholder="Mô tả hiện tượng sự cố quan sát được..."
                   className="mt-1 w-full rounded-2xl border border-slate-200 p-3 text-sm text-slate-800 focus:border-cyan-500 focus:outline-hidden"
                 />
               </div>

@@ -77,14 +77,14 @@ export default function DeviceHeader({
                 onChange={handleEditChange}
               />
               <FieldItem
-                label="Số lỗi thường gặp"
+                label="Số sự cố thường gặp"
                 name="normalErrors"
                 type="number"
                 value={editData?.normalErrors || 0}
                 onChange={handleEditChange}
               />
               <FieldItem
-                label="Số lỗi nâng cao"
+                label="Số sự cố nâng cao"
                 name="advancedErrors"
                 type="number"
                 value={editData?.advancedErrors || 0}

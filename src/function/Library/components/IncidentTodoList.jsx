@@ -316,7 +316,7 @@ export default function IncidentTodoList({
                 )}
               </h3>
               <p className="text-xs font-semibold text-slate-500">
-                Đánh dấu các mục đã kiểm tra/thực hiện để phục vụ phân tích nội suy lỗi
+                Đánh dấu các mục đã kiểm tra/thực hiện để phục vụ phân tích nội suy sự cố
               </p>
             </div>
           </div>

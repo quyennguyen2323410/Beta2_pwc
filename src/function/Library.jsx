@@ -411,10 +411,10 @@ export default function Library() {
     window.open(`https://www.google.com/maps?q=${lat},${lng}`, "_blank");
   };
 
-  // Gửi dữ liệu tạo báo cáo lỗi mới qua API
+  // Gửi dữ liệu tạo báo cáo sự cố mới qua API
   const handleSaveNewError = async () => {
     if (!newError.loi.trim()) {
-      alert("Vui lòng nhập tiêu đề lỗi!");
+      alert("Vui lòng nhập tiêu đề sự cố!");
       return;
     }
 
@@ -431,7 +431,7 @@ export default function Library() {
       };
 
       await createDmaError(payload);
-      alert("Thêm báo cáo lỗi thành công!");
+      alert("Thêm báo cáo sự cố thành công!");
 
       // Tải lại dữ liệu mới từ backend
       await loadAllData();
@@ -439,7 +439,7 @@ export default function Library() {
       setNewError(initialNewErrorState);
       setOpenAddModal(false);
     } catch (err) {
-      alert("Không thể thêm lỗi mới. Vui lòng thử lại!");
+      alert("Không thể thêm sự cố mới. Vui lòng thử lại!");
       console.error(err);
     } finally {
       setSubmitting(false);
@@ -757,7 +757,7 @@ export default function Library() {
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Tìm kiếm toàn cục (Tên lỗi, tình trạng, hướng khắc phục, thiết bị, DMA)..."
+                    placeholder="Tìm kiếm toàn cục (Tên sự cố, tình trạng, hướng khắc phục, thiết bị, DMA)..."
                     className="h-11 w-full rounded-[12px] border border-[#8db0ee] bg-white pl-10 pr-10 text-[14px] text-[#244a8a] shadow-sm outline-none transition focus:border-[#2f69d9] focus:ring-4 focus:ring-[#4f80de]/15 placeholder:text-slate-400"
                   />
 
@@ -1285,7 +1285,7 @@ export default function Library() {
                               onClick={() => setOpenAddModal(true)}
                               className="inline-flex items-center gap-2 rounded-[12px] bg-[#2f69d9] px-4 py-2 text-sm font-semibold text-white shadow hover:bg-[#1d478d]"
                             >
-                              <Plus size={16} /> Thêm báo cáo lỗi
+                              <Plus size={16} /> Thêm báo cáo sự cố
                             </button>
                           </div>
                         </div>
@@ -1369,7 +1369,7 @@ export default function Library() {
                             />
                             <div>
                               <h1 className="text-[22px] font-bold text-[#183f82]">
-                                Mã lỗi: {selectedErrorObj?.loi_so}
+                                Sự cố: {selectedErrorObj?.loi_so}
                               </h1>
                               <p className="text-sm text-[#4f72ad]">
                                 Thiết bị: <b>{selectedDeviceObj?.ten_thiet_bi}</b> |{" "}
@@ -1491,7 +1491,7 @@ export default function Library() {
           <div className="w-full max-w-lg rounded-[24px] border border-[#9bb8ee] bg-white p-5 shadow-2xl">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="text-lg font-bold text-[#183f82]">
-                Thêm lỗi mới ({selectedDeviceObj?.ten_thiet_bi})
+                Thêm sự cố mới ({selectedDeviceObj?.ten_thiet_bi})
               </h3>
               <button
                 type="button"
@@ -1505,14 +1505,14 @@ export default function Library() {
             <div className="mt-4 space-y-3">
               <div>
                 <label className="mb-1 block text-xs font-bold text-slate-600">
-                  Tên / Tiêu đề lỗi *
+                  Tên / Tiêu đề sự cố *
                 </label>
                 <input
                   value={newError.loi}
                   onChange={(e) =>
                     setNewError({ ...newError, loi: e.target.value })
                   }
-                  placeholder="Ví dụ: Lỗi mất kết nối RS485"
+                  placeholder="Ví dụ: Mất kết nối RS485"
                   className="w-full rounded-xl border border-slate-300 p-2.5 text-sm outline-none focus:border-blue-500"
                 />
               </div>

@@ -600,7 +600,7 @@ export default function DocumentManagerView({
           </div>
           <div>
             <h3 className="text-sm font-bold text-[#183f82]">
-              Tài liệu kỹ thuật số & Đa phương tiện
+              Tài liệu kỹ thuật & Đa phương tiện
             </h3>
             <p className="text-xs text-slate-500">
               Tổng số {matchedDocs.length} tệp ({technicalDocs.length} tài liệu văn bản, {mediaDocs.length} ảnh/video)
@@ -672,7 +672,11 @@ export default function DocumentManagerView({
             className="h-8 inline-flex items-center gap-1.5 rounded-lg bg-[#2f69d9] px-3 text-xs font-bold text-white shadow-sm hover:bg-[#2356b8] transition active:scale-95 disabled:opacity-50"
           >
             <Plus size={14} />
-            Thêm tài liệu (Word, PDF, PPTX)
+            {su_co_id && scopeFilter === "general"
+              ? `Thêm vào Hồ sơ Tiêu chuẩn (${thiet_bi_name || "Thiết bị"})`
+              : su_co_id
+              ? `Thêm tài liệu cho Sự cố #${loi_so !== null && loi_so !== undefined ? loi_so : su_co_id}`
+              : "Thêm tài liệu (Word, PDF, PPTX)"}
           </button>
         </div>
 
@@ -883,7 +887,7 @@ export default function DocumentManagerView({
                             </span>
                           ) : (
                             <span className="shrink-0 rounded bg-blue-50 border border-blue-200 px-1.5 py-0.5 text-[9px] font-bold text-blue-700">
-                              Sự cố
+                              Sự cố {doc.su_co_id == su_co_id && loi_so !== null && loi_so !== undefined ? `#${loi_so}` : ""}
                             </span>
                           )}
                           <div className="min-w-0">
@@ -999,7 +1003,11 @@ export default function DocumentManagerView({
               className="h-8 inline-flex items-center gap-1.5 rounded-lg bg-slate-800 px-3 text-xs font-bold text-white shadow-sm hover:bg-slate-900 transition active:scale-95 disabled:opacity-50"
             >
               <Plus size={14} />
-              Thêm ảnh / Video
+              {su_co_id && scopeFilter === "general"
+                ? `Thêm ảnh/video tiêu chuẩn (${thiet_bi_name || "Thiết bị"})`
+                : su_co_id
+                ? `Thêm ảnh/video sự cố #${loi_so !== null && loi_so !== undefined ? loi_so : su_co_id}`
+                : "Thêm ảnh / Video"}
             </button>
           </div>
         </div>
@@ -1019,7 +1027,7 @@ export default function DocumentManagerView({
               Chưa có hình ảnh hoặc video sửa chữa nào
             </p>
             <p className="text-[11px] text-slate-400 mt-0.5">
-              Nhấn vào đây để tải lên hình ảnh chụp lỗi hiện trường (.jpg, .png) hoặc video clip sửa chữa (.mp4)
+              Nhấn vào đây để tải lên hình ảnh chụp sự cố hiện trường (.jpg, .png) hoặc video clip sửa chữa (.mp4)
             </p>
           </div>
         ) : (
@@ -1248,7 +1256,13 @@ export default function DocumentManagerView({
       >
         <div className="flex items-center gap-2 text-xs font-medium text-slate-600">
           <UploadCloud size={16} className="text-[#2f69d9]" />
-          <span>Kéo thả hoặc nhấn để chọn tải lên nhiều tệp cùng lúc</span>
+          <span>
+            {su_co_id && scopeFilter === "general"
+              ? `Kéo thả để tải lên Hồ sơ Tiêu chuẩn (${thiet_bi_name || "Thiết bị"})`
+              : su_co_id
+              ? `Kéo thả để tải tài liệu riêng cho Sự cố #${loi_so !== null && loi_so !== undefined ? loi_so : su_co_id}`
+              : "Kéo thả hoặc nhấn để chọn tải lên nhiều tệp cùng lúc"}
+          </span>
           <span className="text-[11px] text-slate-400 font-normal">
             (Hỗ trợ tải lên nhiều tệp đồng thời: Word, PDF, PPTX, hình ảnh, video...)
           </span>

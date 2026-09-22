@@ -120,10 +120,10 @@ export default function Overview() {
         c.loai_thiet_bi?.toUpperCase().includes("PRV") ||
         Number(c.id_pq) === 3,
     );
-    if (!cat) return "13 lỗi";
+    if (!cat) return "13 sự cố";
     let count = 0;
     (cat.devices || []).forEach((d) => (count += (d.errors || []).length));
-    return `${count} lỗi`;
+    return `${count} sự cố`;
   }, [troubleList]);
 
   const loggerCount = useMemo(() => {
@@ -132,10 +132,10 @@ export default function Overview() {
         c.loai_thiet_bi?.toUpperCase().includes("LOGGER") ||
         Number(c.id_pq) === 4,
     );
-    if (!cat) return "14 lỗi";
+    if (!cat) return "14 sự cố";
     let count = 0;
     (cat.devices || []).forEach((d) => (count += (d.errors || []).length));
-    return `${count} lỗi`;
+    return `${count} sự cố`;
   }, [troubleList]);
 
   // Kết quả tìm kiếm
@@ -198,7 +198,7 @@ export default function Overview() {
   // Danh mục tra cứu nhanh khi không tìm kiếm
   const knowledgeItems = [
     {
-      title: "Quy trình xử lý lỗi PRV",
+      title: "Quy trình xử lý sự cố PRV",
       desc: "Áp cao, không giữ áp, rò rỉ, kẹt màng van",
       count: prvCount,
       imageSrc: "/image.png",
@@ -212,7 +212,7 @@ export default function Overview() {
     },
     {
       title: "Hướng dẫn kiểm tra Logger",
-      desc: "Mất kết nối, pin yếu, SIM lỗi, mất dữ liệu",
+      desc: "Mất kết nối, pin yếu, hỏng SIM, mất dữ liệu",
       count: loggerCount,
       imageSrc: "/image copy.png",
       action: () => {
@@ -274,7 +274,7 @@ export default function Overview() {
                   className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-white/80 px-5 py-3 text-sm font-bold text-blue-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-white"
                 >
                   <Bot size={18} />
-                  Hỏi AI xử lý lỗi
+                  Hỏi AI xử lý sự cố
                 </button>
               </div>
             </div>
@@ -288,7 +288,7 @@ export default function Overview() {
                   Tra cứu nhanh
                 </h2>
                 <p className="mt-1 text-sm text-[#6c7fa4]">
-                  Tìm kiếm tức thì theo mã lỗi, tên thiết bị, mã điểm đo DMA hoặc hướng khắc phục
+                  Tìm kiếm tức thì theo mã sự cố, tên thiết bị, mã điểm đo DMA hoặc hướng khắc phục
                 </p>
               </div>
 
@@ -308,7 +308,7 @@ export default function Overview() {
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Nhập mã thiết bị, tên lỗi, mã DMA, nguyên nhân hoặc phương án xử lý..."
+                  placeholder="Nhập mã thiết bị, tên sự cố, mã DMA, nguyên nhân hoặc phương án xử lý..."
                   className="w-full bg-transparent text-sm font-medium text-[#163f7e] outline-none placeholder:text-[#8fa2c2]"
                 />
                 {hasSearchKeyword && (

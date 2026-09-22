@@ -36,9 +36,10 @@ export const fetchDocuments = async (filterOptions = {}) => {
     .order("created_at", { ascending: false });
 
   if (filterOptions.su_co_id) {
-    query = query.eq("su_co_id", filterOptions.su_co_id);
+    query = query.eq("su_co_id", Number(filterOptions.su_co_id));
   } else if (filterOptions.is_general) {
-    // Hồ sơ Kỹ thuật Tiêu chuẩn riêng cho từng thiết bị/DMA được chọn ở Input 2
+    // Hồ sơ Kỹ thuật Tiêu chuẩn riêng cho từng thiết bị/DMA được chọn ở Input 2 (bắt buộc su_co_id phải là null)
+    query = query.is("su_co_id", null);
     if (filterOptions.thiet_bi_name) {
       query = query.eq("thiet_bi_name", filterOptions.thiet_bi_name.trim());
       if (filterOptions.id_pq) {
@@ -66,8 +67,9 @@ export const fetchDocuments = async (filterOptions = {}) => {
       .order("created_at", { ascending: false });
 
     if (filterOptions.su_co_id) {
-      simpleQuery = simpleQuery.eq("su_co_id", filterOptions.su_co_id);
+      simpleQuery = simpleQuery.eq("su_co_id", Number(filterOptions.su_co_id));
     } else if (filterOptions.is_general) {
+      simpleQuery = simpleQuery.is("su_co_id", null);
       if (filterOptions.thiet_bi_name) {
         simpleQuery = simpleQuery.eq("thiet_bi_name", filterOptions.thiet_bi_name.trim());
         if (filterOptions.id_pq) {

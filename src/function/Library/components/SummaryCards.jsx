@@ -34,7 +34,7 @@ export default function SummaryCards({ selectedDma, currentErrors = [] }) {
       <CardItem
         icon={AlertTriangle}
         label="Sự cố ghi nhận"
-        value={`${totalErrors} lỗi`}
+        value={`${totalErrors} sự cố`}
         desc="Tổng số bài hướng dẫn"
         tone="from-amber-500 to-orange-400"
       />

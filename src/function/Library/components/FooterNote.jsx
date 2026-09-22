@@ -15,7 +15,7 @@ export default function FooterNote({ setIsEditing }) {
               Ghi chú vận hành hiện trường
             </h3>
             <p className="mt-1 max-w-4xl text-sm leading-6 text-[#6c7fa4]">
-              Nếu phát hiện lỗi mới hoặc quy trình khắc phục chưa chính xác, hãy
+              Nếu phát hiện sự cố mới hoặc quy trình khắc phục chưa chính xác, hãy
               kích hoạt chế độ chỉnh sửa để cập nhật kho tri thức.
             </p>
           </div>

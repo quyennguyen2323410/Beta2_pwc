@@ -313,7 +313,7 @@ export default function DMASearchPage() {
                     {currentDetail?.ten_thiet_bi || "Chọn thiết bị"}
                   </h2>
                   <p className="text-sm text-slate-500">
-                    Danh sách lỗi & Hướng xử lý sự cố kỹ thuật
+                    Danh sách sự cố & Hướng xử lý kỹ thuật
                   </p>
                 </div>
               </div>
